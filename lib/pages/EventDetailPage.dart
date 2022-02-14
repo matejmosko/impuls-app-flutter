@@ -36,7 +36,7 @@ class EventDetailPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "NATURLIG OVERNATURLIG",
+          "Scénická žatva",
           style: TextStyle(color: colorTheme.secondaryColor),
         ),
       ),
@@ -60,7 +60,7 @@ class EventDetailPage extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(12),
                       child: MarkdownBody(
-                        onTapLink: (url) => _launchURL(url),
+                        onTapLink: (text, href, title) => _launchURL(href),
                         data: event.description,
                       ),
                     ),

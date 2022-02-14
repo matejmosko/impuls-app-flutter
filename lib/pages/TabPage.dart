@@ -45,7 +45,7 @@ class _TabPageState extends State<TabPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "NATURLIG OVERNATURLIG",
+          "Scénická žatva 100",
           style: TextStyle(color: colorTheme.textColor),
         ),
         backgroundColor: colorTheme.mainColor,
@@ -60,7 +60,7 @@ class _TabPageState extends State<TabPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications, color: colorTheme.textColor),
             title: Text(
-              'Nyheter',
+              'Novinky',
               style: TextStyle(color: colorTheme.textColor),
             ),
           ),
@@ -70,7 +70,7 @@ class _TabPageState extends State<TabPage> {
               color: colorTheme.textColor,
             ),
             title: Text(
-              'Kalender',
+              'Kalendár',
               style: TextStyle(color: colorTheme.textColor),
             ),
           ),

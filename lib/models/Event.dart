@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Event {
   final String id;
   final String title;

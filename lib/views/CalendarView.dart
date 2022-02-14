@@ -41,7 +41,7 @@ class _CalendarViewState extends State<CalendarView>
 
   void fetchEvents(context) {
     EventsProvider eventsProvider =
-        Provider.of<EventsProvider>(context, listen: false);
+    Provider.of<EventsProvider>(context, listen: false);
     eventsProvider.fetchAllEvents();
   }
 
@@ -62,7 +62,7 @@ class _CalendarViewState extends State<CalendarView>
 
   void setSelectedDay(DateTime day) {
     final EventsProvider eventsProvider =
-        Provider.of<EventsProvider>(context, listen: false);
+    Provider.of<EventsProvider>(context, listen: false);
     eventsProvider.setSelectedDay(day);
   }
 
@@ -104,7 +104,7 @@ class _CalendarViewState extends State<CalendarView>
     return Container(
       color: Colors.white,
       child: TableCalendar(
-        locale: 'nb_NO',
+        locale: 'sk_SK',
         calendarController: _calendarController,
         events: eventsProvider.mappedEvents,
 //        events: _events,
@@ -114,8 +114,8 @@ class _CalendarViewState extends State<CalendarView>
         startingDayOfWeek: StartingDayOfWeek.monday,
         availableGestures: AvailableGestures.all,
         availableCalendarFormats: const {
-          CalendarFormat.month: 'Måned',
-          CalendarFormat.week: 'Uke',
+          CalendarFormat.month: 'Mesiac',
+          CalendarFormat.week: 'Týždeň',
         },
         calendarStyle: CalendarStyle(
           outsideDaysVisible: false,
@@ -131,7 +131,7 @@ class _CalendarViewState extends State<CalendarView>
           selectedDayBuilder: (context, date, _) {
             return FadeTransition(
               opacity:
-                  Tween(begin: 0.0, end: 1.0).animate(_animationController),
+              Tween(begin: 0.0, end: 1.0).animate(_animationController),
               child: ClipOval(
                 child: Container(
                   color: colorTheme.secondaryColor,
@@ -151,10 +151,10 @@ class _CalendarViewState extends State<CalendarView>
             return Container(
               decoration: BoxDecoration(
                 border:
-                    Border.all(width: 3.0, color: colorTheme.secondaryColor),
+                Border.all(width: 3.0, color: colorTheme.secondaryColor),
                 borderRadius: BorderRadius.all(Radius.circular(
-                        4.0) //                 <--- border radius here
-                    ),
+                    4.0) //                 <--- border radius here
+                ),
               ),
               width: 100,
               height: 100,
@@ -207,7 +207,7 @@ class _CalendarViewState extends State<CalendarView>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration:
-          BoxDecoration(shape: BoxShape.rectangle, color: colorTheme.mainColor),
+      BoxDecoration(shape: BoxShape.rectangle, color: colorTheme.mainColor),
       width: 16.0,
       height: 16.0,
       child: Center(
@@ -281,7 +281,7 @@ class EventListItem extends StatelessWidget {
 //              event.image != null ? Image.network(event.image) : SizedBox(),
           trailing: event.description != null
               ? Icon(Icons.keyboard_arrow_right,
-                  color: Colors.black38, size: 30.0)
+              color: Colors.black38, size: 30.0)
               : SizedBox.shrink(),
           title: Text("${event.title ?? ''}$location"),
           subtitle: Text(

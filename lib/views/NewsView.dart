@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:impuls/pages/NewsDetailPage.dart';
 import 'package:impuls/providers/AppSettings.dart';
 import 'package:impuls/providers/NewsProvider.dart';
@@ -44,36 +45,42 @@ class NewsView extends StatelessWidget {
                   itemCount: newsProvider.news.length,
                   itemBuilder: (BuildContext context, int index) {
                     final item = newsProvider.news[index];
-                    return Hero(
-                      child: Card(
+                    return Card(
                         elevation: 10,
-                        child: ListTile(
-                          title: Text(item.title),
-                          trailing: item.image != null
-                              ? ClipRRect(
-                                  borderRadius: new BorderRadius.circular(8.0),
-                                  child: Image.network(
-                                    item.image,
-                                  ),
-                                )
-                              : SizedBox.shrink(),
-                          subtitle: Text(
-                            item.description != null ? item.description : '',
-                            overflow: TextOverflow.fade,
-                            maxLines: 3,
-                          ),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NewsDetailPage(
-                                news: item,
+                        child: Row(mainAxisSize: MainAxisSize.min, children:[
+                          Expanded(
+                          child: ListTile(
+                            title: Text(item.title),
+                            subtitle: Html(data: item.description),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewsDetailPage(
+                                  news: item,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      tag: item.id,
-                    );
+                          ),
+                          item.image != null
+                              ? Container(
+                                  width: 120.0,
+                                  height: 120.0,
+                                  color: Colors.red,
+                                  //ClipRRect(
+                                  //borderRadius: new BorderRadius.circular(3.0),
+                                  child: Hero(
+                                    child: Image.network(
+                                      item.image,
+                                      fit: BoxFit.cover,
+                                      height: double.infinity,
+                                      width: double.infinity,
+                                    ),
+                                    tag: item.id,
+                                  ),
+                                )
+                              : SizedBox.shrink(),
+                        ]));
                   },
                 ),
               ),

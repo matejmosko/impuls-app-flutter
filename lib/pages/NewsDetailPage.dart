@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:impuls/models/Event.dart';
 import 'package:impuls/models/NewsPost.dart';
 import 'package:impuls/providers/AppSettings.dart';
@@ -27,7 +28,7 @@ class NewsDetailPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "NATURLIG OVERNATURLIG",
+          "Scénická žatva 100",
           style: TextStyle(color: colorTheme.secondaryColor),
         ),
       ),
@@ -35,25 +36,28 @@ class NewsDetailPage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            news.image != null ? Image.network(news.image) : SizedBox(),
             Hero(
-              child: Card(
+              child: news.image != null ? Image.network(news.image) : SizedBox(),
+              tag: news.id,
+            ),
+            Card(
                 color: Colors.white,
                 child: ListTile(
 //                  leading: Text("$startTime$location$endTime"),
                   title: Text("${news.title ?? ''}"),
                 ),
               ),
-              tag: news.id,
-            ),
+
             news.description != null
                 ? Card(
                     child: Padding(
                       padding: EdgeInsets.all(12),
-                      child: MarkdownBody(
-                        onTapLink: (url) => _launchURL(url),
+                      child: //Text("${news.content ?? ''}"),
+                          Html(data: news.content),
+                      /*child: MarkdownBody(
+                        onTapLink: (text, href, title) => _launchURL(href),
                         data: news.description,
-                      ),
+                      ),*/
                     ),
                   )
                 : SizedBox.shrink()

@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:impuls/pages/TabPage.dart';
 import 'package:impuls/providers/AppSettings.dart';
@@ -11,13 +10,14 @@ import 'package:provider/provider.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(MyApp()));
+  //runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   @override
   Widget build(BuildContext context) {
-    _firebaseMessaging.requestNotificationPermissions();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ColorProvider>.value(
@@ -37,9 +37,9 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: TabPage(),
-      ),
+          debugShowCheckedModeBanner: false,
+          home: TabPage(),
+        ),
     );
   }
 }
