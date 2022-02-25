@@ -6,7 +6,7 @@ class API {
   final String selectedArrangement = '5e19cdd924cfa04fc3de1d3a';
 
   Future<http.Response> fetchArrangements() {
-    var result = http.get(Uri.parse(url + '/arrangements'), headers: {'Content-Type': 'application/json; charset=utf-8'});
+    var result = http.get(Uri.parse(url2 + '/events.json'), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
 
@@ -16,17 +16,17 @@ class API {
   }
 
   Future<http.Response> fetchEventsForArrangement(arrangement) {
-    var result = http.get(Uri.parse(url + '/events?arrangement=$selectedArrangement'), headers: {'Content-Type': 'application/json; charset=utf-8'});
+    var result = http.get(Uri.parse(url2 + '/events.json?arrangement=$selectedArrangement'), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
 
-  Future<http.Response> fetchAllEvents() {
-    var result = http.get(Uri.parse(url2 + '/events.json'), headers: {'Content-Type': 'application/json; charset=utf-8'});
+  Future<http.Response> fetchAllEvents() async {
+    var result = await http.get(Uri.parse(url2 + '/events.json'), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
 
   Future<http.Response> fetchInfo() {
-    var result = http.get(Uri.parse(url + '/info'), headers: {'Content-Type': 'application/json; charset=utf-8'});
+    var result = http.get(Uri.parse(url2 + '/info.json'), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
 }

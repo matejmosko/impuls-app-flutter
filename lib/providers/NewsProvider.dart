@@ -20,7 +20,7 @@ class NewsProvider extends ChangeNotifier {
     setLoading(true);
     API().fetchNews().then((data) {
       if (data.statusCode == 200) {
-        Iterable list = json.decode(data.body);
+        Iterable list = json.decode(utf8.decode(data.bodyBytes));
         setArrangements(
           list.map((model) => NewsPost.fromJson(model)).toList(),
         );

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/InfoPost.dart';
 import 'package:impuls/requests/api.dart';
@@ -18,7 +17,7 @@ class InfoProvider extends ChangeNotifier {
     setLoading(true);
     API().fetchInfo().then((data) {
       if (data.statusCode == 200) {
-        Iterable list = json.decode(data.body);
+        Iterable list = json.decode(utf8.decode(data.bodyBytes));
         setInfo(
           list.map((model) => InfoPost.fromJson(model)).toList(),
         );

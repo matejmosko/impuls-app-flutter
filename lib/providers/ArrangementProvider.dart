@@ -18,7 +18,7 @@ class ArrangementProvider extends ChangeNotifier {
     setLoading(true);
     API().fetchArrangements().then((data) {
       if (data.statusCode == 200) {
-        Iterable list = json.decode(data.body);
+        Iterable list = json.decode(utf8.decode(data.bodyBytes));
         setArrangements(
           list.map((model) => Arrangement.fromJson(model)).toList(),
         );

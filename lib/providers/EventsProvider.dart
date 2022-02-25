@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/Event.dart';
 import 'package:impuls/requests/api.dart';
+import 'package:impuls/views/CalendarView.dart';
 
 class EventsProvider extends ChangeNotifier {
   Map<DateTime, List<Event>> _mappedEvents = {};
@@ -32,7 +32,6 @@ class EventsProvider extends ChangeNotifier {
 
   void setSelectedDay(DateTime day) {
     _selectedDay = day;
-    notifyListeners();
   }
 
   Future<bool> fetchEventsForArrangement(arrangement) async {
@@ -51,7 +50,7 @@ class EventsProvider extends ChangeNotifier {
     setLoading(true);
     API().fetchAllEvents().then((data) {
       if (data.statusCode == 200) {
-        Iterable events = json.decode(data.body);
+        Iterable events = json.decode(utf8.decode(data.bodyBytes));
         setEvents(
           events.map((model) => Event.fromJson(model)).toList(),
         );

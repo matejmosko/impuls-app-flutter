@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+
 class CalendarView extends StatefulWidget {
   CalendarView({Key key, this.title}) : super(key: key);
 
@@ -17,13 +18,15 @@ class CalendarView extends StatefulWidget {
 
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
+  CalendarFormat _calendarFormat = CalendarFormat.week;
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay;
   AnimationController _animationController;
-  CalendarController _calendarController;
+  List events;
 
   @override
   void initState() {
     super.initState();
-    _calendarController = CalendarController();
 
     _animationController = AnimationController(
       vsync: this,
@@ -36,23 +39,22 @@ class _CalendarViewState extends State<CalendarView>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print(_calendarController.selectedDay);
   }
 
   void fetchEvents(context) {
     EventsProvider eventsProvider =
-    Provider.of<EventsProvider>(context, listen: false);
+        Provider.of<EventsProvider>(context, listen: false);
     eventsProvider.fetchAllEvents();
+    events = eventsProvider.events;
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _calendarController.dispose();
     super.dispose();
   }
 
-  void _onDaySelected(DateTime day, List events) {
+  void _onDaySelected(DateTime day) {
     print('CALLBACK: _onDaySelected');
     fetchEvents(context);
     setState(() {
@@ -62,15 +64,15 @@ class _CalendarViewState extends State<CalendarView>
 
   void setSelectedDay(DateTime day) {
     final EventsProvider eventsProvider =
-    Provider.of<EventsProvider>(context, listen: false);
+        Provider.of<EventsProvider>(context, listen: false);
     eventsProvider.setSelectedDay(day);
   }
 
-  void _onVisibleDaysChanged(
+/*  void _onVisibleDaysChanged(
       DateTime first, DateTime last, CalendarFormat format) {
     print('CALLBACK: _onVisibleDaysChanged');
     fetchEvents(context);
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -105,56 +107,83 @@ class _CalendarViewState extends State<CalendarView>
       color: Colors.white,
       child: TableCalendar(
         locale: 'sk_SK',
-        calendarController: _calendarController,
-        events: eventsProvider.mappedEvents,
-//        events: _events,
-//      holidays: _holidays,
-        initialCalendarFormat: CalendarFormat.week,
-        formatAnimation: FormatAnimation.slide,
+        firstDay: DateTime.utc(2022, 8, 29),
+        lastDay: DateTime.utc(2022, 9, 4),
+        focusedDay: DateTime.utc(2022, 8, 29),
+        selectedDayPredicate: (day) {
+          return isSameDay(_selectedDay, day);
+        },
+        onDaySelected: (selectedDay, focusedDay) {
+          if (!isSameDay(_selectedDay, selectedDay)) {
+            // Call `setState()` when updating the selected day
+            setState(() {
+              _onDaySelected(selectedDay);
+              _selectedDay = selectedDay;
+              _focusedDay = focusedDay;
+            });
+          }
+        },
+        onFormatChanged: (format) {
+          if (_calendarFormat != format) {
+            // Call `setState()` when updating calendar format
+            setState(() {
+              _calendarFormat = format;
+            });
+          }
+        },
+        onPageChanged: (focusedDay) {
+          // No need to call `setState()` here
+          _focusedDay = focusedDay;
+          print('CALLBACK: _onVisibleDaysChanged');
+          fetchEvents(context);
+        },
+        eventLoader: (day) {
+          eventsProvider.events;
+        },
+        calendarFormat: _calendarFormat,
+        //formatAnimation: FormatAnimation.slide,
         startingDayOfWeek: StartingDayOfWeek.monday,
         availableGestures: AvailableGestures.all,
         availableCalendarFormats: const {
-          CalendarFormat.month: 'Mesiac',
           CalendarFormat.week: 'Týždeň',
         },
-        calendarStyle: CalendarStyle(
-          outsideDaysVisible: false,
-          weekendStyle: TextStyle().copyWith(
+        /*calendarStyle: CalendarStyle(
+            outsideDaysVisible: false,
+            weekendStyle: TextStyle().copyWith(
               color: colorTheme.mainColor, fontWeight: FontWeight.bold),
-//        holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
-        ),
+        holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
+        ),*/
+        /*
         headerStyle: HeaderStyle(
           centerHeaderTitle: true,
           formatButtonVisible: false,
-        ),
-        builders: CalendarBuilders(
-          selectedDayBuilder: (context, date, _) {
+        ),*/
+        calendarBuilders: CalendarBuilders(
+          selectedBuilder: (context, date, _) {
             return FadeTransition(
               opacity:
-              Tween(begin: 0.0, end: 1.0).animate(_animationController),
-              child: ClipOval(
-                child: Container(
-                  color: colorTheme.secondaryColor,
-                  width: 100,
-                  height: 100,
-                  child: Center(
-                    child: Text(
-                      '${date.day}',
-                      style: TextStyle().copyWith(fontSize: 16.0),
-                    ),
+                  Tween(begin: 0.0, end: 1.0).animate(_animationController),
+              child: Container(
+                color: colorTheme.secondaryColor,
+                width: 100,
+                height: 100,
+                child: Center(
+                  child: Text(
+                    '${date.day}',
+                    style: TextStyle().copyWith(fontSize: 16.0),
                   ),
                 ),
               ),
             );
           },
-          todayDayBuilder: (context, date, _) {
+          todayBuilder: (context, date, _) {
             return Container(
               decoration: BoxDecoration(
                 border:
-                Border.all(width: 3.0, color: colorTheme.secondaryColor),
+                    Border.all(width: 3.0, color: colorTheme.secondaryColor),
                 borderRadius: BorderRadius.all(Radius.circular(
-                    4.0) //                 <--- border radius here
-                ),
+                        4.0) //                 <--- border radius here
+                    ),
               ),
               width: 100,
               height: 100,
@@ -166,48 +195,34 @@ class _CalendarViewState extends State<CalendarView>
               ),
             );
           },
-          markersBuilder: (context, date, events, holidays) {
-            final children = <Widget>[];
-
+          markerBuilder: (context, date, List events) {
             if (events.isNotEmpty) {
-              children.add(
-                Positioned(
-                  right: 1,
-                  bottom: 1,
-                  child: _buildEventsMarker(date, events),
-                ),
+              return Positioned(
+                bottom: 1,
+                right: 1,
+                child: _buildEventsMarker(date, events),
+              );
+            } else {
+              // return SizedBox.shrink();
+              return Positioned(
+                top: 1,
+                right: 1,
+                child: _buildEventsMarker(date, events),
               );
             }
-
-            if (holidays.isNotEmpty) {
-              children.add(
-                Positioned(
-                  right: -2,
-                  top: -2,
-                  child: _buildHolidaysMarker(),
-                ),
-              );
-            }
-
-            return children;
           },
         ),
-        onDaySelected: (date, events) {
-          print(date);
-          _onDaySelected(date, events);
-          _animationController.forward(from: 0.0);
-        },
-        onVisibleDaysChanged: _onVisibleDaysChanged,
       ),
     );
   }
 
   Widget _buildEventsMarker(DateTime date, List events) {
+
     final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration:
-      BoxDecoration(shape: BoxShape.rectangle, color: colorTheme.mainColor),
+          BoxDecoration(shape: BoxShape.rectangle, color: colorTheme.mainColor),
       width: 16.0,
       height: 16.0,
       child: Center(
@@ -281,7 +296,7 @@ class EventListItem extends StatelessWidget {
 //              event.image != null ? Image.network(event.image) : SizedBox(),
           trailing: event.description != null
               ? Icon(Icons.keyboard_arrow_right,
-              color: Colors.black38, size: 30.0)
+                  color: Colors.black38, size: 30.0)
               : SizedBox.shrink(),
           title: Text("${event.title ?? ''}$location"),
           subtitle: Text(

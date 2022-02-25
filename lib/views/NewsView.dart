@@ -46,29 +46,19 @@ class NewsView extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     final item = newsProvider.news[index];
                     return Card(
-                        elevation: 10,
-                        child: Row(mainAxisSize: MainAxisSize.min, children:[
+                      elevation: 10,
+                      child: GestureDetector(
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
                           Expanded(
-                          child: ListTile(
-                            title: Text(item.title),
-                            subtitle: Html(data: item.description),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NewsDetailPage(
-                                  news: item,
-                                ),
-                              ),
+                            child: ListTile(
+                              title: Text(item.title),
+                              subtitle: Html(data: item.description),
                             ),
-                          ),
                           ),
                           item.image != null
                               ? Container(
                                   width: 120.0,
                                   height: 120.0,
-                                  color: Colors.red,
-                                  //ClipRRect(
-                                  //borderRadius: new BorderRadius.circular(3.0),
                                   child: Hero(
                                     child: Image.network(
                                       item.image,
@@ -80,7 +70,17 @@ class NewsView extends StatelessWidget {
                                   ),
                                 )
                               : SizedBox.shrink(),
-                        ]));
+                        ]),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewsDetailPage(
+                              news: item,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),
