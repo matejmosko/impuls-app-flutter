@@ -59,30 +59,21 @@ class _TabPageState extends State<TabPage> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications, color: colorTheme.textColor),
-            title: Text(
-              'Novinky',
-              style: TextStyle(color: colorTheme.textColor),
-            ),
+            label: 'Novinky',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.calendar_today,
               color: colorTheme.textColor,
             ),
-            title: Text(
-              'Kalendár',
-              style: TextStyle(color: colorTheme.textColor),
-            ),
+            label: 'Kalendár',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.info,
               color: colorTheme.textColor,
             ),
-            title: Text(
-              'Info',
-              style: TextStyle(color: colorTheme.textColor),
-            ),
+            label: 'Info',
           ),
         ],
         currentIndex: _selectedIndex,

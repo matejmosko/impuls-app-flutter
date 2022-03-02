@@ -5,6 +5,8 @@ import 'package:impuls/providers/EventsProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:impuls/models/Event.dart';
+
 
 
 class CalendarView extends StatefulWidget {
@@ -18,11 +20,14 @@ class CalendarView extends StatefulWidget {
 
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
+  ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime _focusedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.utc(2022, 8, 29); // DateTime.now();
   DateTime _selectedDay;
+  DateTime _rangeStart = DateTime.utc(2022, 8, 29);
+  DateTime _rangeEnd = DateTime.utc(2022, 9, 4);
   AnimationController _animationController;
-  List events;
+ // List events;
 
   @override
   void initState() {
@@ -34,6 +39,9 @@ class _CalendarViewState extends State<CalendarView>
     );
 
     _animationController.forward();
+
+    _selectedDay = _focusedDay;
+    _selectedEvents = ValueNotifier(_fetchEvents(_selectedDay));
   }
 
   @override
@@ -41,11 +49,15 @@ class _CalendarViewState extends State<CalendarView>
     super.didChangeDependencies();
   }
 
-  void fetchEvents(context) {
+  List<Event> _fetchEvents(DateTime day) {
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
-    eventsProvider.fetchAllEvents();
-    events = eventsProvider.events;
+    final events = eventsProvider.events;
+    return events.where((event) {
+      return event.startTime.year == day.year &&
+          event.startTime.month == day.month &&
+          event.startTime.day == day.day;
+    }).toList();
   }
 
   @override
@@ -54,12 +66,14 @@ class _CalendarViewState extends State<CalendarView>
     super.dispose();
   }
 
-  void _onDaySelected(DateTime day) {
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     print('CALLBACK: _onDaySelected');
-    fetchEvents(context);
     setState(() {
-      setSelectedDay(day);
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;
+      setSelectedDay(selectedDay);
     });
+    _fetchEvents;
   }
 
   void setSelectedDay(DateTime day) {
@@ -67,6 +81,8 @@ class _CalendarViewState extends State<CalendarView>
         Provider.of<EventsProvider>(context, listen: false);
     eventsProvider.setSelectedDay(day);
   }
+
+
 
 /*  void _onVisibleDaysChanged(
       DateTime first, DateTime last, CalendarFormat format) {
@@ -96,8 +112,6 @@ class _CalendarViewState extends State<CalendarView>
     );
   }
 
-  // Simple TableCalendar configuration (using Styles)
-
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
@@ -107,22 +121,13 @@ class _CalendarViewState extends State<CalendarView>
       color: Colors.white,
       child: TableCalendar(
         locale: 'sk_SK',
-        firstDay: DateTime.utc(2022, 8, 29),
-        lastDay: DateTime.utc(2022, 9, 4),
-        focusedDay: DateTime.utc(2022, 8, 29),
+        firstDay: _rangeStart,
+        lastDay: _rangeEnd,
+        focusedDay: _focusedDay,
         selectedDayPredicate: (day) {
           return isSameDay(_selectedDay, day);
         },
-        onDaySelected: (selectedDay, focusedDay) {
-          if (!isSameDay(_selectedDay, selectedDay)) {
-            // Call `setState()` when updating the selected day
-            setState(() {
-              _onDaySelected(selectedDay);
-              _selectedDay = selectedDay;
-              _focusedDay = focusedDay;
-            });
-          }
-        },
+        onDaySelected: _onDaySelected,
         onFormatChanged: (format) {
           if (_calendarFormat != format) {
             // Call `setState()` when updating calendar format
@@ -134,14 +139,9 @@ class _CalendarViewState extends State<CalendarView>
         onPageChanged: (focusedDay) {
           // No need to call `setState()` here
           _focusedDay = focusedDay;
-          print('CALLBACK: _onVisibleDaysChanged');
-          fetchEvents(context);
         },
-        eventLoader: (day) {
-          eventsProvider.events;
-        },
+        eventLoader: _fetchEvents, //(day){ return events;},
         calendarFormat: _calendarFormat,
-        //formatAnimation: FormatAnimation.slide,
         startingDayOfWeek: StartingDayOfWeek.monday,
         availableGestures: AvailableGestures.all,
         availableCalendarFormats: const {
@@ -195,7 +195,7 @@ class _CalendarViewState extends State<CalendarView>
               ),
             );
           },
-          markerBuilder: (context, date, List events) {
+         markerBuilder: (context, date, List events) {
             if (events.isNotEmpty) {
               return Positioned(
                 bottom: 1,
@@ -203,12 +203,8 @@ class _CalendarViewState extends State<CalendarView>
                 child: _buildEventsMarker(date, events),
               );
             } else {
-              // return SizedBox.shrink();
-              return Positioned(
-                top: 1,
-                right: 1,
-                child: _buildEventsMarker(date, events),
-              );
+               return SizedBox.shrink();
+
             }
           },
         ),

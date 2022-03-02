@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/Event.dart';
 import 'package:impuls/requests/api.dart';
-import 'package:impuls/views/CalendarView.dart';
+// import 'package:impuls/views/CalendarView.dart';
 
 class EventsProvider extends ChangeNotifier {
   Map<DateTime, List<Event>> _mappedEvents = {};

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:impuls/models/Event.dart';
+// import 'package:impuls/models/Event.dart';
 import 'package:impuls/models/NewsPost.dart';
 import 'package:impuls/providers/AppSettings.dart';
 import 'package:provider/provider.dart';
