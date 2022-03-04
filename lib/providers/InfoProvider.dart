@@ -13,7 +13,7 @@ class InfoProvider extends ChangeNotifier {
 
   List<InfoPost> get info => _info;
 
-  Future<List<InfoPost>> fetchInfo() async {
+  void /*Future<List<InfoPost>>*/ fetchInfo() async {
     setLoading(true);
     API().fetchInfo().then((data) {
       if (data.statusCode == 200) {

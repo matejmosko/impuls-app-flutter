@@ -52,25 +52,24 @@ class NewsDetailPage extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(12),
                       child: //Text("${news.content ?? ''}"),
-                          Html(data: news.content),
+                          Html(data: news.content,
+                            onLinkTap: (url, renderContext, map, element) async {
+                              if (await canLaunch(url)) {
+                                await launch(url);
+                              } else {
+                                throw 'Could not launch $url';
+                              }
+                            },
                       /*child: MarkdownBody(
                         onTapLink: (text, href, title) => _launchURL(href),
                         data: news.description,
                       ),*/
                     ),
                   )
-                : SizedBox.shrink()
+            ): SizedBox.shrink()
           ],
         ),
       ),
     );
-  }
-}
-
-_launchURL(url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
   }
 }

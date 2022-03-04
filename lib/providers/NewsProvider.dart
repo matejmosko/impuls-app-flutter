@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+//import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/NewsPost.dart';
 import 'package:impuls/requests/api.dart';
@@ -26,7 +26,7 @@ class NewsProvider extends ChangeNotifier {
 
   List<NewsPost> get articles => _articles;
 
-  Future<List<NewsPost>> fetchNews() async {
+  void /*Future<List<NewsPost>>*/ fetchNews() async {
     setLoading(true);
     newspage++;
     if (totalnewspages >= newspage) {
@@ -43,7 +43,7 @@ class NewsProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<NewsPost>> fetchMagazine() async {
+ void /* Future<List<NewsPost>>*/ fetchMagazine() async {
     setLoading(true);
     magazinepage++;
     if (totalmagazinepages >= magazinepage) {

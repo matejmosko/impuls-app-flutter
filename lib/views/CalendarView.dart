@@ -20,7 +20,6 @@ class CalendarView extends StatefulWidget {
 
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
-  ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.utc(2022, 8, 29); // DateTime.now();
   DateTime _selectedDay;
@@ -41,7 +40,6 @@ class _CalendarViewState extends State<CalendarView>
     _animationController.forward();
 
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_fetchEvents(_selectedDay));
   }
 
   @override
@@ -115,7 +113,7 @@ class _CalendarViewState extends State<CalendarView>
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
-    final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
+    //final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
 
     return Container(
       color: Colors.white,
@@ -233,25 +231,17 @@ class _CalendarViewState extends State<CalendarView>
     );
   }
 
-  Widget _buildHolidaysMarker() {
-    return Icon(
-      Icons.add_box,
-      size: 20.0,
-      color: Colors.blueGrey[800],
-    );
-  }
-
   Widget _buildEventList() {
     final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     return Container(
         color: colorTheme.secondaryColor,
         child: AnimatedOpacity(
-          opacity: eventsProvider.selectedEvents.length > 0 ? 1.0 : 0.0,
+          opacity: eventsProvider.events.length > 0 ? 1.0 : 0.0,
           duration: Duration(milliseconds: 500),
           child: ListView(
             padding: EdgeInsets.all(8),
-            children: eventsProvider.selectedEvents
+            children: _fetchEvents(_selectedDay)
                 .map((event) => EventListItem(event: event))
                 .toList(),
           ),
@@ -266,7 +256,7 @@ class EventListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
 
 //    String Formatting
     //Start & End-time

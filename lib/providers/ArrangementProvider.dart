@@ -14,7 +14,7 @@ class ArrangementProvider extends ChangeNotifier {
 
   List<Arrangement> get arrangements => _arrangements;
 
-  Future<List<Arrangement>> fetchArrangements() async {
+  void /*Future<List<Arrangement>>*/ fetchArrangements() async {
     setLoading(true);
     API().fetchArrangements().then((data) {
       if (data.statusCode == 200) {

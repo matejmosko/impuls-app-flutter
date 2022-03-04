@@ -85,9 +85,11 @@ flutter:
 
 # To create image just run: $ flutter pub run flutter_launcher_icons:main
 flutter_icons:
-  image_path: 'assets/images/icon.png'
-  android: true
+  android: "launcher_icon"
   ios: true
+  image_path: 'assets/images/icon.png'
+  adaptive_icon_background: "assets/images/icon-background.png"
+  adaptive_icon_foreground: "assets/images/icon-foreground.png"
 
 #  flutter pub run flutter_native_splash:create
 flutter_native_splash:

@@ -34,7 +34,7 @@ class EventsProvider extends ChangeNotifier {
     _selectedDay = day;
   }
 
-  Future<bool> fetchEventsForArrangement(arrangement) async {
+  void /*Future<bool>*/ fetchEventsForArrangement(arrangement) async {
     setLoading(true);
     API().fetchEventsForArrangement(arrangement).then((data) {
       if (data.statusCode == 200) {
@@ -46,7 +46,7 @@ class EventsProvider extends ChangeNotifier {
     });
   }
 
-  Future<bool> fetchAllEvents() async {
+  void /*Future<bool>*/ fetchAllEvents() async {
     setLoading(true);
     API().fetchAllEvents().then((data) {
       if (data.statusCode == 200) {

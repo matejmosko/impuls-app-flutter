@@ -45,6 +45,7 @@ class NewsView extends StatelessWidget {
                 child: LazyLoadScrollView(
                   onEndOfPage: () => newsProvider.fetchNews(),
                   isLoading: newsProvider.loading,
+                  scrollOffset: 50,
                   child: ListView.builder(
                     itemCount: newsProvider.news.length,
                     itemBuilder: (BuildContext context, int index) {
