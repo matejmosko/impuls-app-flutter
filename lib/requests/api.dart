@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+// https://pub.dev/packages/flutter_wordpress !!!!!!!!!!!!!!!!!!!!!
 
 class API {
   final String url = 'https://www.scenickazatva.eu/2021';
@@ -10,8 +11,16 @@ class API {
     return result;
   }
 
-  Future<http.Response> fetchNews() {
-    var result = http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=asc&_embed'), headers: {'Content-Type': 'application/json; charset=utf-8'});
+  Future<http.Response> fetchNews(page) async {
+    //http.Response response = await http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=asc&_embed&page='+page));
+    //print(response.headers.value(HttpHeaders.'X-WP-TotalPages'));
+    var result = http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=asc&_embed&page='+page), headers: {'Content-Type': 'application/json; charset=utf-8'});
+
+    return result;
+  }
+
+  Future<http.Response> fetchMagazine(page) {
+    var result = http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=asc&_embed?categories=18,19,20&page='+page), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
 

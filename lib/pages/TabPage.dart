@@ -12,6 +12,7 @@ class TabPage extends StatefulWidget {
   static List<Widget> _widgetOptions = <Widget>[
     NewsView(),
     CalendarView(),
+    NewsView(),
     InfoView(),
   ];
 
@@ -28,6 +29,8 @@ class _TabPageState extends State<TabPage> {
     } else if (index == 1) {
       eventsProvider.fetchAllEvents();
     } else if (index == 2) {
+      newsProvider.fetchNews();
+    } else if (index == 3) {
       infoProvider.fetchInfo();
     }
     setState(() {
@@ -55,29 +58,32 @@ class _TabPageState extends State<TabPage> {
         child: TabPage._widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: colorTheme.mainColor,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications, color: colorTheme.textColor),
+            icon: Icon(Icons.notifications),
             label: 'Novinky',
+            backgroundColor: colorTheme.mainColor,
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.calendar_today,
-              color: colorTheme.textColor,
-            ),
+            icon: Icon(Icons.calendar_today),
             label: 'Kalendár',
+            backgroundColor: colorTheme.mainColor,
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.info,
-              color: colorTheme.textColor,
-            ),
+            icon: Icon(Icons.article),
+            label: 'Festník',
+            backgroundColor: colorTheme.mainColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info),
             label: 'Info',
+            backgroundColor: colorTheme.mainColor,
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: colorTheme.textColor,
+        /* selectedItemColor: colorTheme.textColor,
+        unselectedItemColor: colorTheme.textColor,*/
+        showUnselectedLabels: true,
         onTap: (index) =>
             _onItemTapped(index, newsProvider, eventsProvider, infoProvider),
       ),

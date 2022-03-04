@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/NewsPost.dart';
@@ -18,8 +19,9 @@ class NewsProvider extends ChangeNotifier {
 
   Future<List<NewsPost>> fetchNews() async {
     setLoading(true);
-    API().fetchNews().then((data) {
+    API().fetchNews(0).then((data) {
       if (data.statusCode == 200) {
+        //if data.headers.value(HttpHeaders.CONNECTION);
         Iterable list = json.decode(utf8.decode(data.bodyBytes));
         setArrangements(
           list.map((model) => NewsPost.fromJson(model)).toList(),
