@@ -6,7 +6,7 @@ import 'package:impuls/providers/NewsProvider.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
 
-class NewsView extends StatelessWidget {
+class MagazineView extends StatelessWidget {
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
@@ -36,19 +36,19 @@ class NewsView extends StatelessWidget {
           ),
         ),
         AnimatedOpacity(
-          opacity: newsProvider.news.length > 0 ? 1.0 : 0.0,
+          opacity: newsProvider.articles.length > 0 ? 1.0 : 0.0,
           duration: Duration(milliseconds: 500),
           child: Container(
               child: Column(
             children: <Widget>[
               Flexible(
                 child: LazyLoadScrollView(
-                  onEndOfPage: () => newsProvider.fetchNews(),
+                  onEndOfPage: () => newsProvider.fetchMagazine(),
                   isLoading: newsProvider.loading,
                   child: ListView.builder(
-                    itemCount: newsProvider.news.length,
+                    itemCount: newsProvider.articles.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final item = newsProvider.news[index];
+                      final item = newsProvider.articles[index];
                       return Card(
                         elevation: 10,
                         child: GestureDetector(
@@ -90,7 +90,7 @@ class NewsView extends StatelessWidget {
                 ),
               ),
               Container(
-                  child: (newsProvider.loading && !newsProvider.allnews)
+                  child: (newsProvider.loading && !newsProvider.allarticles)
                       ? Padding(
                       padding: EdgeInsets.all(20),
                       child: new CircularProgressIndicator())

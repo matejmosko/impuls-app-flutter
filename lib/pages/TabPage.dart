@@ -6,13 +6,14 @@ import 'package:impuls/providers/NewsProvider.dart';
 import 'package:impuls/views/CalendarView.dart';
 import 'package:impuls/views/InfoView.dart';
 import 'package:impuls/views/NewsView.dart';
+import 'package:impuls/views/MagazineView.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
   static List<Widget> _widgetOptions = <Widget>[
     NewsView(),
     CalendarView(),
-    NewsView(),
+    MagazineView(),
     InfoView(),
   ];
 
@@ -29,7 +30,7 @@ class _TabPageState extends State<TabPage> {
     } else if (index == 1) {
       eventsProvider.fetchAllEvents();
     } else if (index == 2) {
-      newsProvider.fetchNews();
+      newsProvider.fetchMagazine();
     } else if (index == 3) {
       infoProvider.fetchInfo();
     }

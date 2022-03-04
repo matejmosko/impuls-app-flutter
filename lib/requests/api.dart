@@ -11,16 +11,13 @@ class API {
     return result;
   }
 
-  Future<http.Response> fetchNews(page) async {
-    //http.Response response = await http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=asc&_embed&page='+page));
-    //print(response.headers.value(HttpHeaders.'X-WP-TotalPages'));
-    var result = http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=asc&_embed&page='+page), headers: {'Content-Type': 'application/json; charset=utf-8'});
-
+  Future<http.Response> fetchNews(page) {
+    var result = http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=desc&categories_exclude=18,19,20&_embed&page='+page.toString()), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
 
   Future<http.Response> fetchMagazine(page) {
-    var result = http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=asc&_embed?categories=18,19,20&page='+page), headers: {'Content-Type': 'application/json; charset=utf-8'});
+    var result = http.get(Uri.parse(url + '/wp-json/wp/v2/posts?order=desc&_embed&categories=18,19,20&page='+page.toString()), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
 
