@@ -1,8 +1,10 @@
+//import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/Event.dart';
 import 'package:impuls/requests/api.dart';
-// import 'package:impuls/views/CalendarView.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 
 class EventsProvider extends ChangeNotifier {
   Map<DateTime, List<Event>> _mappedEvents = {};
@@ -10,7 +12,7 @@ class EventsProvider extends ChangeNotifier {
   DateTime _selectedDay = DateTime.now();
   bool _loading = false;
 
-  EventsProvider(){
+  EventsProvider() {
     fetchAllEvents();
   }
 
@@ -21,6 +23,7 @@ class EventsProvider extends ChangeNotifier {
   List<Event> get events => _events;
 
   bool get loading => _loading;
+
 
   List<Event> get selectedEvents {
     return _events.where((event) {
@@ -46,16 +49,39 @@ class EventsProvider extends ChangeNotifier {
     });
   }
 
-  void /*Future<bool>*/ fetchAllEvents() async {
+  void fetchAllEvents() async { // returns a bool
     setLoading(true);
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    database.setPersistenceEnabled(true);
+
+    DatabaseReference eventsdb = FirebaseDatabase.instance.ref("events");
+    eventsdb.keepSynced(true);
+    // Get the Stream
+    Stream<DatabaseEvent> stream = eventsdb.onValue;
+
+// Subscribe to the stream!
+    stream.listen((DatabaseEvent event) {
+      print('Event Type: ${event.type}'); // DatabaseEventType.value;
+      print('Snapshot: ${event.snapshot.value}'); // DataSnapshot
+
+      final validMap = json.decode(json.encode(event.snapshot.value)) as List<dynamic>;
+      Iterable _events = validMap;
+
+      setEvents(
+        _events.map((model) => Event.fromJson(model)).toList(),
+      );
+    });
+
+       /*setLoading(true);
     API().fetchAllEvents().then((data) {
       if (data.statusCode == 200) {
+
         Iterable events = json.decode(utf8.decode(data.bodyBytes));
         setEvents(
           events.map((model) => Event.fromJson(model)).toList(),
         );
       }
-    });
+    });*/
   }
 
   void setLoading(bool val) {

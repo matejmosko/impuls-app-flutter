@@ -16,14 +16,14 @@ class ArrangementProvider extends ChangeNotifier {
 
   void /*Future<List<Arrangement>>*/ fetchArrangements() async {
     setLoading(true);
-    API().fetchArrangements().then((data) {
+   /* API().fetchArrangements().then((data) {
       if (data.statusCode == 200) {
         Iterable list = json.decode(utf8.decode(data.bodyBytes));
         setArrangements(
           list.map((model) => Arrangement.fromJson(model)).toList(),
         );
       }
-    });
+    });*/
   }
 
   void setLoading(bool val) {

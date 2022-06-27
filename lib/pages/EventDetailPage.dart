@@ -74,8 +74,9 @@ class EventDetailPage extends StatelessWidget {
 }
 
 _launchURL(url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
+  final Uri _url = Uri.parse(url);
+  if (await canLaunchUrl(_url)) {
+    await launchUrl(_url);
   } else {
     throw 'Could not launch $url';
   }

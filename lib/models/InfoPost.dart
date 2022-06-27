@@ -23,7 +23,6 @@ class InfoPost {
     index = json['index'];
     published = json['published'];
     image = json['image'];
-    arrangement = json['arrangement'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {

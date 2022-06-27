@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-// https://pub.dev/packages/flutter_wordpress !!!!!!!!!!!!!!!!!!!!!
+
 
 class API {
   final String url = 'https://www.scenickazatva.eu/2021';

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
 set(BINARY_NAME "impuls_app_flutter")
-set(APPLICATION_ID "no.koka.impuls_app_flutter")
+set(APPLICATION_ID "sk.panakrala.scenickazatva_app_flutter")
 
 cmake_policy(SET CMP0063 NEW)
 

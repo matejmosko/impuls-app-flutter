@@ -11,7 +11,7 @@ description: Just another festival app
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.1+1s
+version: 1.0.2+2s
 
 repository: https://github.com/kodekameratene/impuls-app-flutter
 issue_tracker: https://github.com/kodekameratene/impuls-app-flutter/issues
@@ -23,23 +23,27 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.0
-  table_calendar: 3.0.3
+  table_calendar: ^3.0.6
   shared_preferences: ^2.0.0
   http: ^0.13.0
   flutter_markdown: ^0.6.0
   url_launcher: ^6.0.0
-  flutter_html: ^2.2.1
+  flutter_html: ^3.0.0-alpha.5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   lazy_load_scrollview: ^1.3.0
+  firebase_core: ^1.13.1
+  firebase_database: ^9.0.8
+  firebase_auth: ^3.3.11
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.9.0
   flutter_native_splash: ^2.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

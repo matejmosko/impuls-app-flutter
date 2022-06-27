@@ -54,8 +54,9 @@ class NewsDetailPage extends StatelessWidget {
                       child: //Text("${news.content ?? ''}"),
                           Html(data: news.content,
                             onLinkTap: (url, renderContext, map, element) async {
-                              if (await canLaunch(url)) {
-                                await launch(url);
+                            final Uri _url = Uri.parse(url);
+                              if (await canLaunchUrl(_url)) {
+                                await launchUrl(_url);
                               } else {
                                 throw 'Could not launch $url';
                               }

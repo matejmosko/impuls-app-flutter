@@ -7,8 +7,49 @@ import 'package:impuls/providers/InfoProvider.dart';
 import 'package:impuls/providers/NewsProvider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
+import 'dart:io' show Platform;
 
-void main() {
+
+void main() async{
+  if(Platform.isAndroid||Platform.isIOS) {
+    WidgetsFlutterBinding.ensureInitialized();
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } else {
+      await Firebase.app();
+    }
+
+    try {
+      final userCredential =
+      await FirebaseAuth.instance.signInAnonymously();
+      print("Signed in with temporary account.");
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "operation-not-allowed":
+          print("Anonymous auth hasn't been enabled for this project.");
+          break;
+        default:
+          print("ERROR: "+e.code);
+      }
+    }
+
+    FirebaseAuth.instance
+        .authStateChanges()
+        .listen((User user) {
+      if (user == null) {
+        print('User is currently signed out!');
+      } else {
+        print('User is signed in!');
+      }
+    });
+  }
+
+
   initializeDateFormatting().then((_) => runApp(MyApp()));
   //runApp(MyApp());
 }
