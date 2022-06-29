@@ -5,6 +5,7 @@ import 'package:impuls/providers/AppSettings.dart';
 import 'package:impuls/providers/NewsProvider.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class NewsView extends StatelessWidget {
   static const TextStyle optionStyle = TextStyle(
@@ -14,7 +15,7 @@ class NewsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
 
     return Stack(
@@ -29,7 +30,6 @@ class NewsView extends StatelessWidget {
             child: Text(
               "Loading...",
               style: TextStyle(
-                  color: colorTheme.mainColor,
                   fontSize: 16,
                   fontStyle: FontStyle.italic),
             ),
@@ -65,12 +65,12 @@ class NewsView extends StatelessWidget {
                                     width: 120.0,
                                     height: 120.0,
                                     child: Hero(
-                                      child: Image.network(
-                                        item.image,
+                                      child: CachedNetworkImage(
+                                        imageUrl: item.image,
                                         fit: BoxFit.cover,
                                         height: double.infinity,
                                         width: double.infinity,
-                                      ),
+                                        ),
                                       tag: item.id,
                                     ),
                                   )

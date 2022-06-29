@@ -61,9 +61,9 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ColorProvider>.value(
+        /*ChangeNotifierProvider<ColorProvider>.value(
           value: ColorProvider(),
-        ),
+        ),*/
         ChangeNotifierProvider<NewsProvider>.value(
           value: NewsProvider(),
         ),
@@ -78,6 +78,33 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        title: "Scénická žatva 100",
+        theme: ThemeData(
+          // Define the default brightness and colors.
+          //brightness: Brightness.dark,
+          primaryColor: Colors.black,
+          //cardColor: Colors.white,
+
+          // Define the default font family.
+          fontFamily: 'Arial',
+
+          appBarTheme: AppBarTheme(
+              backgroundColor: Colors.black87,
+            foregroundColor: Color(0xffdf9f4a),
+          ),
+
+          // Define the default `TextTheme`. Use this to specify the default
+          // text styling for headlines, titles, bodies of text, and more.
+          textTheme: TextTheme(
+            headline1: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+            headline2: TextStyle(fontSize: 18.0, fontStyle: FontStyle.italic),
+            bodyText1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+            bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+          ).apply(
+            bodyColor: Colors.black87,
+            displayColor: Color(0xffdf9f4a),
+          ),
+        ),
           debugShowCheckedModeBanner: false,
           home: TabPage(),
         ),

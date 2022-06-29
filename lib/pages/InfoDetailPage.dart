@@ -4,6 +4,7 @@ import 'package:impuls/models/InfoPost.dart';
 import 'package:impuls/providers/AppSettings.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class InfoDetailPage extends StatelessWidget {
   final InfoPost info;
@@ -12,49 +13,50 @@ class InfoDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorTheme.mainColor,
         automaticallyImplyLeading: true,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: colorTheme.secondaryColor,
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Scénická žatva 100",
-          style: TextStyle(color: colorTheme.secondaryColor),
+            style: Theme.of(context).textTheme.headline2,
         ),
       ),
-      backgroundColor: colorTheme.secondaryColor,
       body: SafeArea(
         child: ListView(
           children: [
-            info.image != null ? Image.network(info.image) : SizedBox(),
             Hero(
-              child: Card(
-                color: Colors.white,
-                child: ListTile(
+              child: info.image != null
+                  ? CachedNetworkImage(imageUrl: info.image)
+                  : SizedBox(),
+              tag: info.id,
+            ),
+            Card(
+                child: Column(
+              children: <Widget>[
+                ListTile(
 //                  leading: Text("$startTime$location$endTime"),
                   title: Text("${info.title ?? ''}"),
+
                 ),
-              ), tag: info.id,
-            ),
-            info.description != null
-                ? Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: MarkdownBody(
-                        onTapLink: (text, href, title) => _launchURL(href),
-                        data: info.description,
-                      ),
-                    ),
-                  )
-                : SizedBox.shrink()
+                info.description != null
+                    ? Padding(
+                        padding: EdgeInsets.all(12),
+                        child: MarkdownBody(
+                          onTapLink: (text, href, title) => _launchURL(href),
+                          data: info.description,
+                        ),
+                      )
+                    : SizedBox.shrink()
+              ],
+            ))
           ],
         ),
       ),
@@ -70,4 +72,3 @@ _launchURL(url) async {
     throw 'Could not launch $url';
   }
 }
-

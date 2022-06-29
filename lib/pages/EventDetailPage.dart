@@ -5,6 +5,7 @@ import 'package:impuls/providers/AppSettings.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class EventDetailPage extends StatelessWidget {
   final Event event;
@@ -13,7 +14,7 @@ class EventDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final startTime = event.startTime != null
         ? new DateFormat("hh:mm").format(event.startTime)
         : '';
@@ -26,46 +27,50 @@ class EventDetailPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorTheme.mainColor,
         automaticallyImplyLeading: true,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: colorTheme.secondaryColor,
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Scénická žatva",
-          style: TextStyle(color: colorTheme.secondaryColor),
+          "Scénická žatva 100",
         ),
       ),
-      backgroundColor: colorTheme.secondaryColor,
       body: SafeArea(
         child: ListView(
           children: [
-            event.image != null ? Image.network(event.image) : SizedBox(),
             Hero(
-              child: Card(
-                color: Colors.white,
-                child: ListTile(
-                  leading: Text("$startTime$location$endTime"),
-                  title: Text("${event.title ?? ''}"),
-                ),
-              ),
+              child: event.image != null
+                  ? CachedNetworkImage(imageUrl: event.image)
+                  : SizedBox(),
               tag: event.id,
             ),
-            event.description != null
-                ? Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: MarkdownBody(
-                        onTapLink: (text, href, title) => _launchURL(href),
-                        data: event.description,
+            Card(
+              child: Column(children: <Widget>[
+                Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text("$startTime - $endTime"),
+                      Expanded(
+                        child: Text("${event.title ?? ''}",
+                            style: Theme.of(context).textTheme.headline2),
                       ),
-                    ),
-                  )
-                : SizedBox.shrink()
+                      Text("$location"),
+                    ]),
+                event.description != null
+                    ? Padding(
+                        padding: EdgeInsets.all(12),
+                        child: MarkdownBody(
+                          onTapLink: (text, href, title) => _launchURL(href),
+                          data: event.description,
+                        ),
+                      )
+                    : SizedBox.shrink()
+              ]),
+            ),
           ],
         ),
       ),

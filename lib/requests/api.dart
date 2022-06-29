@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 
 
 class API {
-  final String url = 'https://www.scenickazatva.eu/2021';
+  final String url = 'https://www.scenickazatva.eu/2022';
   final String url2 = 'https://db.panakrala.sk/zatva';
   final String selectedArrangement = '5e19cdd924cfa04fc3de1d3a';
 
@@ -21,12 +21,12 @@ class API {
     return result;
   }
 
-  Future<http.Response> fetchEventsForArrangement(arrangement) {
+  /*Future<http.Response> fetchEventsForArrangement(arrangement) {
     var result = http.get(Uri.parse(url2 + '/events.json?arrangement=$selectedArrangement'), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
-  }
+  }*/
 
-  Future<http.Response> fetchAllEvents() async {
+  /*Future<http.Response> fetchAllEvents() async {
     var result = await http.get(Uri.parse(url2 + '/events.json'), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
@@ -34,5 +34,5 @@ class API {
   Future<http.Response> fetchInfo() {
     var result = http.get(Uri.parse(url2 + '/info.json'), headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
-  }
+  }*/
 }

@@ -4,7 +4,6 @@ import 'package:impuls/models/InfoPost.dart';
 import 'package:impuls/requests/api.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-
 class InfoProvider extends ChangeNotifier {
   List<InfoPost> _info = [];
   bool loading = false;
@@ -20,18 +19,18 @@ class InfoProvider extends ChangeNotifier {
     FirebaseDatabase database = FirebaseDatabase.instance;
     database.setPersistenceEnabled(true);
 
-    DatabaseReference infodb = FirebaseDatabase.instance.ref("info");
+    final infodb = FirebaseDatabase.instance.ref("info").orderByChild("id");
     infodb.keepSynced(true);
     // Get the Stream
     Stream<DatabaseEvent> stream = infodb.onValue;
 
 // Subscribe to the stream!
     stream.listen((DatabaseEvent info) {
-      print('Event Type: ${info.type}'); // DatabaseEventType.value;
-      print('Snapshot: ${info.snapshot.value}'); // DataSnapshot
-
-      final validMap = json.decode(json.encode(info.snapshot.value)) as List<dynamic>;
-      Iterable list = validMap;
+      List<dynamic> list = [];
+      Map validMap = json.decode(json.encode(info.snapshot.value));
+      for (var e in validMap.values) {
+        list.add(e);
+      }
 
       setInfo(
         list.map((model) => InfoPost.fromJson(model)).toList(),
@@ -54,7 +53,6 @@ class InfoProvider extends ChangeNotifier {
 
   void setInfo(List<InfoPost> list) {
     _info = list;
-    print(list);
     notifyListeners();
     setLoading(false);
   }

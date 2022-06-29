@@ -10,7 +10,7 @@ class InfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final InfoProvider infoProvider = Provider.of<InfoProvider>(context);
 
     return Stack(
@@ -24,7 +24,6 @@ class InfoView extends StatelessWidget {
             child: Text(
               "Loading...",
               style: TextStyle(
-                  color: colorTheme.mainColor,
                   fontSize: 16,
                   fontStyle: FontStyle.italic),
             ),
@@ -34,45 +33,32 @@ class InfoView extends StatelessWidget {
           opacity: infoProvider.info.length > 0 ? 1.0 : 0.0,
           duration: Duration(milliseconds: 500),
           child: Container(
-              child: Column(
-            children: <Widget>[
-              Flexible(
-                child: ListView.builder(
-                  itemCount: infoProvider.info.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = infoProvider.info[index];
-                    return Hero(
-                      child: Card(
-                        elevation: 10,
-                        child: ListTile(
-                          title: Text(item.title),
-                          trailing: item.image != null
-                              ? ClipRRect(
-                                  borderRadius: new BorderRadius.circular(8.0),
-                                  child: Image.network(item.image))
-                              : SizedBox(),
-                          subtitle: Text(
-                            item.description != null ? item.description : '',
-                            overflow: TextOverflow.fade,
-                            maxLines: 3,
-                          ),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InfoDetailPage(
-                                info: item,
-                              ),
-                            ),
-                          ),
+              child: Card(
+              child: ListView.builder(
+                itemCount: infoProvider.info.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final item = infoProvider.info[index];
+                  return ListTile(
+                    title: Text(item.title),
+                    leading: Icon(IconData(item.icon, fontFamily: 'MaterialIcons')),
+                    subtitle: Text(
+                      item.description != null ? item.description : '',
+                      overflow: TextOverflow.fade,
+                      maxLines: 3,
+                    ),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InfoDetailPage(
+                          info: item,
                         ),
                       ),
-                      tag: item.id,
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-            ],
-          )),
+    ),
+          ),
         )
       ],
     );

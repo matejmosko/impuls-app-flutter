@@ -3,6 +3,8 @@ import 'package:impuls/models/Arrangement.dart';
 import 'package:impuls/providers/ArrangementProvider.dart';
 // import 'package:impuls/requests/api.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 var themeLight = Color(0xffffd8d1);
 var themeDark = Color(0xff021f2d);
@@ -278,8 +280,8 @@ class IntroPageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var image = item.imgUrl != null
-        ? Image.network(
-            item.imgUrl,
+        ? CachedNetworkImage(
+            imageUrl: item.imgUrl,
             fit: BoxFit.cover,
             alignment: FractionalOffset(
               0.5 + (pageVisibility.pagePosition / 3),

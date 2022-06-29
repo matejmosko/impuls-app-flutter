@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class DetailPage extends StatelessWidget {
   @override
@@ -11,8 +13,8 @@ class DetailPage extends StatelessWidget {
         children: <Widget>[
           Container(
             color: Colors.amber,
-            child: Image.network(
-              'http://impulsweb.genialt.no/wp-content/uploads/2015/11/Impuls_2013_AlexanderSolheim_57-1024x682.jpg',
+            child: CachedNetworkImage(
+              imageUrl: 'https://www.scenickazatva.eu/2022/wp-content/uploads/2022/05/sz-typo-twist.png',
             ),
           ),
         ],

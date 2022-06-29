@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:impuls/models/Event.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 
 
@@ -112,7 +113,7 @@ class _CalendarViewState extends State<CalendarView>
 
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     //final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
 
     return Container(
@@ -162,7 +163,6 @@ class _CalendarViewState extends State<CalendarView>
               opacity:
                   Tween(begin: 0.0, end: 1.0).animate(_animationController),
               child: Container(
-                color: colorTheme.secondaryColor,
                 width: 100,
                 height: 100,
                 child: Center(
@@ -178,7 +178,7 @@ class _CalendarViewState extends State<CalendarView>
             return Container(
               decoration: BoxDecoration(
                 border:
-                    Border.all(width: 3.0, color: colorTheme.secondaryColor),
+                    Border.all(width: 3.0),
                 borderRadius: BorderRadius.all(Radius.circular(
                         4.0) //                 <--- border radius here
                     ),
@@ -212,11 +212,11 @@ class _CalendarViewState extends State<CalendarView>
 
   Widget _buildEventsMarker(DateTime date, List events) {
 
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration:
-          BoxDecoration(shape: BoxShape.rectangle, color: colorTheme.mainColor),
+          BoxDecoration(shape: BoxShape.rectangle),
       width: 16.0,
       height: 16.0,
       child: Center(
@@ -232,10 +232,9 @@ class _CalendarViewState extends State<CalendarView>
   }
 
   Widget _buildEventList() {
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     return Container(
-        color: colorTheme.secondaryColor,
         child: AnimatedOpacity(
           opacity: eventsProvider.events.length > 0 ? 1.0 : 0.0,
           duration: Duration(milliseconds: 500),

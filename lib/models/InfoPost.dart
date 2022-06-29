@@ -5,6 +5,7 @@ class InfoPost {
   int index;
   bool published;
   String image;
+  int icon;
   List<String> arrangement;
 
   InfoPost(
@@ -14,6 +15,7 @@ class InfoPost {
       this.index,
       this.published,
       this.image,
+      this.icon,
       this.arrangement});
 
   InfoPost.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class InfoPost {
     index = json['index'];
     published = json['published'];
     image = json['image'];
+    icon = json['icon'];
   }
 
   Map<String, dynamic> toJson() {
@@ -33,6 +36,7 @@ class InfoPost {
     data['index'] = this.index;
     data['published'] = this.published;
     data['image'] = this.image;
+    data['icon'] = this.icon;
     data['arrangement'] = this.arrangement;
     return data;
   }

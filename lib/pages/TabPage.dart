@@ -45,40 +45,37 @@ class _TabPageState extends State<TabPage> {
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     final InfoProvider infoProvider = Provider.of<InfoProvider>(context);
 
-    final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
+    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "Scénická žatva 100",
-          style: TextStyle(color: colorTheme.textColor),
         ),
-        backgroundColor: colorTheme.mainColor,
       ),
-      backgroundColor: colorTheme.secondaryColor,
       body: Center(
         child: TabPage._widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type:BottomNavigationBarType.fixed,
+        backgroundColor: Colors.black87,
+        unselectedItemColor: Colors.white70,
+        selectedItemColor: Color(0xffdf9f4a),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
             label: 'Novinky',
-            backgroundColor: colorTheme.mainColor,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
             label: 'Kalendár',
-            backgroundColor: colorTheme.mainColor,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.article),
             label: 'Festník',
-            backgroundColor: colorTheme.mainColor,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.info),
             label: 'Info',
-            backgroundColor: colorTheme.mainColor,
           ),
         ],
         currentIndex: _selectedIndex,

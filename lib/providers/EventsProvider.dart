@@ -37,7 +37,7 @@ class EventsProvider extends ChangeNotifier {
     _selectedDay = day;
   }
 
-  void /*Future<bool>*/ fetchEventsForArrangement(arrangement) async {
+  /*void /*Future<bool>*/ fetchEventsForArrangement(arrangement) async {
     setLoading(true);
     API().fetchEventsForArrangement(arrangement).then((data) {
       if (data.statusCode == 200) {
@@ -47,7 +47,7 @@ class EventsProvider extends ChangeNotifier {
         );
       }
     });
-  }
+  }*/
 
   void fetchAllEvents() async { // returns a bool
     setLoading(true);
@@ -61,12 +61,12 @@ class EventsProvider extends ChangeNotifier {
 
 // Subscribe to the stream!
     stream.listen((DatabaseEvent event) {
-      print('Event Type: ${event.type}'); // DatabaseEventType.value;
-      print('Snapshot: ${event.snapshot.value}'); // DataSnapshot
 
-      final validMap = json.decode(json.encode(event.snapshot.value)) as List<dynamic>;
-      Iterable _events = validMap;
-
+      List<dynamic> _events = [];
+      Map validMap = json.decode(json.encode(event.snapshot.value));
+      for (var e in validMap.values){
+        _events.add(e);
+      }
       setEvents(
         _events.map((model) => Event.fromJson(model)).toList(),
       );
