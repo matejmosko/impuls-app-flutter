@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:impuls/pages/NewsDetailPage.dart';
-import 'package:impuls/providers/AppSettings.dart';
 import 'package:impuls/providers/NewsProvider.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';

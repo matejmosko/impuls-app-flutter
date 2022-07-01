@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:impuls/pages/TabPage.dart';
-import 'package:impuls/providers/AppSettings.dart';
 import 'package:impuls/providers/ArrangementProvider.dart';
 import 'package:impuls/providers/EventsProvider.dart';
 import 'package:impuls/providers/InfoProvider.dart';
@@ -47,6 +47,23 @@ void main() async{
         print('User is signed in!');
       }
     });
+
+    /// Initializes shared_preference
+    void sharedPrefInit() async {
+      try {
+        /// Checks if shared preference exist
+        Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+        final SharedPreferences prefs = await _prefs;
+        prefs.getString("app-name");
+      } catch (err) {
+        /// setMockInitialValues initiates shared preference
+        /// Adds app-name
+        SharedPreferences.setMockInitialValues({});
+        Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+        final SharedPreferences prefs = await _prefs;
+        prefs.setString("app-name", "scenickazatva");
+      }
+    }
   }
 
 
@@ -58,6 +75,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    Color darkColor = Colors.black87;
+    Color lightColor = Colors.white;
+    Color accentColor = Color(0xffdf9f4a);
 
     return MultiProvider(
       providers: [
@@ -77,33 +98,34 @@ class MyApp extends StatelessWidget {
           value: ArrangementProvider(),
         ),
       ],
+
       child: MaterialApp(
         title: "Scénická žatva 100",
         theme: ThemeData(
-          // Define the default brightness and colors.
-          //brightness: Brightness.dark,
-          primaryColor: Colors.black,
-          //cardColor: Colors.white,
+          scaffoldBackgroundColor: lightColor,
+          primaryColor: darkColor,
+          backgroundColor: lightColor,
+          dividerColor: Colors.grey,
+          cardColor: lightColor,
 
-          // Define the default font family.
-          fontFamily: 'Arial',
+          colorScheme: ColorScheme.fromSwatch()
+              .copyWith(secondary: accentColor),
+          fontFamily: 'Hind',
 
           appBarTheme: AppBarTheme(
-              backgroundColor: Colors.black87,
-            foregroundColor: Color(0xffdf9f4a),
+              backgroundColor: darkColor,
+            foregroundColor: accentColor,
           ),
 
           // Define the default `TextTheme`. Use this to specify the default
           // text styling for headlines, titles, bodies of text, and more.
           textTheme: TextTheme(
-            headline1: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            headline2: TextStyle(fontSize: 18.0, fontStyle: FontStyle.italic),
-            bodyText1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-            bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-          ).apply(
-            bodyColor: Colors.black87,
-            displayColor: Color(0xffdf9f4a),
-          ),
+            headline1: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: accentColor),
+            headline2: TextStyle(fontSize: 18.0, fontStyle: FontStyle.italic, color: accentColor),
+            headline3: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: darkColor),
+            bodyText1: TextStyle(fontSize: 14.0, fontFamily: 'Hind', color: lightColor),
+            bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind', color: darkColor),
+          )
         ),
           debugShowCheckedModeBanner: false,
           home: TabPage(),

@@ -7,6 +7,7 @@ class Event {
   final DateTime startTime;
   final DateTime endTime;
   final String image;
+  final String artist;
   final List<dynamic> arrangement;
 
   Event({
@@ -17,6 +18,7 @@ class Event {
     this.location,
     this.image,
     this.description,
+    this.artist,
     this.arrangement,
   });
 
@@ -37,6 +39,7 @@ class Event {
       endTime: endTime,
       image: json['image'] as String,
       arrangement: json['arrangement'],
+      artist: json['artist'],
     );
   }
 }

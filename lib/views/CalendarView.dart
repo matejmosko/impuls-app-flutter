@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:impuls/pages/EventDetailPage.dart';
-import 'package:impuls/providers/AppSettings.dart';
 import 'package:impuls/providers/EventsProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:impuls/models/Event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
-
 
 class CalendarView extends StatefulWidget {
   CalendarView({Key key, this.title}) : super(key: key);
@@ -22,12 +19,12 @@ class CalendarView extends StatefulWidget {
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime _focusedDay = DateTime.utc(2022, 8, 29); // DateTime.now();
+  DateTime _focusedDay = DateTime.utc(2022, 8, 30); // DateTime.now();
   DateTime _selectedDay;
   DateTime _rangeStart = DateTime.utc(2022, 8, 29);
   DateTime _rangeEnd = DateTime.utc(2022, 9, 4);
   AnimationController _animationController;
- // List events;
+  // List events;
 
   @override
   void initState() {
@@ -81,8 +78,6 @@ class _CalendarViewState extends State<CalendarView>
     eventsProvider.setSelectedDay(day);
   }
 
-
-
 /*  void _onVisibleDaysChanged(
       DateTime first, DateTime last, CalendarFormat format) {
     print('CALLBACK: _onVisibleDaysChanged');
@@ -99,7 +94,6 @@ class _CalendarViewState extends State<CalendarView>
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.black,
                 blurRadius: 1.0, // has the effect of softening the shadow
                 spreadRadius: 5.0, // has the effect of extending the shadow
               )
@@ -113,16 +107,15 @@ class _CalendarViewState extends State<CalendarView>
 
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
-    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
-    //final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
 
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).primaryColor,
       child: TableCalendar(
         locale: 'sk_SK',
         firstDay: _rangeStart,
         lastDay: _rangeEnd,
         focusedDay: _focusedDay,
+        headerVisible: false,
         selectedDayPredicate: (day) {
           return isSameDay(_selectedDay, day);
         },
@@ -146,17 +139,11 @@ class _CalendarViewState extends State<CalendarView>
         availableCalendarFormats: const {
           CalendarFormat.week: 'Týždeň',
         },
-        /*calendarStyle: CalendarStyle(
-            outsideDaysVisible: false,
-            weekendStyle: TextStyle().copyWith(
-              color: colorTheme.mainColor, fontWeight: FontWeight.bold),
-        holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
-        ),*/
-        /*
-        headerStyle: HeaderStyle(
-          centerHeaderTitle: true,
-          formatButtonVisible: false,
-        ),*/
+        calendarStyle: CalendarStyle(
+          outsideDaysVisible: true,
+          outsideTextStyle: TextStyle(color: Theme.of(context).dividerColor),
+          defaultTextStyle: TextStyle(color: Theme.of(context).backgroundColor),
+        ),
         calendarBuilders: CalendarBuilders(
           selectedBuilder: (context, date, _) {
             return FadeTransition(
@@ -165,6 +152,8 @@ class _CalendarViewState extends State<CalendarView>
               child: Container(
                 width: 100,
                 height: 100,
+                decoration: BoxDecoration(
+                    shape: BoxShape.rectangle, color: Theme.of(context).colorScheme.secondary),
                 child: Center(
                   child: Text(
                     '${date.day}',
@@ -177,8 +166,7 @@ class _CalendarViewState extends State<CalendarView>
           todayBuilder: (context, date, _) {
             return Container(
               decoration: BoxDecoration(
-                border:
-                    Border.all(width: 3.0),
+                border: Border.all(width: 3.0),
                 borderRadius: BorderRadius.all(Radius.circular(
                         4.0) //                 <--- border radius here
                     ),
@@ -193,7 +181,7 @@ class _CalendarViewState extends State<CalendarView>
               ),
             );
           },
-         markerBuilder: (context, date, List events) {
+          markerBuilder: (context, date, List events) {
             if (events.isNotEmpty) {
               return Positioned(
                 bottom: 1,
@@ -201,8 +189,7 @@ class _CalendarViewState extends State<CalendarView>
                 child: _buildEventsMarker(date, events),
               );
             } else {
-               return SizedBox.shrink();
-
+              return SizedBox.shrink();
             }
           },
         ),
@@ -211,19 +198,16 @@ class _CalendarViewState extends State<CalendarView>
   }
 
   Widget _buildEventsMarker(DateTime date, List events) {
-
-    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      decoration:
-          BoxDecoration(shape: BoxShape.rectangle),
+      decoration: BoxDecoration(shape: BoxShape.rectangle),
       width: 16.0,
       height: 16.0,
       child: Center(
         child: Text(
           '${events.length}',
           style: TextStyle().copyWith(
-            color: Colors.white,
+            color: Theme.of(context).backgroundColor,
             fontSize: 12.0,
           ),
         ),
@@ -232,19 +216,18 @@ class _CalendarViewState extends State<CalendarView>
   }
 
   Widget _buildEventList() {
-    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     return Container(
         child: AnimatedOpacity(
-          opacity: eventsProvider.events.length > 0 ? 1.0 : 0.0,
-          duration: Duration(milliseconds: 500),
-          child: ListView(
-            padding: EdgeInsets.all(8),
-            children: _fetchEvents(_selectedDay)
-                .map((event) => EventListItem(event: event))
-                .toList(),
-          ),
-        ));
+      opacity: eventsProvider.events.length > 0 ? 1.0 : 0.0,
+      duration: Duration(milliseconds: 500),
+      child: ListView(
+        padding: EdgeInsets.all(8),
+        children: _fetchEvents(_selectedDay)
+            .map((event) => EventListItem(event: event))
+            .toList(),
+      ),
+    ));
   }
 }
 
@@ -256,50 +239,115 @@ class EventListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
-
+    Color locColor;
+    IconData locIcon;
+    String locName;
+    switch (event.location) {
+      case "Štúdio":
+        locColor = Colors.orangeAccent;
+        locIcon = Icons.corporate_fare;
+        locName = "Štúdio SKD";
+        break;
+      case "ND":
+        locColor = Colors.brown;
+        locIcon = Icons.house;
+        locName = "Národný Dom";
+        break;
+      case "TKS":
+        locColor = Colors.greenAccent;
+        locIcon = Icons.grass;
+        locName = "Pred TKS";
+        break;
+      case "BarMuseum":
+        locColor = Colors.deepPurple;
+        locIcon = Icons.museum;
+        locName = "BarMuseum";
+        break;
+      case "Stan":
+        locColor = Colors.blueAccent;
+        locIcon = Icons.storefront;
+        locName = "Stan";
+        break;
+      case "Námestie":
+        locColor = Colors.blueAccent;
+        locIcon = Icons.storefront;
+        locName = "Divadelné námestie";
+        break;
+      default:
+        locColor = Colors.grey;
+        locIcon = Icons.location_city;
+        break;
+    }
 //    String Formatting
     //Start & End-time
     final startTime = event.startTime != null
         ? new DateFormat("HH:mm").format(event.startTime)
         : '';
     final endTime = event.endTime != null
-        ? "\n${new DateFormat("HH:mm").format(event.endTime)}"
+        ? new DateFormat("HH:mm").format(event.endTime)
         : '';
 
     //Location
-    final location = event.location != null ? "\nSted: ${event.location}" : '';
+    final location = event.location != null ? "${event.location}" : '';
+    final description = event.description != null
+        ? event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
+        : '';
 
-    return Hero(
-      child: Card(
-        color: Colors.white,
-        child: ListTile(
-          leading: Column(
-            children: <Widget>[Text("$startTime$endTime")],
+    return Card(
+      child: GestureDetector(
+        child: Row(children: <Widget>[
+          Padding(
+          padding: EdgeInsets.all(12.0),
+          child: Column(
+            /*crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,*/
+            children: <Widget>[
+              Icon(locIcon, color: locColor,size: 26),
+              Text("$location", style: TextStyle(color: locColor)),
+              Text("$startTime"),
+            ],
           ),
-          dense: true,
-//          trailing:
-//              event.image != null ? Image.network(event.image) : SizedBox(),
-          trailing: event.description != null
-              ? Icon(Icons.keyboard_arrow_right,
-                  color: Colors.black38, size: 30.0)
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                    "${event.title ?? ''}", style: Theme.of(context).textTheme.headline3),  //title: Text("${event.title ?? ''}$location"),
+                Text(
+                  "$description",
+                  maxLines: 3,
+                  overflow: TextOverflow.fade,
+                ),
+              ],
+            ),
+          ),
+          event.image != null
+              ? Container(
+                  width: 120.0,
+                  height: 120.0,
+                  child: Hero(
+                    child: CachedNetworkImage(
+                      imageUrl: event.image,
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                    ),
+                    tag: event.id,
+                  ),
+                )
               : SizedBox.shrink(),
-          title: Text("${event.title ?? ''}$location"),
-          subtitle: Text(
-            "${event.description ?? ''}",
-            maxLines: 3,
-            overflow: TextOverflow.fade,
-          ),
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EventDetailPage(
-                event: event,
-              ),
+        ]),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDetailPage(
+              event: event,
             ),
           ),
         ),
       ),
-      tag: event.id,
     );
   }
 }

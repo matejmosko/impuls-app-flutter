@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/Arrangement.dart';
 import 'package:impuls/requests/api.dart';

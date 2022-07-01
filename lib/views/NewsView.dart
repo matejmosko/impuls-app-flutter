@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:impuls/pages/NewsDetailPage.dart';
-import 'package:impuls/providers/AppSettings.dart';
 import 'package:impuls/providers/NewsProvider.dart';
-import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -15,7 +13,6 @@ class NewsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
 
     return Stack(
@@ -42,10 +39,6 @@ class NewsView extends StatelessWidget {
               child: Column(
             children: <Widget>[
               Flexible(
-                child: LazyLoadScrollView(
-                  onEndOfPage: () => newsProvider.fetchNews(),
-                  isLoading: newsProvider.loading,
-                  scrollOffset: 50,
                   child: ListView.builder(
                     itemCount: newsProvider.news.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -88,7 +81,7 @@ class NewsView extends StatelessWidget {
                       );
                     },
                   ),
-                ),
+
               ),
               Container(
                   child: (newsProvider.loading && !newsProvider.allnews)

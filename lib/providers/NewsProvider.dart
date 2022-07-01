@@ -1,7 +1,8 @@
 import 'dart:convert';
-//import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/NewsPost.dart';
+import 'package:http/http.dart' as http;
 import 'package:impuls/requests/api.dart';
 
 class NewsProvider extends ChangeNotifier {
@@ -10,9 +11,9 @@ class NewsProvider extends ChangeNotifier {
   bool loading = false;
   bool allnews = false;
   bool allarticles = false;
-  int newspage = 0;
+  int newspage = 1;
   int totalnewspages = 1;
-  int magazinepage = 0;
+  int magazinepage = 1;
   int totalmagazinepages = 1;
 
   NewsProvider() {
@@ -20,45 +21,31 @@ class NewsProvider extends ChangeNotifier {
     fetchMagazine();
   }
 
-  List<NewsPost> get arrangements => _news;
+  //List<NewsPost> get arrangements => _news;
 
   List<NewsPost> get news => _news;
 
   List<NewsPost> get articles => _articles;
 
   void /*Future<List<NewsPost>>*/ fetchNews() async {
-    setLoading(true);
-    newspage++;
-    if (totalnewspages >= newspage) {
+      setLoading(true);
       API().fetchNews(newspage).then((data) {
-        if (data.statusCode == 200) {
-          totalnewspages = int.parse(data.headers["x-wp-totalpages"]);
-          Iterable list = json.decode(utf8.decode(data.bodyBytes));
+        Iterable _list = json.decode(data);
+        if (data == []) {allnews = true;}
           setArrangements(
-              list.map((model) => NewsPost.fromJson(model)).toList(), "news");
-        }
+              _list.map((model) => NewsPost.fromJson(model)).toList(), "news");
       });
-    } else {
-      allnews = true;
-    }
   }
 
- void /* Future<List<NewsPost>>*/ fetchMagazine() async {
+  void /* Future<List<NewsPost>>*/ fetchMagazine() async {
     setLoading(true);
-    magazinepage++;
-    if (totalmagazinepages >= magazinepage) {
       API().fetchMagazine(magazinepage).then((data) {
-        if (data.statusCode == 200) {
-          totalmagazinepages = int.parse(data.headers["x-wp-totalpages"]);
-          Iterable list2 = json.decode(utf8.decode(data.bodyBytes));
+          Iterable _list = json.decode(data);
+          if (data == []) {allarticles = true;}
           setArrangements(
-              list2.map((model) => NewsPost.fromJson(model)).toList(),
+              _list.map((model) => NewsPost.fromJson(model)).toList(),
               "magazine");
-        }
       });
-    } else {
-      allarticles = true;
-    }
   }
 
   void setLoading(bool val) {
@@ -69,12 +56,12 @@ class NewsProvider extends ChangeNotifier {
   void setArrangements(List<NewsPost> list, category) {
     if (category == "news") {
       _news = _news + list;
+      newspage++;
     }
     if (category == "magazine") {
       _articles = _articles + list;
+      magazinepage++;
     }
-
-    print(list);
     notifyListeners();
     setLoading(false);
   }

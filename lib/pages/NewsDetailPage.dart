@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-// import 'package:impuls/models/Event.dart';
 import 'package:impuls/models/NewsPost.dart';
-import 'package:impuls/providers/AppSettings.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -14,7 +12,6 @@ class NewsDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
 
     return Scaffold(
       appBar: AppBar(

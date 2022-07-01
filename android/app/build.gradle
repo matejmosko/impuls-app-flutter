@@ -39,9 +39,6 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId "sk.panakrala.scenickazatva"
@@ -68,7 +65,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
+    lint {
+        disable 'InvalidPackage'
+    }
 
 
 }

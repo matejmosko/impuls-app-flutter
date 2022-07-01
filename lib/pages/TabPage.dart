@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:impuls/providers/AppSettings.dart';
 import 'package:impuls/providers/EventsProvider.dart';
 import 'package:impuls/providers/InfoProvider.dart';
 import 'package:impuls/providers/NewsProvider.dart';
