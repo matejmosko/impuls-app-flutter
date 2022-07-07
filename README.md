@@ -301,3 +301,21 @@ Devices:
 - [x] 12.9 inch (3rd generation iPad Pro)
 - [x] 12.9 inch (2nd generation iPad Pro)
 
+
+
+### Generate native libs for play console
+
+ Go to [YOUR_PROJECT]\build\app\intermediates\merged_native_libs\release\out\lib
+
+note that 3 folders exist inside
+
+    arm64-v8a
+    armeabi-v7a
+    x86_64
+
+    Select this 3 folder and create a .zip file. Name doesn't matter.
+
+[PLEASE NOTE THAT I HAVEN'T COMPRESSED THE ./lib FOLDER]
+
+    Upload this new *.zip file as Symbol File.
+
