@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1074295223145-78ccho5aimjv9i9v6ek5i2paddoltof0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1074295223145-78ccho5aimjv9i9v6ek5i2paddoltof0</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCBUnNiDz9AQQo9re021ECK2OJ92qAhOug</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1074295223145</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>sk.panakrala.scenickazatva</string>
+	<key>PROJECT_ID</key>
+	<string>scenickazatva-343517</string>
+	<key>STORAGE_BUCKET</key>
+	<string>scenickazatva-343517.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1074295223145:ios:94a31398c815d50b0243f8</string>
+	<key>DATABASE_URL</key>
+	<string>https://scenickazatva-343517-default-rtdb.europe-west1.firebasedatabase.app</string>
+</dict>
+</plist>
