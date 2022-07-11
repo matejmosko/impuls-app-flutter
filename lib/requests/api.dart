@@ -16,8 +16,8 @@ class API {
         "festivals/$festival/options");
     final options = await optionsdb.get();
     if (options.exists) {
-      final result = Map<String, dynamic>.from(options.value as Map);
-      return result[src];
+      final result = (options.value as Map)[src];
+      return result;
     } else {
       print('no data;');
       return null;
