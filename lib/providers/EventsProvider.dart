@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/Event.dart';
-import 'package:impuls/requests/api.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 
@@ -51,13 +50,15 @@ class EventsProvider extends ChangeNotifier {
 
   void fetchAllEvents() async { // returns a bool
     setLoading(true);
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    database.setPersistenceEnabled(true);
+    //FirebaseDatabase database = FirebaseDatabase.instance;
+    //database.setPersistenceEnabled(true);
+    String festival = "scenickazatva2022";
+    DatabaseReference eventsdb = FirebaseDatabase.instance.ref("festivals/$festival/events");
+    Stream<DatabaseEvent> stream = eventsdb.onValue;
 
-    DatabaseReference eventsdb = FirebaseDatabase.instance.ref("events");
     eventsdb.keepSynced(true);
     // Get the Stream
-    Stream<DatabaseEvent> stream = eventsdb.onValue;
+
 
 // Subscribe to the stream!
     stream.listen((DatabaseEvent event) {

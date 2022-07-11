@@ -1,13 +1,35 @@
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+
 
 class API {
   final String url = 'https://www.scenickazatva.eu/2021';
   final String url2 = 'https://db.panakrala.sk/zatva';
   final String selectedArrangement = '5e19cdd924cfa04fc3de1d3a';
+
+  Future<String> getRestSrc(src) async{
+
+    String festival = "scenickazatva2022";
+    DatabaseReference optionsdb = FirebaseDatabase.instance.ref(
+        "festivals/$festival/options");
+    final options = await optionsdb.get();
+    if (options.exists) {
+      final result = Map<String, dynamic>.from(options.value as Map);
+      return result[src];
+    } else {
+      print('no data;');
+      return null;
+    }
+
+
+    /*  Stream<DatabaseEvent> streamopts = optionsdb.onValue;
+    streamopts.listen((DatabaseEvent option) {
+      print(option.snapshot.value?.news_src);
+    });*/
+
+  }
 
 /*  Future<List<Post>> fetchPosts() async {
     final wp = WordPressAPI('wp-site.com');
@@ -24,11 +46,16 @@ class API {
     return result;
   }
 
+
+
+
   Future<String> fetchNews(page) async {
     try {
-      var _url = url +
+      /*var _url = url +
           '/wp-json/wp/v2/posts?per_page=100&order=desc&categories_exclude=18,19,20&_embed&page=' +
-          page.toString();
+          page.toString();*/
+      var _url = await getRestSrc("news_src");
+      _url = _url.toString()+page.toString();
       var file = await DefaultCacheManager().getSingleFile(_url);
 
       if (file != null && await file.exists()) {
@@ -43,18 +70,22 @@ class API {
   }
   Future<String> fetchMagazine(page) async {
     try {
-      var _url = url +
+      /*var _url = url +
           '/wp-json/wp/v2/posts?per_page=100&order=desc&_embed&categories=18,19,20&page=' +
-          page.toString();
+          page.toString();*/
+      var _url = await getRestSrc("magazine_src");
+      _url = _url.toString()+page.toString();
       var file = await DefaultCacheManager().getSingleFile(_url);
 
       if (file != null && await file.exists()) {
         final text = await file.readAsString();
         return text;
       }
+      print("File is null");
       return "[]";
     }
     catch (e){
+      print(e);
       return "[]";
     }
   }

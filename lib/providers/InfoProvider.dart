@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/InfoPost.dart';
-import 'package:impuls/requests/api.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class InfoProvider extends ChangeNotifier {
@@ -19,7 +18,9 @@ class InfoProvider extends ChangeNotifier {
     FirebaseDatabase database = FirebaseDatabase.instance;
     database.setPersistenceEnabled(true);
 
-    final infodb = FirebaseDatabase.instance.ref("info").orderByChild("id");
+
+    String festival = "scenickazatva2022";
+    final infodb = FirebaseDatabase.instance.ref("festivals/$festival/info").orderByChild("id");
     infodb.keepSynced(true);
     // Get the Stream
     Stream<DatabaseEvent> stream = infodb.onValue;

@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:impuls/models/NewsPost.dart';
-import 'package:http/http.dart' as http;
 import 'package:impuls/requests/api.dart';
 
 class NewsProvider extends ChangeNotifier {
