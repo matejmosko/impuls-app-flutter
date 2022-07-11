@@ -1,19 +1,8 @@
-<div align="center">
-
-[![KoKa](/resources/KoKa_Moon_Logo_with_Alhpa.png)](https://koka.no)
-
-### Made by [KoKa](https://koka.no)
-
-[![iOS](/resources/appstore.png)](https://apps.apple.com/no/app/impuls-trh/id1496543581)
-[![Android](/resources/gplay.png)](https://play.google.com/store/apps/details?id=sk.panakrala.scenickazatva)
-
-</div>
-
-# Impuls-App-Flutter
+# Scénická žatva app
 
 Open-Source Festival-app written in Flutter for iOS & Android (and possibly web).
 
-[![Codemagic build status](https://api.codemagic.io/apps/5e2d8c6fb9213d0d957e20f8/5e2d8c6fb9213d0d957e20f7/status_badge.svg)](https://codemagic.io/apps/5e2d8c6fb9213d0d957e20f8/5e2d8c6fb9213d0d957e20f7/latest_build)
+[![Codemagic build status](https://api.codemagic.io/apps/62bf24e71d8501daf7e6f5ce/62bf24e71d8501daf7e6f5cd/status_badge.svg)](https://codemagic.io/apps/62bf24e71d8501daf7e6f5ce/62bf24e71d8501daf7e6f5cd/latest_build)
 
 - [Impuls-App-Flutter](#impuls-app-flutter)
   - [Get in touch](#get-in-touch)
@@ -35,37 +24,12 @@ Open-Source Festival-app written in Flutter for iOS & Android (and possibly web)
     - [Views](#views)
     - [Widgets](#widgets)
 
-## Get in touch
-
-[![Chat with us](https://img.shields.io/discord/551441672584822805?color=blue&label=Join%20us%21&logo=Discord&logoColor=lightblue&style=for-the-badge)](https://discord.gg/b74XKSw)
-
-We don't bite... And we would love to have you onboard! 😁
-
-If you want to join us in creating awesome stuff, connect with us on Discord.
-You are also welcome to just hang around. 😉
-
-## Report issues / feature requests
-
-
-## ZenHub
-
-<https://app.zenhub.com/workspaces/impuls-5e1f68bc7fc3f65df8ab07e6>
-
 ## Dependencies
 
 ### Flutter
 
 Flutter is the glue that make creating a universal app (iOS + Android) possible.
 [Check it out](https://flutter.dev/) , it's pretty awesome.
-
-## Getting started with developing
-
-```bash
-git clone git@github.com:kodekameratene/impuls-app-flutter.git
-cd impuls-app-flutter
-flutter pub get
-flutter run
-```
 
 ## Updating icon
 
@@ -303,7 +267,7 @@ Devices:
 
 
 
-### Generate native libs for play console
+## Generate native libs for play console
 
  Go to [YOUR_PROJECT]\build\app\intermediates\merged_native_libs\release\out\lib
 
