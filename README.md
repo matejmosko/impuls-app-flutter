@@ -2,7 +2,7 @@
 
 Open-Source Festival-app written in Flutter for iOS & Android (and possibly web).
 
-[![Codemagic build status](https://api.codemagic.io/apps/5e2d8c6fb9213d0d957e20f8/5e2d8c6fb9213d0d957e20f7/status_badge.svg)](https://codemagic.io/apps/5e2d8c6fb9213d0d957e20f8/5e2d8c6fb9213d0d957e20f7/latest_build)
+[![Codemagic build status](https://api.codemagic.io/apps/62bf24e71d8501daf7e6f5ce/62bf24e71d8501daf7e6f5cd/status_badge.svg)](https://codemagic.io/apps/62bf24e71d8501daf7e6f5ce/62bf24e71d8501daf7e6f5cd/latest_build)
 
 - [Impuls-App-Flutter](#impuls-app-flutter)
   - [Get in touch](#get-in-touch)
@@ -30,15 +30,6 @@ Open-Source Festival-app written in Flutter for iOS & Android (and possibly web)
 
 Flutter is the glue that make creating a universal app (iOS + Android) possible.
 [Check it out](https://flutter.dev/) , it's pretty awesome.
-
-## Getting started with developing
-
-```bash
-git clone git@github.com:kodekameratene/impuls-app-flutter.git
-cd impuls-app-flutter
-flutter pub get
-flutter run
-```
 
 ## Updating icon
 
