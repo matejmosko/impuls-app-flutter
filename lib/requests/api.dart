@@ -16,7 +16,7 @@ class API {
         "festivals/$festival/options");
     final options = await optionsdb.get();
     if (options.exists) {
-      final result = (options.value as Map)[src];
+      final result = (options.value as Map)[src]; // https://github.com/firebase/flutterfire/issues/7945#issuecomment-1065871088
       return result;
     } else {
       print('no data;');

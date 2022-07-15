@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:impuls/models/InfoPost.dart';
+import 'package:scenickazatva_app/models/InfoPost.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class InfoProvider extends ChangeNotifier {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:impuls/providers/counter_bloc.dart';
-import 'package:impuls/widgets/decrement.dart';
-import 'package:impuls/widgets/increment.dart';
+import 'package:scenickazatva_app/providers/counter_bloc.dart';
+import 'package:scenickazatva_app/widgets/decrement.dart';
+import 'package:scenickazatva_app/widgets/increment.dart';
 import 'package:provider/provider.dart';
 
 class CounterPage extends StatelessWidget {

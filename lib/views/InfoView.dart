@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:impuls/pages/InfoDetailPage.dart';
-import 'package:impuls/providers/InfoProvider.dart';
+import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
+import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:provider/provider.dart';
 
 class InfoView extends StatelessWidget {

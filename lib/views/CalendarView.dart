@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:impuls/pages/EventDetailPage.dart';
-import 'package:impuls/providers/EventsProvider.dart';
+import 'package:scenickazatva_app/pages/EventDetailPage.dart';
+import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:impuls/models/Event.dart';
+import 'package:scenickazatva_app/models/Event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class CalendarView extends StatefulWidget {
@@ -276,16 +276,18 @@ class EventListItem extends StatelessWidget {
       default:
         locColor = Colors.grey;
         locIcon = Icons.location_city;
+        locName = "Martin";
         break;
     }
+    print(locName);
 //    String Formatting
     //Start & End-time
     final startTime = event.startTime != null
         ? new DateFormat("HH:mm").format(event.startTime)
         : '';
-    final endTime = event.endTime != null
+    /*final endTime = event.endTime != null
         ? new DateFormat("HH:mm").format(event.endTime)
-        : '';
+        : '';*/
 
     //Location
     final location = event.location != null ? "${event.location}" : '';

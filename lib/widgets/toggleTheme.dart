@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:impuls/providers/AppSettings.dart';
+import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:provider/provider.dart';
 
 class ToggleThemeButton extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:impuls/models/Event.dart';
+import 'package:scenickazatva_app/models/Event.dart';
 
 class EventProvider extends ChangeNotifier {
   Event _event;

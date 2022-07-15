@@ -1,7 +1,7 @@
 //import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:impuls/models/Event.dart';
+import 'package:scenickazatva_app/models/Event.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 

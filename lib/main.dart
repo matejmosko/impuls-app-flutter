@@ -1,40 +1,77 @@
 import 'package:flutter/material.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
-import 'package:impuls/pages/TabPage.dart';
-import 'package:impuls/providers/ArrangementProvider.dart';
-import 'package:impuls/providers/EventsProvider.dart';
-import 'package:impuls/providers/InfoProvider.dart';
-import 'package:impuls/providers/NewsProvider.dart';
+import 'package:scenickazatva_app/pages/TabPage.dart';
+import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
+import 'package:scenickazatva_app/providers/EventsProvider.dart';
+import 'package:scenickazatva_app/providers/InfoProvider.dart';
+import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_analytics/firebase_analytics.dart'; // imported for firebase messaging to log events
 import 'firebase_options.dart';
 import 'dart:io' show Platform;
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
+}
+
+void initializeFirebase() async{
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } else {
+    await Firebase.app();
+  }
+}
+
+Future<String> getFCMtoken() async{
+  FirebaseMessaging _messaging;
+  _messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await _messaging.requestPermission(
+    alert: true,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: false,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission: ${settings.authorizationStatus}');
+  } else {
+    print('User declined or has not accepted permission');
+  }
+
+  final fcmToken = await _messaging.getToken();
+  return fcmToken;
+}
 
 void main() async {
   if (Platform.isAndroid || Platform.isIOS) {
     WidgetsFlutterBinding.ensureInitialized();
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    } else {
-      await Firebase.app();
-    }
-
+    await initializeFirebase();
+    final fcmToken = getFCMtoken().toString();
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    print(analytics);
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     try {
       final userCredential = await FirebaseAuth.instance.signInAnonymously();
 
       /* Log user login time */
+
       DatabaseReference auth_log = FirebaseDatabase.instance.ref("auth_log");
-      print(userCredential.user.uid);
-        await auth_log.update({
-          userCredential.user.uid+"/timestamp": DateTime.now().toString()
-        });
-      print("Signed in with temporary account.");
-    } on FirebaseAuthException catch (e) { /* Catch login errors */
+
+      await auth_log.update({
+        userCredential.user.uid + "/timestamp": DateTime.now().toString(),
+        userCredential.user.uid + "/notifications": fcmToken != null ? fcmToken : ""
+      });
+    } on FirebaseAuthException catch (e) {
+      /* Catch login errors */
       switch (e.code) {
         case "operation-not-allowed":
           print("Anonymous auth hasn't been enabled for this project.");
@@ -51,30 +88,32 @@ void main() async {
         print('User is signed in!');
       }
     });
-/*
-    /// Initializes shared_preference
-    void sharedPrefInit() async {
-      try {
-        /// Checks if shared preference exist
-        Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-        final SharedPreferences prefs = await _prefs;
-        prefs.getString("app-name");
-      } catch (err) {
-        /// setMockInitialValues initiates shared preference
-        /// Adds app-name
-        SharedPreferences.setMockInitialValues({});
-        Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-        final SharedPreferences prefs = await _prefs;
-        prefs.setString("app-name", "scenickazatva");
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+
+      // Note: This callback is fired at each app startup and whenever a new
+      // token is generated.
+      print("Token changed");
+    }).onError((err) {
+      // Error getting token.
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
       }
-    }*/
+    });
+
   }
 
   initializeDateFormatting().then((_) => runApp(MyApp()));
-  //runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     Color darkColor = Colors.black87;

@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:impuls/models/Arrangement.dart';
-import 'package:impuls/requests/api.dart';
+import 'package:scenickazatva_app/models/Arrangement.dart';
 
 class ArrangementProvider extends ChangeNotifier {
   List<Arrangement> _arrangements = [];

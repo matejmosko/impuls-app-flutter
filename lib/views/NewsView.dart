@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:impuls/pages/NewsDetailPage.dart';
-import 'package:impuls/providers/NewsProvider.dart';
+import 'package:scenickazatva_app/pages/NewsDetailPage.dart';
+import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
