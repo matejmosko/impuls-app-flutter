@@ -14,6 +14,11 @@ import 'package:firebase_analytics/firebase_analytics.dart'; // imported for fir
 import 'firebase_options.dart';
 import 'dart:io' show Platform;
 
+/* iOS possible solutions:
+* https://stackoverflow.com/questions/68434062/flutter-ios-module-cloud-firestore-not-found-in-generatedpluginregistrant/68476434#68476434
+*
+*   */
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
