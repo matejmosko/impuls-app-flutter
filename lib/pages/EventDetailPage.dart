@@ -106,7 +106,7 @@ class EventDetailPage extends StatelessWidget {
                                   Text("${event.title ?? ''}",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .headline2),
+                                          .headline3),
                                   Text("${event.artist ?? ''}"),
                                 ]),
                           ),
@@ -128,7 +128,8 @@ class EventDetailPage extends StatelessWidget {
                           onLinkTap: (url, renderContext, map, element) async {
                             final Uri _url = Uri.parse(url);
                             if (await canLaunchUrl(_url)) {
-                              await launchUrl(_url);
+                              await launchUrl(_url,
+                                  mode: LaunchMode.inAppWebView);
                             } else {
                               throw 'Could not launch $url';
                             }

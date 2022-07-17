@@ -11,7 +11,6 @@ class NewsDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -45,11 +44,11 @@ class NewsDetailPage extends StatelessWidget {
                           child: //Text("${news.content ?? ''}"),
                               Html(
                             data: news.content,
-                            onLinkTap:
-                                (url, renderContext, map, element) async {
+                            onLinkTap: (url, renderContext, map, element) async {
                               final Uri _url = Uri.parse(url);
                               if (await canLaunchUrl(_url)) {
-                                await launchUrl(_url);
+                                await launchUrl(_url,
+                                    mode: LaunchMode.inAppWebView);
                               } else {
                                 throw 'Could not launch $url';
                               }

@@ -3,6 +3,7 @@ import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/views/CalendarView.dart';
+import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/views/InfoView.dart';
 import 'package:scenickazatva_app/views/NewsView.dart';
 import 'package:scenickazatva_app/views/MagazineView.dart';
@@ -50,6 +51,23 @@ class _TabPageState extends State<TabPage> {
         title: Text(
           "Scénická žatva 100",
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPage(
+                  ),
+                ),
+              );
+            },
+          )
+        ],
       ),
       body: Center(
         child: TabPage._widgetOptions.elementAt(_selectedIndex),

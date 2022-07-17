@@ -19,10 +19,10 @@ class CalendarView extends StatefulWidget {
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime _focusedDay = DateTime.utc(2022, 8, 30); // DateTime.now();
   DateTime _selectedDay;
   DateTime _rangeStart = DateTime.utc(2022, 8, 29);
   DateTime _rangeEnd = DateTime.utc(2022, 9, 4);
+  DateTime _focusedDay = (DateTime.now().isBefore(DateTime.utc(2022, 8, 29)) || DateTime.now().isAfter(DateTime.utc(2022, 9, 4))) ? DateTime.utc(2022, 8, 30) : DateTime.now();
   AnimationController _animationController;
   // List events;
 
@@ -295,8 +295,8 @@ class EventListItem extends StatelessWidget {
         ? event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
         : '';
 
-    return Card(
-      child: GestureDetector(
+    return GestureDetector(
+      child: Card(
         child: Row(children: <Widget>[
           Padding(
           padding: EdgeInsets.all(12.0),
@@ -340,7 +340,8 @@ class EventListItem extends StatelessWidget {
                   ),
                 )
               : SizedBox.shrink(),
-        ]),
+        ])
+      ),
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -349,7 +350,6 @@ class EventListItem extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
