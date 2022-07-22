@@ -39,7 +39,7 @@ class InfoView extends StatelessWidget {
                   final item = infoProvider.info[index];
                   return ListTile(
                     title: Text(item.title),
-                    leading: Icon(const IconData(item.icon, fontFamily: 'MaterialIcons')),
+                    leading: Icon(IconData(item.icon, fontFamily: 'MaterialIcons')),
                     subtitle: Text(
                       item.description != null ? item.description : '',
                       overflow: TextOverflow.fade,
