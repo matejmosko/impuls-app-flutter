@@ -4,99 +4,67 @@ import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
+import 'package:scenickazatva_app/providers/AppSettings.dart';
+import 'package:scenickazatva_app/requests/auth_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_analytics/firebase_analytics.dart'; // imported for firebase messaging to log events
-import 'firebase_options.dart';
+
 import 'dart:io' show Platform;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 
-void initializeFirebase() async{
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } else {
-    await Firebase.app();
-  }
-}
-
-Future<String> getFCMtoken() async{
-  FirebaseMessaging _messaging;
-  _messaging = FirebaseMessaging.instance;
-
-  NotificationSettings settings = await _messaging.requestPermission(
-    alert: true,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: false,
-  );
-
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission: ${settings.authorizationStatus}');
-  } else {
-    print('User declined or has not accepted permission');
-  }
-
-  final fcmToken = await _messaging.getToken();
-  return fcmToken;
-}
-
 void main() async {
   if (Platform.isAndroid || Platform.isIOS) {
     WidgetsFlutterBinding.ensureInitialized();
-    await initializeFirebase();
-    final fcmToken = getFCMtoken().toString();
-    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-    print(analytics);
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    try {
-      final userCredential = await FirebaseAuth.instance.signInAnonymously();
 
-      /* Log user login time */
-
-      DatabaseReference auth_log = FirebaseDatabase.instance.ref("auth_log");
-
-      await auth_log.update({
-        userCredential.user.uid + "/timestamp": DateTime.now().toString(),
-        userCredential.user.uid + "/notifications": fcmToken != null ? fcmToken : ""
-      });
-    } on FirebaseAuthException catch (e) {
-      /* Catch login errors */
-      switch (e.code) {
-        case "operation-not-allowed":
-          print("Anonymous auth hasn't been enabled for this project.");
-          break;
-        default:
-          print("ERROR: " + e.code);
-      }
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      await authService().authFirebase();
+    } else {
+      await Firebase.app();
+      await authService().authFirebase();
     }
 
-    FirebaseAuth.instance.authStateChanges().listen((User user) {
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+    FirebaseAuth.instance.idTokenChanges().listen((User user) async{
       if (user == null) {
-        print('User is currently signed out!');
+        print('User is currently signed out! We cannot get data');
       } else {
-        print('User is signed in!');
+        print('User is signed in with UID: '+user.uid);
+        final fcmToken = await authService().getFCMtoken();
+        FirebaseDatabase.instance.setPersistenceEnabled(true);
+        FirebaseDatabase.instance.ref("users/"+user.uid).update({
+          "timestamp": DateTime.now().toString(),
+          "fcmtoken": fcmToken != null ? fcmToken : "",
+          "programNotifications": true,
+        }).then((_) {
+          print("Firebase save success");
+        }).catchError((error) {
+          print(error);
+        });
       }
     });
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
-
       // Note: This callback is fired at each app startup and whenever a new
       // token is generated.
-      print("Token changed");
+      print("Token changed: $fcmToken");
     }).onError((err) {
       // Error getting token.
     });
+
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message whilst in the foreground!');
@@ -106,14 +74,12 @@ void main() async {
         print('Message also contained a notification: ${message.notification}');
       }
     });
-
   }
 
   initializeDateFormatting().then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     Color darkColor = Colors.black87;
@@ -169,6 +135,10 @@ class MyApp extends StatelessWidget {
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                   color: darkColor),
+              headline6: TextStyle(
+                  fontSize: 19.0,
+                  //fontWeight: FontWeight.bold,
+                  color: accentColor),
               bodyText1: TextStyle(
                   fontSize: 14.0, fontFamily: 'Hind', color: lightColor),
               bodyText2: TextStyle(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+var userData;
+
 class ColorProvider extends ChangeNotifier {
   static Color themeDark = Color(0xff021f2d);
   static Color themeDarker = Color(0xff000d14);
@@ -27,7 +29,6 @@ class ColorProvider extends ChangeNotifier {
   }
 
   setDarkTheme() {
-    //Todo: Make it look awesome!
     _isLightThemeActive = false;
     _mainColor = themeDark;
     _secondaryColor = themeDarker;
