@@ -10,16 +10,14 @@ class API {
   final String selectedArrangement = '5e19cdd924cfa04fc3de1d3a';
 
   Future<String> getRestSrc(src) async{
-
-    String festival = "scenickazatva2022";
     DatabaseReference optionsdb = FirebaseDatabase.instance.ref(
-        "festivals/$festival/options");
+        "appsettings");
     final options = await optionsdb.get();
     if (options.exists) {
-      final result = (options.value as Map)[src]; // https://github.com/firebase/flutterfire/issues/7945#issuecomment-1065871088
-      return result;
+      final _options = (options.value as Map); // https://github.com/firebase/flutterfire/issues/7945#issuecomment-1065871088
+      return _options["festivals"][_options["defaultfestival"]][src];
     } else {
-      print('no data;');
+      print('No data in AppSettings');
       return null;
     }
 

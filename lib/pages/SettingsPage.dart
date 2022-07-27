@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:scenickazatva_app/providers/AppSettings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:scenickazatva_app/providers/AppSettings.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -8,17 +10,43 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool showPush = false;
-  Map<String, String> festivals = {
-  'scenickazatva2022': 'Scénická žatva',
-  'tvorba2022': 'Tvorba',
-  'belopotockehomikulas2023': 'Belopotockého Mikuláš'
-  };
-  String selectedFestival;
+  Future<Map<Object, Object>> _pushSettings;
+
+  @override
+  void initState() {
+    super.initState();
+    _pushSettings = getPushSettings();
+  }
+
+  Future<Map<Object, Object>> getPushSettings() async {
+    DatabaseReference festivalsdb =
+        FirebaseDatabase.instance.ref("appsettings/festivals");
+    final festivals = await festivalsdb.get();
+    if (festivals.exists) {
+      final _uid = FirebaseAuth.instance.currentUser.uid;
+      DatabaseReference usersdb =
+          FirebaseDatabase.instance.ref("users/$_uid/notifications");
+
+      final usersettings = await usersdb.get();
+
+      final _festivals = festivals.value as Map;
+      final _user = usersettings.value as Map;
+      Map<String, bool> _data = {};
+
+      _festivals.forEach((key, value) {
+        if (key != null) {
+          _data[key] = _user[key] != null ? _user[key] : true;
+        }
+      });
+      return _data != null ? _data : {};
+    } else {
+      print('No data in AppSettings');
+      return {};
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    selectedFestival = festivals[1];
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -32,27 +60,50 @@ class _SettingsPageState extends State<SettingsPage> {
           "Scénická žatva 100",
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: <Widget>[
-          SwitchListTile(
-            title: Text('Notifikácie na program'),
-            subtitle: Text('Krátke správy o tom, že sa blíži predstavenie'),
-            secondary: Icon(Icons.notifications),
-            onChanged: (value) {
-              setState(() {
-                showPush = value;
-                final _uid = userData.user.uid; //userCredential.user.uid;
-                DatabaseReference users = FirebaseDatabase.instance.ref("users/$_uid");
-                users.update({
-                  "programNotifications": value,
-                });
-              });
-              //save('adminNotifications', value);
-            },
-            value: showPush,
-          ),
-         /* Card(
+      body: Card(
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text("Push notifikácie",
+              style: Theme.of(context).textTheme.headline3),
+          FutureBuilder<Map<Object, Object>>(
+              future: _pushSettings, // function where you call your api
+              builder: (BuildContext context,
+                  AsyncSnapshot<Map<Object, Object>> snapshot) {
+                if (snapshot.hasData) {
+                  final _festivals = snapshot.data;
+                  final _keys = _festivals.keys.toList();
+                  return /*Text("Test");*/
+                      Expanded(
+                    child: ListView.builder(
+                      itemCount: _keys != null ? _keys.length : 0,
+                      itemBuilder: (BuildContext context, int index) {
+                        String item = _keys[index].toString();
+                        print(_festivals[item]);
+
+                        return SwitchListTile(
+                          title: Text(item),
+                          subtitle: Text(
+                              'Krátke správy o tom, že sa blíži predstavenie'),
+                          secondary: Icon(Icons.notifications),
+                          onChanged: (value) {
+                            setState(() {
+                              changeSubscription(item, value);
+                            });
+                          },
+                          value: _festivals[item],
+                        );
+                      },
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return _buildLoadingScreen();
+                }
+              })
+        ]),
+      ),
+      /* Card(
             child: Column(
               children: <Widget>[
                 ListTile(
@@ -96,70 +147,32 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
           )*/
-        ],
-      ),
-
-      /*SettingsList(
-        sections: [
-          SettingsSection(
-            title: Text('Všeobecné'),
-            tiles: <SettingsTile>[
-              /*SettingsTile(
-                // A setting to change main festival in the app
-                leading: Icon(Icons.language),
-                title: Text('Vyberte si festival'),
-                value: Text(selectedFestival),
-                onPressed: (context) {
-                  _showMessageDialog(context);
-                },
-              ),*/
-              SettingsTile.switchTile(
-                onToggle: (value) {
-                  setState(() {
-                    showPush = value;
-                  });
-                },
-                initialValue: showPush,
-                leading: Icon(Icons.notifications),
-                title: Text('Upozorňovať na program v notifikáciách'),
-              ),
-            ],
-          ),
-          /*SettingsSection(
-            title: Text('Festival'),
-            tiles: <SettingsTile>[],
-          ),*/
-        ],
-      ),*/
     );
   }
 
-  /*_showMessageDialog(BuildContext context) => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-            title: Text("Select one country"),
-            content: SingleChildScrollView(
-                child: Container(
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: festivals
-                          .map((e) => RadioListTile(
-                                title: Text(e),
-                                value: e,
-                                groupValue: selectedFestival,
-                                /*groupValue: _singleNotifier.currentCountry,
-                     selected: _singleNotifier.currentCountry == e,*/
-                                onChanged: (value) {
-                                  /*if (value != _singleNotifier.currentCountry) {
-                       _singleNotifier.updateCountry(value);*/
-                                  if (value != selectedFestival) {
-                                    selectedFestival = value;
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                              ))
-                          .toList(),
-                    )))),
-      );*/
+  void changeSubscription(topic, value) async {
+    final _uid = FirebaseAuth.instance.currentUser.uid;
+    if (value == true) {
+      await FirebaseMessaging.instance.subscribeToTopic(topic);
+    } else {
+      await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+    }
+
+    DatabaseReference users = FirebaseDatabase.instance.ref("users/$_uid");
+    users.update({
+      "notifications/$topic": value,
+    }).then((_) {
+      _pushSettings = getPushSettings();
+    });
+  }
+
+  Widget _buildLoadingScreen() {
+    return Center(
+      child: Container(
+        width: 50,
+        height: 50,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
 }

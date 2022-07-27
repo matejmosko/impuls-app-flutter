@@ -4,7 +4,7 @@ import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
-import 'package:scenickazatva_app/providers/AppSettings.dart';
+//import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:scenickazatva_app/requests/auth_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -18,12 +18,9 @@ import 'package:firebase_analytics/firebase_analytics.dart'; // imported for fir
 import 'dart:io' show Platform;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
-
-  print("Handling a background message: ${message.messageId}");
+  print("Notification shown!");
 }
+
 
 
 void main() async {
@@ -47,17 +44,46 @@ void main() async {
         print('User is currently signed out! We cannot get data');
       } else {
         print('User is signed in with UID: '+user.uid);
-        final fcmToken = await authService().getFCMtoken();
+        var _uid = user.uid;
         FirebaseDatabase.instance.setPersistenceEnabled(true);
-        FirebaseDatabase.instance.ref("users/"+user.uid).update({
+        final fcmToken = await authService().getFCMtoken();
+
+        final Map<String, Object> userSettings = {
           "timestamp": DateTime.now().toString(),
           "fcmtoken": fcmToken != null ? fcmToken : "",
-          "programNotifications": true,
-        }).then((_) {
-          print("Firebase save success");
-        }).catchError((error) {
-          print(error);
+        };
+
+        DatabaseReference festivals = await FirebaseDatabase.instance.ref("appsettings/festivals");
+
+        festivals.onValue.listen((DatabaseEvent event) async{
+          DatabaseReference _usersdb = FirebaseDatabase.instance.ref("users/$_uid/notifications");
+          final _users = await _usersdb.get();
+          final _currentUser = (_users.value as Map);
+
+
+          final data = (event.snapshot.value as Map);
+          final _notifications = {};
+
+            data.forEach((key, value) {
+              if (_currentUser !=null) {
+              _notifications[key] =
+              _currentUser[key] != null ? _currentUser[key] : true;
+              } else {
+                _notifications[key] =
+                true;
+              }
+            });
+
+          userSettings["notifications"] = _notifications;
+
+          FirebaseDatabase.instance.ref("users/"+user.uid).update(userSettings).then((_) {
+            print("Firebase save success");
+          }).catchError((error) {
+            print(error);
+          });
         });
+
+
       }
     });
 
@@ -70,6 +96,7 @@ void main() async {
     });
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Got a message whilst in the foreground!');
