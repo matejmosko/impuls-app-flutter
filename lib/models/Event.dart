@@ -6,7 +6,7 @@ class Event {
   final String location;
   final DateTime startTime;
   final DateTime endTime;
-  final String image;
+  String image;
   final String artist;
   final List<dynamic> arrangement;
 
@@ -22,7 +22,7 @@ class Event {
     this.arrangement,
   });
 
-  factory Event.fromJson(Map<String, dynamic> json) {
+  factory Event.fromJson(Map<String, dynamic> json){
     var startTime = json['startTime'].runtimeType == String
         ? DateTime.parse(json['startTime'])
         : null;

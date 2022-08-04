@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,12 +11,11 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Future<Map<Object, Object>> _pushSettings;
+  final bool _running = true;
 
   @override
   void initState() {
     super.initState();
-    _pushSettings = getPushSettings();
   }
 
   Future<Map<Object, Object>> getPushSettings() async {
@@ -45,6 +45,13 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  Stream<Map<Object, Object>> _pushStream() async* {
+    while (_running) {
+      Map<Object, Object> _data = await getPushSettings();
+      yield _data;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,29 +68,31 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       body: Card(
-        child:
-            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        child:Padding(
+          padding: EdgeInsets.all(16.0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Text("Push notifikácie",
               style: Theme.of(context).textTheme.headline3),
-          FutureBuilder<Map<Object, Object>>(
-              future: _pushSettings, // function where you call your api
-              builder: (BuildContext context,
-                  AsyncSnapshot<Map<Object, Object>> snapshot) {
+          Text(
+              'Push notifikácie sú krátke správy o tom, že sa blíži predstavenie, ktoré sa zobrazujú medzi upozorneniami. Vyberte si tie podujatia, o ktorých chcete dostávať upozornenia.'),
+          StreamBuilder(
+              stream: _pushStream(),
+              builder: (context, AsyncSnapshot<Map<Object, Object>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _buildLoadingScreen();
+                }
                 if (snapshot.hasData) {
+                  // bool x;
                   final _festivals = snapshot.data;
                   final _keys = _festivals.keys.toList();
-                  return /*Text("Test");*/
-                      Expanded(
+                  return Flexible(
+                    fit: FlexFit.tight,
                     child: ListView.builder(
                       itemCount: _keys != null ? _keys.length : 0,
                       itemBuilder: (BuildContext context, int index) {
                         String item = _keys[index].toString();
-                        print(_festivals[item]);
-
                         return SwitchListTile(
                           title: Text(item),
-                          subtitle: Text(
-                              'Krátke správy o tom, že sa blíži predstavenie'),
                           secondary: Icon(Icons.notifications),
                           onChanged: (value) {
                             setState(() {
@@ -95,58 +104,13 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                     ),
                   );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
                 } else {
                   return _buildLoadingScreen();
                 }
-              })
+              }),
         ]),
+        ),
       ),
-      /* Card(
-            child: Column(
-              children: <Widget>[
-                ListTile(
-                  // A setting to change main festival in the app
-                  title: Text('Vyberte si festival',
-                      style: Theme.of(context).textTheme.headline6),
-                ),
-                RadioListTile(
-                    // A setting to change main festival in the app
-                    value: festivals.scenickazatva2022,
-                    groupValue: selectedFestival,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedFestival = value;
-                      });
-                    },
-                    title: Text('Scénická žatva 2022'),
-                    subtitle: Text("30.8. - 4.9. 2022")),
-                RadioListTile(
-                  value: festivals['scenickazatva2022'],
-                  groupValue: selectedFestival,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedFestival = value;
-                      //_showMessageDialog(context);
-                    });
-                  },
-                  title: Text('Tvorba 2022'),
-                ),
-                RadioListTile(
-                  value: festivals['scenickazatva2022'],
-                  groupValue: selectedFestival,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedFestival = value;
-                      //_showMessageDialog(context);
-                    });
-                  },
-                  title: Text('Belopotockého Mikuláš 2023'),
-                ),
-              ],
-            ),
-          )*/
     );
   }
 
@@ -161,9 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
     DatabaseReference users = FirebaseDatabase.instance.ref("users/$_uid");
     users.update({
       "notifications/$topic": value,
-    }).then((_) {
-      _pushSettings = getPushSettings();
-    });
+    }).then((_) {});
   }
 
   Widget _buildLoadingScreen() {

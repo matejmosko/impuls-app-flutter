@@ -5,7 +5,7 @@ import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 //import 'package:scenickazatva_app/providers/AppSettings.dart';
-import 'package:scenickazatva_app/requests/auth_service.dart';
+//import 'package:scenickazatva_app/requests/auth_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +14,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_analytics/firebase_analytics.dart'; // imported for firebase messaging to log events
+import 'package:scenickazatva_app/providers/AppSettings.dart';
+
 
 import 'dart:io' show Platform;
 
@@ -21,6 +23,47 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Notification shown!");
 }
 
+void authFirebase() async {
+  try {
+    final userCredential = await FirebaseAuth.instance.signInAnonymously();
+    userData = userCredential;
+
+    /* Log user login time */
+
+  } on FirebaseAuthException catch (e) {
+    /* Catch login errors */
+    switch (e.code) {
+      case "operation-not-allowed":
+        print("Anonymous auth hasn't been enabled for this project.");
+        break;
+      default:
+        print("Firebase Auth FAILED: " + e.code);
+    }
+  }
+}
+
+Future<String> getFCMtoken() async{
+  FirebaseMessaging _messaging;
+  _messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await _messaging.requestPermission(
+    alert: true,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: false,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission: ${settings.authorizationStatus}');
+  } else {
+    print('User declined or has not accepted permission');
+  }
+
+  final fcmToken = await _messaging.getToken();
+  return fcmToken;
+}
 
 
 void main() async {
@@ -31,11 +74,13 @@ void main() async {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      await authService().authFirebase();
+      await authFirebase();
     } else {
       await Firebase.app();
-      await authService().authFirebase();
+      await authFirebase();
     }
+
+
 
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -46,7 +91,7 @@ void main() async {
         print('User is signed in with UID: '+user.uid);
         var _uid = user.uid;
         FirebaseDatabase.instance.setPersistenceEnabled(true);
-        final fcmToken = await authService().getFCMtoken();
+        final fcmToken = await getFCMtoken();
 
         final Map<String, Object> userSettings = {
           "timestamp": DateTime.now().toString(),

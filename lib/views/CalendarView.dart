@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class CalendarView extends StatefulWidget {
   CalendarView({Key key, this.title}) : super(key: key);
@@ -336,7 +337,7 @@ class EventListItem extends StatelessWidget {
                       height: double.infinity,
                       width: double.infinity,
                     ),
-                    tag: event.id,
+                    tag: event,
                   ),
                 )
               : SizedBox.shrink(),
