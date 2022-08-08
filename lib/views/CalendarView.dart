@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_image/firebase_image.dart';
 
 class CalendarView extends StatefulWidget {
   CalendarView({Key key, this.title}) : super(key: key);
@@ -331,11 +331,18 @@ class EventListItem extends StatelessWidget {
                   width: 120.0,
                   height: 120.0,
                   child: Hero(
-                    child: CachedNetworkImage(
-                      imageUrl: event.image,
+                    child: Image(
+                      image: FirebaseImage(event.image),
                       fit: BoxFit.cover,
                       height: double.infinity,
                       width: double.infinity,
+                      errorBuilder: (BuildContext context, Object exception,
+                          StackTrace stackTrace) {
+                        return Image.asset('assets/images/icon512.png');
+                      },
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                        return Image.asset('assets/images/icon512.png');
+                      },
                     ),
                     tag: event,
                   ),

@@ -5,24 +5,24 @@ Open-Source Festival-app written in Flutter for iOS & Android (and possibly web)
 [![Codemagic build status](https://api.codemagic.io/apps/62bf24e71d8501daf7e6f5ce/62bf24e71d8501daf7e6f5cd/status_badge.svg)](https://codemagic.io/apps/62bf24e71d8501daf7e6f5ce/62bf24e71d8501daf7e6f5cd/latest_build)
 
 - [Impuls-App-Flutter](#impuls-app-flutter)
-  - [Get in touch](#get-in-touch)
-  - [Report issues / feature requests](#report-issues--feature-requests)
-  - [ZenHub](#zenhub)
-  - [Dependencies](#dependencies)
-    - [Flutter](#flutter)
-  - [Getting started with developing](#getting-started-with-developing)
-  - [Updating icon](#updating-icon)
-  - [Updating splash screen](#updating-splash-screen)
-  - [Folder structure](#folder-structure)
-  - [Lib-folder](#lib-folder)
-    - [Main.dart](#maindart)
-    - [Models](#models)
-    - [Pages](#pages)
-      - [Navigate to SomePage](#navigate-to-somepage)
-    - [Providers](#providers)
-    - [Requests](#requests)
-    - [Views](#views)
-    - [Widgets](#widgets)
+    - [Get in touch](#get-in-touch)
+    - [Report issues / feature requests](#report-issues--feature-requests)
+    - [ZenHub](#zenhub)
+    - [Dependencies](#dependencies)
+        - [Flutter](#flutter)
+    - [Getting started with developing](#getting-started-with-developing)
+    - [Updating icon](#updating-icon)
+    - [Updating splash screen](#updating-splash-screen)
+    - [Folder structure](#folder-structure)
+    - [Lib-folder](#lib-folder)
+        - [Main.dart](#maindart)
+        - [Models](#models)
+        - [Pages](#pages)
+            - [Navigate to SomePage](#navigate-to-somepage)
+        - [Providers](#providers)
+        - [Requests](#requests)
+        - [Views](#views)
+        - [Widgets](#widgets)
 
 ## Dependencies
 
@@ -237,14 +237,14 @@ It doesn't matter that much as long as it makes sense.
 
 ### PR
 Then create a pull request aka. PR here on GitHub and assign me ([sjoenH](https://github.com/SjoenH)) or the `utvikler`-team as a reviewer.
-Assigning the `utvikler`-team will do some load-balancing, auto assigning someone in the team.  
+Assigning the `utvikler`-team will do some load-balancing, auto assigning someone in the team.
 
 Your branch should be merged into the `develop`-branch (not straight into master). We only have production code in master-branch.
 We may delete the feature-branch after it has been merged into develop.
 
 ### Publishing a new version
 Make a PR from `develop` into `master` and tag your code.
-For example. 
+For example.
 ```bash 
 git tag v1.0.0
 git push origin v1.0.0
@@ -256,7 +256,7 @@ Tagging a release should trigger a new build on [Codemagic](https://codemagic.io
 
 ## Other stuff to remember
 
-### iOS screenshots to add when submitting to App Store 
+### iOS screenshots to add when submitting to App Store
 <https://help.apple.com/app-store-connect/#/devd274dd925>
 
 Devices:
@@ -269,7 +269,7 @@ Devices:
 
 ## Generate native libs for play console
 
- Go to [YOUR_PROJECT]\build\app\intermediates\merged_native_libs\release\out\lib
+Go to [YOUR_PROJECT]\build\app\intermediates\merged_native_libs\release\out\lib
 
 note that 3 folders exist inside
 

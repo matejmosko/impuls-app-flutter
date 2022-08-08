@@ -103,8 +103,8 @@ class EventsProvider extends ChangeNotifier {
       } else {
         _mappedEvents[key].addAll([event]);
       }
-      final imgUrl = await FirebaseStorage.instance.refFromURL(event.image).getDownloadURL();
-      event.image = imgUrl;
+      /*final imgUrl = await FirebaseStorage.instance.refFromURL(event.image).getDownloadURL();
+      event.image = imgUrl;*/
     });
     notifyListeners();
   }

@@ -3,7 +3,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+//import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_image/firebase_image.dart';
 
 class EventDetailPage extends StatelessWidget {
   final Event event;
@@ -81,15 +82,28 @@ class EventDetailPage extends StatelessWidget {
           children: [
             Hero(
               child: event.image != null
-                  ? CachedNetworkImage(imageUrl: event.image)
+                  ? Image(
+                      image: FirebaseImage(event.image),
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                      errorBuilder: (BuildContext context, Object exception,
+                          StackTrace stackTrace) {
+                        return Image.asset('assets/images/icon512.png');
+                      },
+                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                  return Image.asset('assets/images/icon512.png');
+                },)
                   : SizedBox(),
-              tag: event.id,
+              tag: event,
             ),
             Card(
               child: Column(children: <Widget>[
                 Container(
                     decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor))),
+                        border: Border(
+                            bottom: BorderSide(
+                                color: Theme.of(context).dividerColor))),
                     child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
