@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class EventsProvider extends ChangeNotifier {
   Map<DateTime, List<Event>> _mappedEvents = {};
@@ -59,7 +58,6 @@ class EventsProvider extends ChangeNotifier {
     eventsdb.keepSynced(true);
     // Get the Stream
 
-
 // Subscribe to the stream!
     stream.listen((DatabaseEvent event){
 
@@ -72,17 +70,6 @@ class EventsProvider extends ChangeNotifier {
         _events.map((model) => Event.fromJson(model)).toList(),
       );
     });
-
-       /*setLoading(true);
-    API().fetchAllEvents().then((data) {
-      if (data.statusCode == 200) {
-
-        Iterable events = json.decode(utf8.decode(data.bodyBytes));
-        setEvents(
-          events.map((model) => Event.fromJson(model)).toList(),
-        );
-      }
-    });*/
   }
 
   void setLoading(bool val) {
@@ -94,7 +81,7 @@ class EventsProvider extends ChangeNotifier {
     _events = events;
     _mappedEvents.clear();
     //Todo: Refactor to not have so many lists... and do it in parent method fetchEventsForArrangement
-    events.forEach((event) async {
+    _events.forEach((event) async {
       var key = DateTime(
           event.startTime.year, event.startTime.month, event.startTime.day);
 
@@ -103,9 +90,9 @@ class EventsProvider extends ChangeNotifier {
       } else {
         _mappedEvents[key].addAll([event]);
       }
-      /*final imgUrl = await FirebaseStorage.instance.refFromURL(event.image).getDownloadURL();
-      event.image = imgUrl;*/
     });
+
+    _events.sort((a, b) => a.startTime.compareTo(b.startTime));
     notifyListeners();
   }
 }

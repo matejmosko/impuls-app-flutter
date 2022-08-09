@@ -5,8 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
-//import 'package:cached_network_image/cached_network_image.dart';
+import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:firebase_image/firebase_image.dart';
+import 'package:scenickazatva_app/requests/api.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:markdown/markdown.dart' as MD;
 
 class CalendarView extends StatefulWidget {
   CalendarView({Key key, this.title}) : super(key: key);
@@ -23,7 +26,10 @@ class _CalendarViewState extends State<CalendarView>
   DateTime _selectedDay;
   DateTime _rangeStart = DateTime.utc(2022, 8, 29);
   DateTime _rangeEnd = DateTime.utc(2022, 9, 4);
-  DateTime _focusedDay = (DateTime.now().isBefore(DateTime.utc(2022, 8, 29)) || DateTime.now().isAfter(DateTime.utc(2022, 9, 4))) ? DateTime.utc(2022, 8, 30) : DateTime.now();
+  DateTime _focusedDay = (DateTime.now().isBefore(DateTime.utc(2022, 8, 29)) ||
+          DateTime.now().isAfter(DateTime.utc(2022, 9, 4)))
+      ? DateTime.utc(2022, 8, 30)
+      : DateTime.now();
   AnimationController _animationController;
   // List events;
 
@@ -64,7 +70,7 @@ class _CalendarViewState extends State<CalendarView>
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    print('CALLBACK: _onDaySelected');
+    // print('CALLBACK: _onDaySelected');
     setState(() {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
@@ -78,12 +84,6 @@ class _CalendarViewState extends State<CalendarView>
         Provider.of<EventsProvider>(context, listen: false);
     eventsProvider.setSelectedDay(day);
   }
-
-/*  void _onVisibleDaysChanged(
-      DateTime first, DateTime last, CalendarFormat format) {
-    print('CALLBACK: _onVisibleDaysChanged');
-    fetchEvents(context);
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,6 @@ class _CalendarViewState extends State<CalendarView>
 
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
-
     return Container(
       color: Theme.of(context).primaryColor,
       child: TableCalendar(
@@ -154,7 +153,8 @@ class _CalendarViewState extends State<CalendarView>
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                    shape: BoxShape.rectangle, color: Theme.of(context).colorScheme.secondary),
+                    shape: BoxShape.rectangle,
+                    color: Theme.of(context).colorScheme.secondary),
                 child: Center(
                   child: Text(
                     '${date.day}',
@@ -240,47 +240,6 @@ class EventListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
-    Color locColor;
-    IconData locIcon;
-    String locName;
-    switch (event.location) {
-      case "Štúdio":
-        locColor = Colors.orangeAccent;
-        locIcon = Icons.corporate_fare;
-        locName = "Štúdio SKD";
-        break;
-      case "ND":
-        locColor = Colors.brown;
-        locIcon = Icons.house;
-        locName = "Národný Dom";
-        break;
-      case "TKS":
-        locColor = Colors.greenAccent;
-        locIcon = Icons.grass;
-        locName = "Pred TKS";
-        break;
-      case "BarMuseum":
-        locColor = Colors.deepPurple;
-        locIcon = Icons.museum;
-        locName = "BarMuseum";
-        break;
-      case "Stan":
-        locColor = Colors.blueAccent;
-        locIcon = Icons.storefront;
-        locName = "Stan";
-        break;
-      case "Námestie":
-        locColor = Colors.blueAccent;
-        locIcon = Icons.storefront;
-        locName = "Divadelné námestie";
-        break;
-      default:
-        locColor = Colors.grey;
-        locIcon = Icons.location_city;
-        locName = "Martin";
-        break;
-    }
-    print(locName);
 //    String Formatting
     //Start & End-time
     final startTime = event.startTime != null
@@ -292,72 +251,86 @@ class EventListItem extends StatelessWidget {
 
     //Location
     final location = event.location != null ? "${event.location}" : '';
-    final description = event.description != null
+    /*final description = event.description != null
         ? event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
-        : '';
+        : '';*/
 
     return GestureDetector(
       child: Card(
-        child: Row(children: <Widget>[
-          Padding(
+          child: Row(children: <Widget>[
+        Padding(
           padding: EdgeInsets.all(12.0),
-          child: Column(
-            /*crossAxisAlignment: CrossAxisAlignment.start,
+          child: SizedBox(
+              width: 60,
+              child: Column(
+                /*crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,*/
+                children: <Widget>[
+                  Icon(Venues().getIcon(event.location),
+                      color: Venues().getColor(event.location), size: 26),
+                  Text("$location",
+                      style:
+                          TextStyle(color: Venues().getColor(event.location)),
+                      textAlign: TextAlign.center),
+                  Text("$startTime"),
+                ],
+              )),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Icon(locIcon, color: locColor,size: 26),
-              Text("$location", style: TextStyle(color: locColor)),
-              Text("$startTime"),
+              Text("${event.title ?? ''}",
+                  style: Theme.of(context).textTheme.headline3),
+              LimitedBox(
+                child: ShaderMask(
+                  blendMode: BlendMode.srcIn,
+                  shaderCallback: (bounds) {
+                    return LinearGradient(
+                      begin: Alignment.center,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.black, Colors.transparent],
+                    ).createShader(bounds);
+                  },
+                  child: Html(data: MD.markdownToHtml(event.description)),
+                ),
+                maxHeight: 70,
+              )
             ],
           ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                    "${event.title ?? ''}", style: Theme.of(context).textTheme.headline3),  //title: Text("${event.title ?? ''}$location"),
-                Text(
-                  "$description",
-                  maxLines: 3,
-                  overflow: TextOverflow.fade,
-                ),
-              ],
-            ),
-          ),
-          event.image != null
-              ? Container(
-                  width: 120.0,
-                  height: 120.0,
-                  child: Hero(
-                    child: Image(
-                      image: FirebaseImage(event.image),
-                      fit: BoxFit.cover,
-                      height: double.infinity,
-                      width: double.infinity,
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace stackTrace) {
-                        return Image.asset('assets/images/icon512.png');
-                      },
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                        return Image.asset('assets/images/icon512.png');
-                      },
-                    ),
-                    tag: event,
+        ),
+        event.image != null
+            ? Container(
+                width: 120.0,
+                height: 120.0,
+                child: Hero(
+                  child: Image(
+                    image: FirebaseImage(event.image),
+                    fit: BoxFit.cover,
+                    height: double.infinity,
+                    width: double.infinity,
+                    errorBuilder: (BuildContext context, Object exception,
+                        StackTrace stackTrace) {
+                      return Image.asset('assets/images/icon512.png');
+                    },
                   ),
-                )
-              : SizedBox.shrink(),
-        ])
-      ),
-        onTap: () => Navigator.push(
+                  tag: event.image,
+                ),
+              )
+            : SizedBox.shrink(),
+      ])),
+      onTap: () {
+        Analytics().sendEvent(event.title);
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => EventDetailPage(
               event: event,
             ),
           ),
-        ),
+        );
+      },
     );
   }
 }

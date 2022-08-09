@@ -4,6 +4,7 @@ import 'package:scenickazatva_app/pages/NewsDetailPage.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:scenickazatva_app/requests/api.dart';
 
 class NewsView extends StatelessWidget {
   static const TextStyle optionStyle = TextStyle(
@@ -26,9 +27,7 @@ class NewsView extends StatelessWidget {
             // The green box must be a child of the AnimatedOpacity widget.
             child: Text(
               "Loading...",
-              style: TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic),
+              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
             ),
           ),
         ),
@@ -39,55 +38,63 @@ class NewsView extends StatelessWidget {
               child: Column(
             children: <Widget>[
               Flexible(
-                  child: ListView.builder(
-                    itemCount: newsProvider.news.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final item = newsProvider.news[index];
-                      return Card(
-                        elevation: 10,
-                        child: GestureDetector(
-                          child: Row(mainAxisSize: MainAxisSize.min, children: [
-                            Expanded(
-                              child: ListTile(
-                                title: Text(item.title),
-                                subtitle: Html(data: item.description),
-                              ),
-                            ),
-                            item.image != null
-                                ? Container(
-                                    width: 120.0,
-                                    height: 120.0,
-                                    child: Hero(
-                                      child: CachedNetworkImage(
-                                        imageUrl: item.image,
-                                        fit: BoxFit.cover,
-                                        height: double.infinity,
-                                        width: double.infinity,
-                                        ),
-                                      tag: item.id,
-                                    ),
-                                  )
-                                : SizedBox.shrink(),
-                          ]),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NewsDetailPage(
-                                news: item,
-                              ),
+                child: ListView.builder(
+                  itemCount: newsProvider.news.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = newsProvider.news[index];
+                    return Card(
+                      elevation: 10,
+                      child: GestureDetector(
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          Expanded(
+                            child: ListTile(
+                              title: Text(item.title),
+                              subtitle: Html(data: item.description),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-
+                          item.image != null
+                              ? Container(
+                                  width: 120.0,
+                                  height: 120.0,
+                                  child: Hero(
+                                    child: CachedNetworkImage(
+                                      imageUrl: item.image,
+                                      fit: BoxFit.cover,
+                                      height: double.infinity,
+                                      width: double.infinity,
+                                      placeholder: (context, url) =>
+                                          Image.asset(
+                                              'assets/images/icon512.png'),
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
+                                              'assets/images/icon512.png'),
+                                    ),
+                                    tag: item.id,
+                                  ),
+                                )
+                              : SizedBox.shrink(),
+                        ]),
+                          onTap: () {
+                            Analytics().sendEvent(item.title);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewsDetailPage(
+                                  news: item,
+                                ),
+                              ),
+                            );
+                          }
+                      ),
+                    );
+                  },
+                ),
               ),
               Container(
                   child: (newsProvider.loading && !newsProvider.allnews)
                       ? Padding(
-                      padding: EdgeInsets.all(20),
-                      child: new CircularProgressIndicator())
+                          padding: EdgeInsets.all(20),
+                          child: new CircularProgressIndicator())
                       : new Row())
             ],
           )),

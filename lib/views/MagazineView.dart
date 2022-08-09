@@ -5,7 +5,7 @@ import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'package:scenickazatva_app/requests/api.dart';
 
 class MagazineView extends StatelessWidget {
   static const TextStyle optionStyle = TextStyle(
@@ -76,14 +76,17 @@ class MagazineView extends StatelessWidget {
                                   )
                                 : SizedBox.shrink(),
                           ]),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NewsDetailPage(
-                                news: item,
-                              ),
-                            ),
-                          ),
+                            onTap: () {
+                              Analytics().sendEvent(item.title);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NewsDetailPage(
+                                    news: item,
+                                  ),
+                                ),
+                              );
+                            }
                         ),
                       );
                     },

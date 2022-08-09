@@ -1,42 +1,26 @@
 import 'package:http/http.dart' as http;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-
+import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_analytics/firebase_analytics.dart'; // imported for firebase messaging to log events
 
 class API {
   final String url = 'https://www.scenickazatva.eu/2021';
   final String url2 = 'https://db.panakrala.sk/zatva';
   final String selectedArrangement = '5e19cdd924cfa04fc3de1d3a';
 
-  Future<String> getRestSrc(src) async{
-    DatabaseReference optionsdb = FirebaseDatabase.instance.ref(
-        "appsettings");
+  Future<String> getRestSrc(src) async {
+    DatabaseReference optionsdb = FirebaseDatabase.instance.ref("appsettings");
     final options = await optionsdb.get();
     if (options.exists) {
-      final _options = (options.value as Map); // https://github.com/firebase/flutterfire/issues/7945#issuecomment-1065871088
+      final _options = (options.value
+          as Map); // https://github.com/firebase/flutterfire/issues/7945#issuecomment-1065871088
       return _options["festivals"][_options["defaultfestival"]][src];
     } else {
-      print('No data in AppSettings');
+      //print('No data in AppSettings');
       return null;
     }
-
-
-    /*  Stream<DatabaseEvent> streamopts = optionsdb.onValue;
-    streamopts.listen((DatabaseEvent option) {
-      print(option.snapshot.value?.news_src);
-    });*/
-
   }
-
-/*  Future<List<Post>> fetchPosts() async {
-    final wp = WordPressAPI('wp-site.com');
-    final WPResponse res = await wp.posts.fetch();
-    for (final post in res.data as List<Post>) {
-      print(WPUtils.parseHtml(post.content));
-    }
-    return res.data as List<Post>;
-  }*/
 
   Future<http.Response> fetchArrangements() {
     var result = http.get(Uri.parse(url2 + '/events.json'),
@@ -44,16 +28,10 @@ class API {
     return result;
   }
 
-
-
-
   Future<String> fetchNews(page) async {
     try {
-      /*var _url = url +
-          '/wp-json/wp/v2/posts?per_page=100&order=desc&categories_exclude=18,19,20&_embed&page=' +
-          page.toString();*/
       var _url = await getRestSrc("news_src");
-      _url = _url.toString()+page.toString();
+      _url = _url.toString() + page.toString();
       var file = await DefaultCacheManager().getSingleFile(_url);
 
       if (file != null && await file.exists()) {
@@ -61,46 +39,47 @@ class API {
         return text;
       }
       return "[]";
-    }
-    catch (e) {
+    } catch (e) {
       return "[]";
     }
   }
+
   Future<String> fetchMagazine(page) async {
     try {
-      /*var _url = url +
-          '/wp-json/wp/v2/posts?per_page=100&order=desc&_embed&categories=18,19,20&page=' +
-          page.toString();*/
       var _url = await getRestSrc("magazine_src");
-      _url = _url.toString()+page.toString();
+      _url = _url.toString() + page.toString();
       var file = await DefaultCacheManager().getSingleFile(_url);
 
       if (file != null && await file.exists()) {
         final text = await file.readAsString();
         return text;
       }
-      print("File is null");
+      //print("File is null");
       return "[]";
-    }
-    catch (e){
-      print(e);
+    } catch (e) {
+      // print(e);
       return "[]";
     }
   }
 
-  /*Future<http.Response> fetchEventsForArrangement(arrangement) {
-    var result = http.get(Uri.parse(url2 + '/events.json?arrangement=$selectedArrangement'), headers: {'Content-Type': 'application/json; charset=utf-8'});
-    return result;
-  }*/
-
-  /*Future<http.Response> fetchAllEvents() async {
-    var result = await http.get(Uri.parse(url2 + '/events.json'), headers: {'Content-Type': 'application/json; charset=utf-8'});
-    return result;
+  launchURL(url) async {
+    final Uri _url = Uri.parse(url);
+    if (await canLaunchUrl(_url)) {
+      await launchUrl(_url, mode: LaunchMode.inAppWebView);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
+}
 
-  Future<http.Response> fetchInfo() {
-    var result = http.get(Uri.parse(url2 + '/info.json'), headers: {'Content-Type': 'application/json; charset=utf-8'});
-    return result;
-  }*/
-
+class Analytics {
+  sendEvent(id) async {
+    await FirebaseAnalytics.instance.logEvent(
+      name: "select_content",
+      parameters: {
+        "content_type": "post",
+        "item_id": id
+      },
+    );
+  }
 }

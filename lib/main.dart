@@ -4,8 +4,6 @@ import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
-//import 'package:scenickazatva_app/providers/AppSettings.dart';
-//import 'package:scenickazatva_app/requests/auth_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,14 +11,13 @@ import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_analytics/firebase_analytics.dart'; // imported for firebase messaging to log events
 import 'package:scenickazatva_app/providers/AppSettings.dart';
 
 
 import 'dart:io' show Platform;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Notification shown!");
+ // print("Notification shown!");
 }
 
 void authFirebase() async {
@@ -80,10 +77,6 @@ void main() async {
       await authFirebase();
     }
 
-
-
-    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-
     FirebaseAuth.instance.idTokenChanges().listen((User user) async{
       if (user == null) {
         print('User is currently signed out! We cannot get data');
@@ -122,7 +115,7 @@ void main() async {
           userSettings["notifications"] = _notifications;
 
           FirebaseDatabase.instance.ref("users/"+user.uid).update(userSettings).then((_) {
-            print("Firebase save success");
+         //   print("Firebase save success");
           }).catchError((error) {
             print(error);
           });

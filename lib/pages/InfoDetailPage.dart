@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:scenickazatva_app/models/InfoPost.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:scenickazatva_app/requests/api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:markdown/markdown.dart' as MD;
 
 class InfoDetailPage extends StatelessWidget {
   final InfoPost info;
@@ -24,7 +25,7 @@ class InfoDetailPage extends StatelessWidget {
         ),
         title: Text(
           "Scénická žatva 100",
-            style: Theme.of(context).textTheme.headline2,
+          style: Theme.of(context).textTheme.headline2,
         ),
       ),
       body: SafeArea(
@@ -32,7 +33,12 @@ class InfoDetailPage extends StatelessWidget {
           children: [
             Hero(
               child: info.image != null
-                  ? CachedNetworkImage(imageUrl: info.image)
+                  ? CachedNetworkImage(
+                      imageUrl: info.image,
+                      placeholder: (context, url) =>
+                          Image.asset('assets/images/icon512.png'),
+                      errorWidget: (context, url, error) =>
+                          Image.asset('assets/images/icon512.png'))
                   : SizedBox(),
               tag: info.id,
             ),
@@ -42,16 +48,14 @@ class InfoDetailPage extends StatelessWidget {
                 ListTile(
 //                  leading: Text("$startTime$location$endTime"),
                   title: Text("${info.title ?? ''}"),
-
                 ),
                 info.description != null
                     ? Padding(
                         padding: EdgeInsets.all(12),
-                        child: MarkdownBody(
-                          onTapLink: (text, href, title) => _launchURL(href),
-                          data: info.description,
-                        ),
-                      )
+                        child: Html(
+                          data: MD.markdownToHtml(info.description),
+                          onLinkTap: (url, renderContext, map, element) => API().launchURL(url),
+                        ))
                     : SizedBox.shrink()
               ],
             ))
@@ -59,14 +63,5 @@ class InfoDetailPage extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-_launchURL(url) async {
-  final Uri _url = Uri.parse(url);
-  if (await canLaunchUrl(_url)) {
-    await launchUrl(_url);
-  } else {
-    throw 'Could not launch $url';
   }
 }

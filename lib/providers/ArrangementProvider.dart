@@ -30,7 +30,7 @@ class ArrangementProvider extends ChangeNotifier {
 
   void setArrangements(List<Arrangement> list) {
     _arrangements = list;
-    print(list);
+    //print(list);
     notifyListeners();
   }
 }

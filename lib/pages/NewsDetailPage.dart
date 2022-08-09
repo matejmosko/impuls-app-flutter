@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:scenickazatva_app/models/NewsPost.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:scenickazatva_app/requests/api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class NewsDetailPage extends StatelessWidget {
@@ -29,7 +29,10 @@ class NewsDetailPage extends StatelessWidget {
           children: [
             Hero(
               child: news.image != null
-                  ? CachedNetworkImage(imageUrl: news.image)
+                  ? CachedNetworkImage(imageUrl: news.image,
+                placeholder: (context, url) => Image.asset('assets/images/icon512.png'),
+                errorWidget: (context, url, error) => Image.asset('assets/images/icon512.png'),
+              )
                   : SizedBox(),
               tag: news.id,
             ),
@@ -44,19 +47,7 @@ class NewsDetailPage extends StatelessWidget {
                           child: //Text("${news.content ?? ''}"),
                               Html(
                             data: news.content,
-                            onLinkTap: (url, renderContext, map, element) async {
-                              final Uri _url = Uri.parse(url);
-                              if (await canLaunchUrl(_url)) {
-                                await launchUrl(_url,
-                                    mode: LaunchMode.inAppWebView);
-                              } else {
-                                throw 'Could not launch $url';
-                              }
-                            },
-                            /*child: MarkdownBody(
-                        onTapLink: (text, href, title) => _launchURL(href),
-                        data: news.description,
-                      ),*/
+                            onLinkTap: (url, renderContext, map, element) => API().launchURL(url),
                           ),
                         )
                       : SizedBox.shrink()
