@@ -14,6 +14,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
 
 
+
 import 'dart:io' show Platform;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -146,7 +147,7 @@ void main() async {
     });
   }
 
-  initializeDateFormatting().then((_) => runApp(MyApp()));
+  initializeDateFormatting('sk_SK').then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {

@@ -15,7 +15,7 @@ class EventDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final startDate = event.startTime != null
-        ? new DateFormat("E, d.M.").format(event.startTime)
+        ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime)
         : '';
     final startTime = event.startTime != null
         ? new DateFormat("HH:mm").format(event.startTime)
