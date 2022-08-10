@@ -10,21 +10,33 @@ import 'package:scenickazatva_app/views/MagazineView.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
-  static List<Widget> _widgetOptions = <Widget>[
-    NewsView(),
-    CalendarView(),
-    MagazineView(),
-    InfoView(),
-  ];
 
   @override
   _TabPageState createState() => _TabPageState();
 }
 
 class _TabPageState extends State<TabPage> {
-  int _selectedIndex = 0;
 
-  void _onItemTapped(int index, newsProvider, eventsProvider, infoProvider) {
+  static List<Widget> _widgetOptions = <Widget>[
+    NewsView(),
+    CalendarView(),
+    MagazineView(),
+    InfoView(),
+  ];
+  int _selectedIndex = 0;
+  PageController _pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
+
+  void _itemTapped(int index, newsProvider, eventsProvider, infoProvider) {
+    setState(() {
+      _selectedIndex = index;
+      _pageController.animateToPage(index, duration: Duration(milliseconds: 500), curve: Curves.ease);
+    });
+  }
+
+  void pageChanged(int index, newsProvider, eventsProvider, infoProvider) {
     if (index == 0) {
       newsProvider.fetchNews();
     } else if (index == 1) {
@@ -39,13 +51,22 @@ class _TabPageState extends State<TabPage> {
     });
   }
 
+  Widget buildPageView(newsProvider, eventsProvider, infoProvider) {
+    return PageView(
+      controller: _pageController,
+        onPageChanged: (index) {
+        pageChanged(index, newsProvider, eventsProvider, infoProvider);
+        },
+        children: _widgetOptions
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     final InfoProvider infoProvider = Provider.of<InfoProvider>(context);
 
-    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -70,7 +91,7 @@ class _TabPageState extends State<TabPage> {
         ],
       ),
       body: Center(
-        child: TabPage._widgetOptions.elementAt(_selectedIndex),
+        child: buildPageView(newsProvider, eventsProvider, infoProvider),//TabPage._widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type:BottomNavigationBarType.fixed,
@@ -100,7 +121,7 @@ class _TabPageState extends State<TabPage> {
         unselectedItemColor: colorTheme.textColor,*/
         showUnselectedLabels: true,
         onTap: (index) =>
-            _onItemTapped(index, newsProvider, eventsProvider, infoProvider),
+            _itemTapped(index, newsProvider, eventsProvider, infoProvider),
       ),
     );
   }

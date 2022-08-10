@@ -43,7 +43,7 @@ class InfoView extends StatelessWidget {
                       subtitle: Text(
                         item.description != null ? item.description : '',
                         overflow: TextOverflow.fade,
-                        maxLines: 3,
+                        maxLines: 1,
                       ),
                       onTap: () {
                         Analytics().sendEvent(item.title);
