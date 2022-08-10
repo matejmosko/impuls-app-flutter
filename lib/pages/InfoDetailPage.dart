@@ -36,9 +36,9 @@ class InfoDetailPage extends StatelessWidget {
                   ? CachedNetworkImage(
                       imageUrl: info.image,
                       placeholder: (context, url) =>
-                          Image.asset('assets/images/icon512.png'),
+                          SizedBox.shrink(),
                       errorWidget: (context, url, error) =>
-                          Image.asset('assets/images/icon512.png'))
+                          SizedBox.shrink())
                   : SizedBox(),
               tag: info.id,
             ),

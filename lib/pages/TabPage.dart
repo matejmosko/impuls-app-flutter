@@ -32,7 +32,7 @@ class _TabPageState extends State<TabPage> {
   void _itemTapped(int index, newsProvider, eventsProvider, infoProvider) {
     setState(() {
       _selectedIndex = index;
-      _pageController.animateToPage(index, duration: Duration(milliseconds: 500), curve: Curves.ease);
+      _pageController.jumpToPage(index);
     });
   }
 
