@@ -105,7 +105,7 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
                         /// build method will run again otherwise
                         /// list will not show all elements
                         setState(() {
-                          newsProvider.fetchNews(refresh: true);
+                          newsProvider.fetchMagazine(refresh: true);
                         });
                       });
                     }),

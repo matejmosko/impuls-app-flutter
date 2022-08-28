@@ -5,6 +5,7 @@ import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 
 class NewsView extends StatefulWidget {
   static const TextStyle optionStyle = TextStyle(
@@ -42,7 +43,11 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
               child: Column(
             children: <Widget>[
               Flexible(
-                child: RefreshIndicator(
+              child: LazyLoadScrollView(
+                  onEndOfPage: () => newsProvider.fetchNews(),
+          isLoading: newsProvider.loading,
+          scrollOffset: 50,
+          child: RefreshIndicator(
                     child: ListView.builder(
                       itemCount: newsProvider.news.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -113,6 +118,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                         });
                       });
                     }),
+              ),
               ),
               Container(
                   child: (newsProvider.loading)

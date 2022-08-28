@@ -15,7 +15,7 @@ class API {
   static CacheManager _newsCache = CacheManager(
     Config(
       key,
-      stalePeriod: const Duration(seconds: 1),
+      stalePeriod: const Duration(seconds: 60),
       maxNrOfCacheObjects: 20,
       repo: JsonCacheInfoRepository(databaseName: key),
     ),
