@@ -10,13 +10,14 @@ class NewsProvider extends ChangeNotifier {
   bool allnews = false;
   bool allarticles = false;
   int newspage = 1;
-  int totalnewspages = 1;
+  //int totalnewspages = 1;
   int magazinepage = 1;
-  int totalmagazinepages = 1;
+  //int totalmagazinepages = 1;
 
   NewsProvider() {
     fetchNews();
     fetchMagazine();
+
   }
 
   //List<NewsPost> get arrangements => _news;
@@ -25,25 +26,38 @@ class NewsProvider extends ChangeNotifier {
 
   List<NewsPost> get articles => _articles;
 
-  void /*Future<List<NewsPost>>*/ fetchNews() async {
-      setLoading(true);
-      API().fetchNews(newspage).then((data) {
-        Iterable _list = json.decode(data);
-        if (data == []) {allnews = true;}
-          setArrangements(
-              _list.map((model) => NewsPost.fromJson(model)).toList(), "news");
-      });
+  void /*Future<List<NewsPost>>*/ fetchNews({refresh: false}) async {
+    setLoading(true);
+    if (refresh){
+      allnews = false;
+      newspage = 1;
+    }
+
+    API().fetchNews(newspage).then((data) {
+      Iterable _list = json.decode(data);
+      if (data == []) {
+        allnews = true;
+      }
+      setArrangements(
+          _list.map((model) => NewsPost.fromJson(model)).toList(), "news", refresh);
+    });
   }
 
-  void /* Future<List<NewsPost>>*/ fetchMagazine() async {
+  void /* Future<List<NewsPost>>*/ fetchMagazine({refresh:false}) async {
     setLoading(true);
-      API().fetchMagazine(magazinepage).then((data) {
-          Iterable _list = json.decode(data);
-          if (data == []) {allarticles = true;}
-          setArrangements(
-              _list.map((model) => NewsPost.fromJson(model)).toList(),
-              "magazine");
-      });
+    if (refresh){
+      allarticles = false;
+      magazinepage = 1;
+    }
+
+    API().fetchMagazine(magazinepage).then((data) {
+      Iterable _list = json.decode(data);
+      if (data == []) {
+        allarticles = true;
+      }
+      setArrangements(
+          _list.map((model) => NewsPost.fromJson(model)).toList(), "magazine", refresh);
+    });
   }
 
   void setLoading(bool val) {
@@ -51,16 +65,24 @@ class NewsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setArrangements(List<NewsPost> list, category) {
+  void setArrangements(List<NewsPost> list, category, refresh) {
     if (category == "news") {
+      if (refresh){
+       _news = [];
+       refresh = false;
+      }
       _news = _news + list;
       newspage++;
     }
     if (category == "magazine") {
+      if (refresh){
+        _articles = [];
+        refresh = false;
+      }
       _articles = _articles + list;
       magazinepage++;
     }
-    notifyListeners();
     setLoading(false);
+    notifyListeners();
   }
 }

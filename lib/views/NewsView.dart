@@ -6,12 +6,16 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 
-class NewsView extends StatelessWidget {
+class NewsView extends StatefulWidget {
   static const TextStyle optionStyle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
   );
+  @override
+  _NewsViewState createState() => _NewsViewState();
+}
 
+class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
@@ -26,7 +30,7 @@ class NewsView extends StatelessWidget {
             duration: Duration(milliseconds: 500),
             // The green box must be a child of the AnimatedOpacity widget.
             child: Text(
-              "Loading...",
+              "Načítavam...",
               style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
             ),
           ),
@@ -38,60 +42,80 @@ class NewsView extends StatelessWidget {
               child: Column(
             children: <Widget>[
               Flexible(
-                child: ListView.builder(
-                  itemCount: newsProvider.news.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = newsProvider.news[index];
-                    return Card(
-                      elevation: 10,
-                      child: GestureDetector(
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          Expanded(
-                            child: ListTile(
-                              title: Text(item.title),
-                              subtitle: Html(data: item.description),
-                            ),
-                          ),
-                          item.image != null
-                              ? Container(
-                                  width: 120.0,
-                                  height: 120.0,
-                                  child: Hero(
-                                    child: CachedNetworkImage(
-                                      imageUrl: item.image,
-                                      fit: BoxFit.cover,
-                                      height: double.infinity,
-                                      width: double.infinity,
-                                      placeholder: (context, url) =>
-                                          Image.asset(
-                                              'assets/images/icon512.png'),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                              'assets/images/icon512.png'),
+                child: RefreshIndicator(
+                    child: ListView.builder(
+                      itemCount: newsProvider.news.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final item = newsProvider.news[index];
+                        return Card(
+                          elevation: 10,
+                          child: GestureDetector(
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Expanded(
+                                      child: ListTile(
+                                        title: Text(item.title),
+                                        subtitle: Html(data: item.description),
+                                      ),
                                     ),
-                                    tag: item.id,
+                                    item.image != null
+                                        ? Container(
+                                            width: 120.0,
+                                            height: 120.0,
+                                            child: Hero(
+                                              child: item.image != ""
+                                                  ? CachedNetworkImage(
+                                                      imageUrl: item.image,
+                                                      fit: BoxFit.cover,
+                                                      height: double.infinity,
+                                                      width: double.infinity,
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          Image.asset(
+                                                              'assets/images/icon512.png'),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Image.asset(
+                                                              'assets/images/icon512.png'),
+                                                    )
+                                                  : Image.asset(
+                                                      'assets/images/icon512.png'),
+                                              tag: item.id,
+                                            ),
+                                          )
+                                        : SizedBox.shrink(),
+                                  ]),
+                              onTap: () {
+                                Analytics().sendEvent(item.title);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NewsDetailPage(
+                                      news: item,
+                                    ),
                                   ),
-                                )
-                              : SizedBox.shrink(),
-                        ]),
-                          onTap: () {
-                            Analytics().sendEvent(item.title);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NewsDetailPage(
-                                  news: item,
-                                ),
-                              ),
-                            );
-                          }
-                      ),
-                    );
-                  },
-                ),
+                                );
+                              }),
+                        );
+                      },
+                    ),
+                    onRefresh: () {
+                      return Future.delayed(Duration(seconds: 0), () {
+                        /// adding elements in list after [1 seconds] delay
+                        /// to mimic network call
+                        ///
+                        /// Remember: [setState] is necessary so that
+                        /// build method will run again otherwise
+                        /// list will not show all elements
+                        setState(() {
+                          newsProvider.fetchNews(refresh: true);
+                        });
+                      });
+                    }),
               ),
               Container(
-                  child: (newsProvider.loading && !newsProvider.allnews)
+                  child: (newsProvider.loading)
                       ? Padding(
                           padding: EdgeInsets.all(20),
                           child: new CircularProgressIndicator())
