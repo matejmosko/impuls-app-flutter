@@ -49,7 +49,6 @@ class API {
 
       if (file != null && await file.exists()) {
         final text = await file.readAsString();
-        print(text);
         return text;
       }
       return "[]";

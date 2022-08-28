@@ -22,7 +22,7 @@ class InfoView extends StatelessWidget {
             opacity: infoProvider.loading ? 1.0 : 0.0,
             duration: Duration(milliseconds: 500),
             child: Text(
-              "Loading...",
+              "Načítavam...",
               style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
             ),
           ),

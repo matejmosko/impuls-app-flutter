@@ -29,9 +29,13 @@ class InfoProvider extends ChangeNotifier {
     stream.listen((DatabaseEvent info) {
       List<dynamic> list = [];
       Map validMap = json.decode(json.encode(info.snapshot.value));
-      for (var e in validMap.values) {
-        list.add(e);
+      var sortedKeys = validMap.keys.toList()..sort();
+      for (var it = 0; it < sortedKeys.length; it++) {
+        list.add(validMap[sortedKeys[it]]);
       }
+/*      for (var e in validMap.values) {
+        list.add(e);
+      }*/
 
       setInfo(
         list.map((model) => InfoPost.fromJson(model)).toList(),
