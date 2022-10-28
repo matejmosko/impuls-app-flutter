@@ -1,9 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:scenickazatva_app/pages/TabPage.dart';
-import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
-import 'package:scenickazatva_app/providers/EventsProvider.dart';
-import 'package:scenickazatva_app/providers/InfoProvider.dart';
-import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,11 +7,14 @@ import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+
+import 'package:scenickazatva_app/pages/TabPage.dart';
+import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
+import 'package:scenickazatva_app/providers/EventsProvider.dart';
+import 'package:scenickazatva_app/providers/InfoProvider.dart';
+import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
 
-
-
-import 'dart:io' show Platform;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
  // print("Notification shown!");
@@ -65,10 +64,10 @@ Future<String> getFCMtoken() async{
 
 
 void main() async {
-  if (Platform.isAndroid || Platform.isIOS) {
+  //if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android) {
     WidgetsFlutterBinding.ensureInitialized();
 
-    if (Firebase.apps.isEmpty) {
+    /*if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
@@ -76,7 +75,12 @@ void main() async {
     } else {
       await Firebase.app();
       await authFirebase();
-    }
+    }*/
+
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await authFirebase();
 
     FirebaseAuth.instance.idTokenChanges().listen((User user) async{
       if (user == null) {
@@ -84,7 +88,7 @@ void main() async {
       } else {
         print('User is signed in with UID: '+user.uid);
         var _uid = user.uid;
-        FirebaseDatabase.instance.setPersistenceEnabled(true);
+        if(!kIsWeb){FirebaseDatabase.instance.setPersistenceEnabled(true);}
         final fcmToken = await getFCMtoken();
 
         final Map<String, Object> userSettings = {
@@ -145,7 +149,10 @@ void main() async {
         print('Message also contained a notification: ${message.notification}');
       }
     });
-  }
+  /*} else {
+    // Some web specific code there
+    // https://stackoverflow.com/questions/58459483/unsupported-operation-platform-operatingsystem
+  }*/
 
   initializeDateFormatting('sk_SK').then((_) => runApp(MyApp()));
 }

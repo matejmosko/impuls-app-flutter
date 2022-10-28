@@ -1,6 +1,6 @@
 //import 'dart:collection';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -55,7 +55,7 @@ class EventsProvider extends ChangeNotifier {
     DatabaseReference eventsdb = FirebaseDatabase.instance.ref("festivals/$festival/events");
     Stream<DatabaseEvent> stream = eventsdb.onValue;
 
-    eventsdb.keepSynced(true);
+    if (!kIsWeb){eventsdb.keepSynced(true);}
     // Get the Stream
 
 // Subscribe to the stream!
