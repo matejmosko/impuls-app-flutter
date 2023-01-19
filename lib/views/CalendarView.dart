@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
-import 'package:firebase_image/firebase_image.dart';
+import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:markdown/markdown.dart' as MD;
@@ -306,7 +306,9 @@ class EventListItem extends StatelessWidget {
                 height: 120.0,
                 child: Hero(
                   child: Image(
-                    image: FirebaseImage(event.image),
+                    image: FirebaseImageProvider(
+                        FirebaseUrl(event.image)
+                    ),
                     fit: BoxFit.cover,
                     height: double.infinity,
                     width: double.infinity,

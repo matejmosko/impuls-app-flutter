@@ -3,7 +3,7 @@ import 'package:scenickazatva_app/models/Event.dart';
 import 'package:intl/intl.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:scenickazatva_app/requests/api.dart';
-import 'package:firebase_image/firebase_image.dart';
+import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:markdown/markdown.dart' as MD;
 
@@ -45,7 +45,9 @@ class EventDetailPage extends StatelessWidget {
             Hero(
               child: event.image != null
                   ? Image(
-                      image: FirebaseImage(event.image),
+                      image: FirebaseImageProvider(
+                          FirebaseUrl(event.image)
+                      ),
                       fit: BoxFit.cover,
                       height: 300,
                       width: double.infinity,

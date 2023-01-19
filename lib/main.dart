@@ -15,9 +15,8 @@ import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
 
-
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
- // print("Notification shown!");
+  // print("Notification shown!");
 }
 
 void authFirebase() async {
@@ -39,7 +38,7 @@ void authFirebase() async {
   }
 }
 
-Future<String> getFCMtoken() async{
+Future<String> getFCMtoken() async {
   FirebaseMessaging _messaging;
   _messaging = FirebaseMessaging.instance;
 
@@ -62,12 +61,11 @@ Future<String> getFCMtoken() async{
   return fcmToken;
 }
 
-
 void main() async {
   //if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android) {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-    /*if (Firebase.apps.isEmpty) {
+  /*if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
@@ -77,78 +75,80 @@ void main() async {
       await authFirebase();
     }*/
 
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    await authFirebase();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await authFirebase();
 
-    FirebaseAuth.instance.idTokenChanges().listen((User user) async{
-      if (user == null) {
-        print('User is currently signed out! We cannot get data');
-      } else {
-        print('User is signed in with UID: '+user.uid);
-        var _uid = user.uid;
-        if(!kIsWeb){FirebaseDatabase.instance.setPersistenceEnabled(true);}
-        final fcmToken = await getFCMtoken();
+  FirebaseAuth.instance.idTokenChanges().listen((User user) async {
+    if (user == null) {
+      print('User is currently signed out! We cannot get data');
+    } else {
+      print('User is signed in with UID: ' + user.uid);
+      var _uid = user.uid;
+      if (!kIsWeb) {
+        FirebaseDatabase.instance.setPersistenceEnabled(true);
+      }
+      final fcmToken = await getFCMtoken();
 
-        final Map<String, Object> userSettings = {
-          "timestamp": DateTime.now().toString(),
-          "fcmtoken": fcmToken != null ? fcmToken : "",
-        };
+      final Map<String, Object> userSettings = {
+        "timestamp": DateTime.now().toString(),
+        "fcmtoken": fcmToken != null ? fcmToken : "",
+      };
 
-        DatabaseReference festivals = await FirebaseDatabase.instance.ref("appsettings/festivals");
+      DatabaseReference festivals =
+          await FirebaseDatabase.instance.ref("appsettings/festivals");
 
-        festivals.onValue.listen((DatabaseEvent event) async{
-          DatabaseReference _usersdb = FirebaseDatabase.instance.ref("users/$_uid/notifications");
-          final _users = await _usersdb.get();
-          final _currentUser = (_users.value as Map);
+      festivals.onValue.listen((DatabaseEvent event) async {
+        DatabaseReference _usersdb =
+            FirebaseDatabase.instance.ref("users/$_uid/notifications");
+        final _users = await _usersdb.get();
+        final _currentUser = (_users.value as Map);
 
+        final data = (event.snapshot.value as Map);
+        final _notifications = {};
 
-          final data = (event.snapshot.value as Map);
-          final _notifications = {};
-
-            data.forEach((key, value) {
-              if (_currentUser !=null) {
-              _notifications[key] =
-              _currentUser[key] != null ? _currentUser[key] : true;
-              } else {
-                _notifications[key] =
-                true;
-              }
-            });
-
-          userSettings["notifications"] = _notifications;
-
-          FirebaseDatabase.instance.ref("users/"+user.uid).update(userSettings).then((_) {
-         //   print("Firebase save success");
-          }).catchError((error) {
-            print(error);
-          });
+        data.forEach((key, value) {
+          if (_currentUser != null) {
+            _notifications[key] =
+                _currentUser[key] != null ? _currentUser[key] : true;
+          } else {
+            _notifications[key] = true;
+          }
         });
 
+        userSettings["notifications"] = _notifications;
 
-      }
-    });
+        FirebaseDatabase.instance
+            .ref("users/" + user.uid)
+            .update(userSettings)
+            .then((_) {
+          //   print("Firebase save success");
+        }).catchError((error) {
+          print(error);
+        });
+      });
+    }
+  });
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
-      // Note: This callback is fired at each app startup and whenever a new
-      // token is generated.
-      print("Token changed: $fcmToken");
-    }).onError((err) {
-      // Error getting token.
-    });
+  FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+    // Note: This callback is fired at each app startup and whenever a new
+    // token is generated.
+    print("Token changed: $fcmToken");
+  }).onError((err) {
+    // Error getting token.
+  });
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-
-      if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
-      }
-    });
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+    }
+  });
   /*} else {
     // Some web specific code there
     // https://stackoverflow.com/questions/58459483/unsupported-operation-platform-operatingsystem
