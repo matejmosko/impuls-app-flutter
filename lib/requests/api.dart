@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -28,8 +29,8 @@ class API {
     if (options.exists) {
       final _options = (options.value
           as Map); // https://github.com/firebase/flutterfire/issues/7945#issuecomment-1065871088
-      return _options["festivals"][_options["defaultfestival"]][src];
-      //return "https://panakrala.sk/wp-json/wp/v2/posts?per_page=10&order=desc&categories_exclude=18,19,20&_embed&page=";
+      return _options["festivals"][_options["defaultfestival"]]["options"][src];
+      //return "https://www.scenickazatva.eu/2021/wp-json/wp/v2/posts?per_page=100&order=desc&categories_exclude=18,19,20&_embed&page=";
     } else {
       //print('No data in AppSettings');
       return null;
@@ -46,22 +47,26 @@ class API {
     } catch (e) {
     }
   }
-
+/*
   Future<http.Response> fetchArrangements() {
     var result = http.get(Uri.parse(url2 + '/events.json'),
         headers: {'Content-Type': 'application/json; charset=utf-8'});
     return result;
   }
+  */
 
   Future<String> fetchNews(page) async {
     try {
       var _url = await getRestSrc("news_src");
       _url = _url.toString() + page.toString();
+      log(_url);
       var file;
       if (!kIsWeb) {
         file = await _newsCache.getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
       } else {
+        log(_url);
         file = await getFileForWeb(_url);
+        log(file);
       }
 
 
