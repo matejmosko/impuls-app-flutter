@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,6 +36,17 @@ class API {
     }
   }
 
+  Future getFileForWeb(url) async {
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        var _file = response.body;
+        return _file;
+      }
+    } catch (e) {
+    }
+  }
+
   Future<http.Response> fetchArrangements() {
     var result = http.get(Uri.parse(url2 + '/events.json'),
         headers: {'Content-Type': 'application/json; charset=utf-8'});
@@ -45,7 +57,13 @@ class API {
     try {
       var _url = await getRestSrc("news_src");
       _url = _url.toString() + page.toString();
-      var file = await _newsCache.getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
+      var file;
+      if (!kIsWeb) {
+        file = await _newsCache.getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
+      } else {
+        file = await getFileForWeb(_url);
+      }
+
 
       if (file != null && await file.exists()) {
         final text = await file.readAsString();

@@ -86,10 +86,12 @@ void main() async {
     } else {
       print('User is signed in with UID: ' + user.uid);
       var _uid = user.uid;
+      var fcmToken = "";
       if (!kIsWeb) {
         FirebaseDatabase.instance.setPersistenceEnabled(true);
+        fcmToken = await getFCMtoken();
       }
-      final fcmToken = await getFCMtoken();
+
 
       final Map<String, Object> userSettings = {
         "timestamp": DateTime.now().toString(),
