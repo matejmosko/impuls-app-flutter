@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
@@ -6,7 +7,7 @@ import 'package:scenickazatva_app/views/CalendarView.dart';
 import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/views/InfoView.dart';
 import 'package:scenickazatva_app/views/NewsView.dart';
-import 'package:scenickazatva_app/views/MagazineView.dart';
+//import 'package:scenickazatva_app/views/MagazineView.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
@@ -83,7 +84,21 @@ class _TabPageState extends State<TabPage> {
                 ),
               );
             },
-          )
+          ),
+          kIsWeb != null ? IconButton(
+            icon: Icon(
+              Icons.person,
+              color: Colors.white,
+            ),
+            onPressed: () { // TODO Pridať možnosť prihlásiť sa na webe.
+              /*Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsPage(),
+                ),
+              );*/
+            },
+          ) : null,
         ],
       ),
       body: Center(

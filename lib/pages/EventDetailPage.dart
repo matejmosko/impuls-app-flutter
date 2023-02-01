@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/models/Event.dart';
+import 'package:scenickazatva_app/pages/EventEditPage.dart';
 import 'package:intl/intl.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:scenickazatva_app/requests/api.dart';
@@ -39,6 +40,7 @@ class EventDetailPage extends StatelessWidget {
           "Scénická žatva 100",
         ),
       ),
+
       body: SafeArea(
         child: ListView(
           children: [
@@ -112,6 +114,19 @@ class EventDetailPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventEditPage(
+                event: event,
+              ),
+            ),
+          );
+        },
+        child: const Icon(Icons.edit),
       ),
     );
   }
