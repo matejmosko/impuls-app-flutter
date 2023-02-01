@@ -15,9 +15,8 @@ class NewsProvider extends ChangeNotifier {
   //int totalmagazinepages = 1;
 
   NewsProvider() {
-    fetchNews();
-    fetchMagazine();
-
+    fetchNews("news_src");
+    fetchMagazine("magazine_src");
   }
 
   //List<NewsPost> get arrangements => _news;
@@ -26,14 +25,14 @@ class NewsProvider extends ChangeNotifier {
 
   List<NewsPost> get articles => _articles;
 
-  void /*Future<List<NewsPost>>*/ fetchNews({refresh: false}) async {
+  void /*Future<List<NewsPost>>*/ fetchNews(src, {refresh: false}) async {
     setLoading(true);
     if (refresh){
       allnews = false;
       newspage = 1;
     }
 
-    API().fetchNews(newspage).then((data) {
+    API().fetchNews(src, newspage).then((data) {
       Iterable _list = json.decode(data);
       if (data == []) {
         allnews = true;
@@ -43,14 +42,14 @@ class NewsProvider extends ChangeNotifier {
     });
   }
 
-  void /* Future<List<NewsPost>>*/ fetchMagazine({refresh:false}) async {
+  void /* Future<List<NewsPost>>*/ fetchMagazine(src, {refresh:false}) async {
     setLoading(true);
     if (refresh){
       allarticles = false;
       magazinepage = 1;
     }
 
-    API().fetchMagazine(magazinepage).then((data) {
+    API().fetchNews(src, magazinepage).then((data) {
       Iterable _list = json.decode(data);
       if (data == []) {
         allarticles = true;

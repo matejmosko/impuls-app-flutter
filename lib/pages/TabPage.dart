@@ -10,18 +10,16 @@ import 'package:scenickazatva_app/views/MagazineView.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
-
   @override
   _TabPageState createState() => _TabPageState();
 }
 
 class _TabPageState extends State<TabPage> {
-
   static List<Widget> _widgetOptions = <Widget>[
     NewsView(),
     CalendarView(),
-    MagazineView(),
     InfoView(),
+//    MagazineView(),
   ];
   int _selectedIndex = 0;
   PageController _pageController = PageController(
@@ -38,14 +36,14 @@ class _TabPageState extends State<TabPage> {
 
   void pageChanged(int index, newsProvider, eventsProvider, infoProvider) {
     if (index == 0) {
-      newsProvider.fetchNews();
+      newsProvider.fetchNews("news_src");
     } else if (index == 1) {
       eventsProvider.fetchAllEvents();
     } else if (index == 2) {
-      newsProvider.fetchMagazine();
-    } else if (index == 3) {
       infoProvider.fetchInfo();
-    }
+    }/* else if (index == 3) {
+      newsProvider.fetchMagazine("magazine_src");
+    }*/
     setState(() {
       _selectedIndex = index;
     });
@@ -53,12 +51,11 @@ class _TabPageState extends State<TabPage> {
 
   Widget buildPageView(newsProvider, eventsProvider, infoProvider) {
     return PageView(
-      controller: _pageController,
+        controller: _pageController,
         onPageChanged: (index) {
-        pageChanged(index, newsProvider, eventsProvider, infoProvider);
+          pageChanged(index, newsProvider, eventsProvider, infoProvider);
         },
-        children: _widgetOptions
-    );
+        children: _widgetOptions);
   }
 
   @override
@@ -82,8 +79,7 @@ class _TabPageState extends State<TabPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsPage(
-                  ),
+                  builder: (context) => SettingsPage(),
                 ),
               );
             },
@@ -91,10 +87,11 @@ class _TabPageState extends State<TabPage> {
         ],
       ),
       body: Center(
-        child: buildPageView(newsProvider, eventsProvider, infoProvider),//TabPage._widgetOptions.elementAt(_selectedIndex),
+        child: buildPageView(newsProvider, eventsProvider,
+            infoProvider), //TabPage._widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type:BottomNavigationBarType.fixed,
+        type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.black87,
         unselectedItemColor: Colors.white70,
         selectedItemColor: Color(0xffdf9f4a),
@@ -107,10 +104,10 @@ class _TabPageState extends State<TabPage> {
             icon: Icon(Icons.calendar_today),
             label: 'Kalendár',
           ),
-          BottomNavigationBarItem(
+          /*BottomNavigationBarItem(
             icon: Icon(Icons.article),
             label: 'Festník',
-          ),
+          ),*/
           BottomNavigationBarItem(
             icon: Icon(Icons.info),
             label: 'Info',

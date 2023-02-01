@@ -44,7 +44,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
             children: <Widget>[
               Flexible(
               child: LazyLoadScrollView(
-                  onEndOfPage: () => newsProvider.fetchNews(),
+                  onEndOfPage: () => newsProvider.fetchNews("news_src"),
           isLoading: newsProvider.loading,
           scrollOffset: 50,
           child: RefreshIndicator(
@@ -114,7 +114,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                         /// build method will run again otherwise
                         /// list will not show all elements
                         setState(() {
-                          newsProvider.fetchNews(refresh: true);
+                          newsProvider.fetchNews("news_src",refresh: true);
                         });
                       });
                     }),

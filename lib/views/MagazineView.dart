@@ -45,7 +45,7 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
             children: <Widget>[
               Flexible(
                     child: LazyLoadScrollView(
-                      onEndOfPage: () => newsProvider.fetchMagazine(),
+                      onEndOfPage: () => newsProvider.fetchMagazine("magazine_src"),
                       isLoading: newsProvider.loading,
                       scrollOffset: 50,
                         child: RefreshIndicator(
@@ -105,7 +105,7 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
                         /// build method will run again otherwise
                         /// list will not show all elements
                         setState(() {
-                          newsProvider.fetchMagazine(refresh: true);
+                          newsProvider.fetchMagazine("magazine_src",refresh: true);
                         });
                       });
                     }),

@@ -9,19 +9,7 @@ import 'package:firebase_analytics/firebase_analytics.dart'; // imported for fir
 
 
 class API {
-  final String url = 'https://www.scenickazatva.eu/2021';
-  final String url2 = 'https://db.panakrala.sk/zatva';
   final String selectedArrangement = '5e19cdd924cfa04fc3de1d3a';
-
-  static const key = 'newsCacheKey';
-  static CacheManager _newsCache = CacheManager(
-    Config(
-      key,
-      stalePeriod: const Duration(seconds: 60),
-      maxNrOfCacheObjects: 20,
-      repo: JsonCacheInfoRepository(databaseName: key),
-    ),
-  );
 
   Future<String> getRestSrc(src) async {
     DatabaseReference optionsdb = FirebaseDatabase.instance.ref("appsettings");
@@ -29,22 +17,10 @@ class API {
     if (options.exists) {
       final _options = (options.value
           as Map); // https://github.com/firebase/flutterfire/issues/7945#issuecomment-1065871088
-      return _options["festivals"][_options["defaultfestival"]]["options"][src];
-      //return "https://www.scenickazatva.eu/2021/wp-json/wp/v2/posts?per_page=100&order=desc&categories_exclude=18,19,20&_embed&page=";
+      return _options["festivals"][_options["defaultfestival"]][src];
     } else {
-      //print('No data in AppSettings');
+      print('No data in AppSettings');
       return null;
-    }
-  }
-
-  Future getFileForWeb(url) async {
-    try {
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        var _file = response.body;
-        return _file;
-      }
-    } catch (e) {
     }
   }
 /*
@@ -55,19 +31,18 @@ class API {
   }
   */
 
-  Future<String> fetchNews(page) async {
+  Future<String> fetchNews(src, page) async {
     try {
-      var _url = await getRestSrc("news_src");
+      var _url = await getRestSrc(src);
       _url = _url.toString() + page.toString();
-      log(_url);
-      var file;
-      if (!kIsWeb) {
-        file = await _newsCache.getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
-      } else {
-        log(_url);
+      /* if (!kIsWeb) { */
+        var file = await DefaultCacheManager().getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
+      //var file = await _newsCache.getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
+      /*} else {
+        print(_url);
         file = await getFileForWeb(_url);
-        log(file);
-      }
+        print(file);
+      }*/
 
 
       if (file != null && await file.exists()) {
@@ -76,23 +51,6 @@ class API {
       }
       return "[]";
     } catch (e) {
-      return "[]";
-    }
-  }
-
-  Future<String> fetchMagazine(page) async {
-    try {
-      var _url = await getRestSrc("magazine_src");
-      _url = _url.toString() + page.toString();
-      var file = await DefaultCacheManager().getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
-
-      if (file != null && await file.exists()) {
-        final text = await file.readAsString();
-        return text;
-      }
-      return "[]";
-    } catch (e) {
-      // print(e);
       return "[]";
     }
   }
