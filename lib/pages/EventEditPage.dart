@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:scenickazatva_app/pages/EventDetailPage.dart';
 import 'package:intl/intl.dart';
-import 'package:scenickazatva_app/providers/AppSettings.dart';
-import 'package:scenickazatva_app/requests/api.dart';
+//import 'package:scenickazatva_app/providers/AppSettings.dart';
+//import 'package:scenickazatva_app/requests/api.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:markdown/markdown.dart' as MD;
+//import 'package:flutter_html/flutter_html.dart';
+//import 'package:markdown/markdown.dart' as MD;
 
 class EventEditPage extends StatefulWidget {
   //const EventEditPage({super.key, @required this.event});
@@ -19,99 +19,239 @@ class EventEditPage extends StatefulWidget {
 
 class EventEditPageState extends State<EventEditPage> {
   final _formKey = GlobalKey<FormState>();
+  var startDate;
+  var endDate;
 
-  var edited;
+  @override
+  void initState() {
+    super.initState();
+    startDate = widget.event.startTime;
+    endDate = widget.event.endTime;
+    // Start listening to changes.
+  }
 
   Widget buildForm(BuildContext context) {
+
+    Future<void> displayTimeDialog(BuildContext context, iniTime, field) async {
+      final TimeOfDay time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(iniTime),
+      );
+      if (time != null) {
+        setState(() {
+          if (field == "start") {
+          startDate = DateTime(iniTime.year, iniTime.month, iniTime.day,
+          time.hour, time.minute);
+          } else if (field == "end") {
+            endDate = DateTime(iniTime.year, iniTime.month, iniTime.day,
+                time.hour, time.minute);
+          }
+        });
+      }
+    }
+
+    Future<void> displayDateDialog(BuildContext context, iniDate, field) async {
+      final DateTime date = await showDatePicker(
+          context: context,
+          initialDate: iniDate,
+          firstDate: DateTime(1970),
+          lastDate: DateTime(2201));
+
+      if (date != null) {
+        setState(() {
+          if (field == "start") {
+            startDate = DateTime(date.year, date.month, date.day, iniDate.hour, iniDate.minute);
+            print("after");
+            print(startDate.toLocal());
+          } else if (field == "end") {
+            endDate =
+                DateTime(date.year, date.month, date.day, iniDate.hour,
+                    iniDate.minute);
+          }
+        });
+      }
+      return date;
+    }
+
     // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            initialValue: widget.event.title,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: "Názov podujatia",
+    return Container(
+      padding: EdgeInsets.all(15),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            Row(children: <Widget>[
+              Expanded(
+                child: TextFormField(
+                  initialValue: widget.event.title,
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: "Názov podujatia",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Flexible(
+                child: TextFormField(
+                  initialValue: widget.event.id,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: "ID",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ]),
+
+            TextFormField(
+              initialValue: widget.event.artist,
+              decoration: InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: "Umelec",
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            initialValue: widget.event.artist,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: "Umelec",
+            TextFormField(
+              initialValue: widget.event
+                  .location, // TODO Prerobiť location na DropdownButtonFormField() - na to ale treba zmeniť aj spôsob priraďovania miest podujatí a prehodiť to na firebase (teraz je to hardcoded)
+              decoration: InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: "Miesto podujatia",
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            initialValue: widget.event.location, // TODO Prerobiť location na DropdownButtonFormField() - na to ale treba zmeniť aj spôsob priraďovania miest podujatí a prehodiť to na firebase (teraz je to hardcoded)
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: "Miesto podujatia",
+            TextFormField( // TODO Pridať WYSIWIG
+              initialValue: widget.event.description,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: "Popis",
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            initialValue: widget.event.description,
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: "Popis",
+            Row(
+              children: <Widget>[
+                Flexible(
+                  child: TextFormField(
+                    controller: TextEditingController(
+                        text:
+                            "${DateFormat("E, d.M. yyyy", "sk_SK").format(startDate)}"),
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: "Dátum začiatku",
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Prosím, vyklikajte si dátum.';
+                      }
+                      return null;
+                    },
+                    onTap: () {
+                      displayDateDialog(context, startDate, "start");
+                    },
+                  ),
+                ),
+                Flexible(
+                  child: TextFormField(
+                    controller: TextEditingController(
+                        text:
+                            "${DateFormat("HH:mm", "sk_SK").format(startDate)}"),
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: "Čas začiatku",
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Prosím, vyklikajte si čas.';
+                      }
+                      return null;
+                    },
+                    onTap: () {displayTimeDialog(context, startDate, "start");},
+                  ),
+                ),
+              ],
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            initialValue: widget.event.id,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: "ID",
+            Row(
+              children: <Widget>[
+                Flexible(
+                  child: TextFormField(
+                    controller: TextEditingController(
+                        text:
+                        "${DateFormat("E, d.M. yyyy", "sk_SK").format(endDate)}"),
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: "Dátum konca",
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Prosím, vyklikajte si dátum.';
+                      }
+                      return null;
+                    },
+                    onTap: () {
+                      displayDateDialog(context, endDate, "end");
+                    },
+                  ),
+                ),
+                Flexible(
+                  child: TextFormField(
+                    controller: TextEditingController(
+                        text:
+                        "${DateFormat("HH:mm", "sk_SK").format(endDate)}"),
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: "Čas začiatku",
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Prosím, vyklikajte si čas.';
+                      }
+                      return null;
+                    },
+                    onTap: () {displayTimeDialog(context, endDate, "end");},
+                  ),
+                ),
+              ],
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
-          ),
-          // Add TextFormFields and ElevatedButton here.
-        ],
+            // Add TextFormFields and ElevatedButton here.
+          ],
+        ),
       ),
     );
   }
 
   Widget build(BuildContext context) {
-    final startDate = widget.event.startTime != null
-        ? new DateFormat("E, d.M.", "sk_SK").format(widget.event.startTime)
-        : '';
-    final startTime = widget.event.startTime != null
-        ? new DateFormat("HH:mm").format(widget.event.startTime)
-        : '';
-    final endTime = widget.event.endTime != null
-        ? "\n${new DateFormat("HH:mm").format(widget.event.endTime)}"
-        : '';
-
     //Location
     //final location = widget.event.location != null ? "\n${widget.event.location}" : '';
     return Scaffold(
@@ -188,7 +328,8 @@ class EventEditPageState extends State<EventEditPage> {
               tag: widget.event.image,
             ),
             Card(
-              child: buildForm(context) /* Column(children: <Widget>[
+                child: buildForm(
+                    context) /* Column(children: <Widget>[
                 Container(
                     decoration: BoxDecoration(
                         border: Border(
@@ -239,7 +380,7 @@ class EventEditPageState extends State<EventEditPage> {
                         ))
                     : SizedBox.shrink()
               ]), */
-            ),
+                ),
           ],
         ),
       ),

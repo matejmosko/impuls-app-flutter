@@ -22,9 +22,9 @@ class _TabPageState extends State<TabPage> {
     InfoView(),
 //    MagazineView(),
   ];
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   PageController _pageController = PageController(
-    initialPage: 0,
+    initialPage: 1,
     keepPage: true,
   );
 
