@@ -40,7 +40,7 @@ class NewsDetailPage extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Text("${news.title ?? ''}",
-                      style: Theme.of(context).textTheme.headline1),
+                      style: Theme.of(context).textTheme.displayLarge),
                   news.description != null
                       ? Padding(
                           padding: EdgeInsets.all(12),

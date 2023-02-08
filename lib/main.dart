@@ -5,15 +5,40 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
+import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/pages/TabPage.dart';
 import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
+import 'package:scenickazatva_app/pages/EventDetailPage.dart';
+import 'package:scenickazatva_app/pages/EventEditPage.dart';
+
+
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => TabPage(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => SettingsPage(),
+    ),
+    GoRoute(
+      path: '/events/:eventId',
+      builder: (context, state) => EventDetailPage(eventId: state.params["eventId"]),
+    ),
+    GoRoute(
+      path: '/events/:eventId/edit',
+      builder: (context, state) => EventEditPage(eventId: state.params["eventId"]),
+    ),
+  ],
+);
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // print("Notification shown!");
@@ -24,7 +49,7 @@ void authFirebase() async {
     final userCredential = await FirebaseAuth.instance.signInAnonymously();
     userData = userCredential;
 
-    /* Log user login time */
+      /* Log user login time */
 
   } on FirebaseAuthException catch (e) {
     /* Catch login errors */
@@ -64,16 +89,6 @@ Future<String> getFCMtoken() async {
 void main() async {
   //if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android) {
   WidgetsFlutterBinding.ensureInitialized();
-
-  /*if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      await authFirebase();
-    } else {
-      await Firebase.app();
-      await authFirebase();
-    }*/
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -184,16 +199,13 @@ class MyApp extends StatelessWidget {
           value: ArrangementProvider(),
         ),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: "Scénická žatva 100",
         theme: ThemeData(
-            scaffoldBackgroundColor: lightColor,
-            primaryColor: darkColor,
-            backgroundColor: lightColor,
+            useMaterial3: true,
+            colorSchemeSeed: accentColor,
             dividerColor: Colors.grey,
             cardColor: lightColor,
-            colorScheme:
-                ColorScheme.fromSwatch().copyWith(secondary: accentColor),
             fontFamily: 'Hind',
             appBarTheme: AppBarTheme(
               backgroundColor: darkColor,
@@ -203,29 +215,30 @@ class MyApp extends StatelessWidget {
             // Define the default `TextTheme`. Use this to specify the default
             // text styling for headlines, titles, bodies of text, and more.
             textTheme: TextTheme(
-              headline1: TextStyle(
+              displayLarge: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                   color: accentColor),
-              headline2: TextStyle(
+              displayMedium: TextStyle(
                   fontSize: 18.0,
                   fontStyle: FontStyle.italic,
                   color: accentColor),
-              headline3: TextStyle(
+              displaySmall: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                   color: darkColor),
-              headline6: TextStyle(
+              titleLarge: TextStyle(
                   fontSize: 19.0,
                   //fontWeight: FontWeight.bold,
                   color: accentColor),
-              bodyText1: TextStyle(
+              bodyLarge: TextStyle(
                   fontSize: 14.0, fontFamily: 'Hind', color: lightColor),
-              bodyText2: TextStyle(
+              bodyMedium: TextStyle(
                   fontSize: 14.0, fontFamily: 'Hind', color: darkColor),
             )),
         debugShowCheckedModeBanner: false,
-        home: TabPage(),
+        //home: TabPage(),
+        routerConfig: _router,
       ),
     );
   }

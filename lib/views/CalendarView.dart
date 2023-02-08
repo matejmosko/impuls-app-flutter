@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scenickazatva_app/pages/EventDetailPage.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +9,7 @@ import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:markdown/markdown.dart' as MD;
+import 'package:go_router/go_router.dart';
 
 class CalendarView extends StatefulWidget {
   CalendarView({Key key, this.title}) : super(key: key);
@@ -142,7 +142,7 @@ class _CalendarViewState extends State<CalendarView>
         calendarStyle: CalendarStyle(
           outsideDaysVisible: true,
           outsideTextStyle: TextStyle(color: Theme.of(context).dividerColor),
-          defaultTextStyle: TextStyle(color: Theme.of(context).backgroundColor),
+          defaultTextStyle: TextStyle(color: Theme.of(context).colorScheme.background),
         ),
         calendarBuilders: CalendarBuilders(
           selectedBuilder: (context, date, _) {
@@ -208,7 +208,7 @@ class _CalendarViewState extends State<CalendarView>
         child: Text(
           '${events.length}',
           style: TextStyle().copyWith(
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             fontSize: 12.0,
           ),
         ),
@@ -282,7 +282,7 @@ class EventListItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text("${event.title ?? ''}",
-                  style: Theme.of(context).textTheme.headline3),
+                  style: Theme.of(context).textTheme.displaySmall),
               LimitedBox(
                 child: ShaderMask(
                   blendMode: BlendMode.srcIn,
@@ -324,14 +324,15 @@ class EventListItem extends StatelessWidget {
       ])),
       onTap: () {
         Analytics().sendEvent(event.title);
-        Navigator.push(
+        context.go("/events/"+event.id);
+/*        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => EventDetailPage(
-              event: event,
+              eventId: event.id,
             ),
           ),
-        );
+        );*/
       },
     );
   }

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/models/Event.dart';
-import 'package:scenickazatva_app/pages/EventDetailPage.dart';
+import 'package:provider/provider.dart';
+import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:intl/intl.dart';
 //import 'package:scenickazatva_app/providers/AppSettings.dart';
 //import 'package:scenickazatva_app/requests/api.dart';
-import 'package:firebase_cached_image/firebase_cached_image.dart';
-//import 'package:flutter_html/flutter_html.dart';
-//import 'package:markdown/markdown.dart' as MD;
+//import 'package:firebase_cached_image/firebase_cached_image.dart';
+import 'package:html_editor_enhanced/html_editor.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
+import 'package:go_router/go_router.dart';
 
 class EventEditPage extends StatefulWidget {
   //const EventEditPage({super.key, @required this.event});
-  final Event event;
-  const EventEditPage({Key key, @required this.event}) : super(key: key);
+  final eventId;
+  const EventEditPage({Key key, @required this.eventId}) : super(key: key);
 
   @override
   EventEditPageState createState() => EventEditPageState();
@@ -21,27 +23,36 @@ class EventEditPageState extends State<EventEditPage> {
   final _formKey = GlobalKey<FormState>();
   var startDate;
   var endDate;
+  Event event;
 
   @override
   void initState() {
     super.initState();
-    startDate = widget.event.startTime;
-    endDate = widget.event.endTime;
     // Start listening to changes.
+
   }
 
   Widget buildForm(BuildContext context) {
+    EventsProvider eventsProvider =
+    Provider.of<EventsProvider>(context, listen: false);
+    Event event = eventsProvider.events.where((element) => (element.id == widget.eventId)).toList()[0];
+    print(event);
+
+    startDate = event.startTime;
+    endDate = event.endTime;
+
+    HtmlEditorController htmlcontroller = HtmlEditorController();
 
     Future<void> displayTimeDialog(BuildContext context, iniTime, field) async {
       final TimeOfDay time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(iniTime),
-      );
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(iniTime),
+          builder: (ctx, child) => PointerInterceptor(child: child));
       if (time != null) {
         setState(() {
           if (field == "start") {
-          startDate = DateTime(iniTime.year, iniTime.month, iniTime.day,
-          time.hour, time.minute);
+            startDate = DateTime(iniTime.year, iniTime.month, iniTime.day,
+                time.hour, time.minute);
           } else if (field == "end") {
             endDate = DateTime(iniTime.year, iniTime.month, iniTime.day,
                 time.hour, time.minute);
@@ -55,18 +66,19 @@ class EventEditPageState extends State<EventEditPage> {
           context: context,
           initialDate: iniDate,
           firstDate: DateTime(1970),
-          lastDate: DateTime(2201));
+          lastDate: DateTime(2201),
+          builder: (ctx, child) => PointerInterceptor(child: child));
 
       if (date != null) {
         setState(() {
           if (field == "start") {
-            startDate = DateTime(date.year, date.month, date.day, iniDate.hour, iniDate.minute);
+            startDate = DateTime(
+                date.year, date.month, date.day, iniDate.hour, iniDate.minute);
             print("after");
             print(startDate.toLocal());
           } else if (field == "end") {
-            endDate =
-                DateTime(date.year, date.month, date.day, iniDate.hour,
-                    iniDate.minute);
+            endDate = DateTime(
+                date.year, date.month, date.day, iniDate.hour, iniDate.minute);
           }
         });
       }
@@ -75,7 +87,7 @@ class EventEditPageState extends State<EventEditPage> {
 
     // Build a Form widget using the _formKey created above.
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.all(45),
       child: Form(
         key: _formKey,
         child: Column(
@@ -83,7 +95,7 @@ class EventEditPageState extends State<EventEditPage> {
             Row(children: <Widget>[
               Expanded(
                 child: TextFormField(
-                  initialValue: widget.event.title,
+                  initialValue: event.title,
                   decoration: InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: "Názov podujatia",
@@ -98,7 +110,7 @@ class EventEditPageState extends State<EventEditPage> {
               ),
               Flexible(
                 child: TextFormField(
-                  initialValue: widget.event.id,
+                  initialValue: event.id,
                   readOnly: true,
                   decoration: InputDecoration(
                     border: UnderlineInputBorder(),
@@ -115,7 +127,7 @@ class EventEditPageState extends State<EventEditPage> {
             ]),
 
             TextFormField(
-              initialValue: widget.event.artist,
+              initialValue: event.artist,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: "Umelec",
@@ -128,26 +140,11 @@ class EventEditPageState extends State<EventEditPage> {
               },
             ),
             TextFormField(
-              initialValue: widget.event
+              initialValue: event
                   .location, // TODO Prerobiť location na DropdownButtonFormField() - na to ale treba zmeniť aj spôsob priraďovania miest podujatí a prehodiť to na firebase (teraz je to hardcoded)
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: "Miesto podujatia",
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            TextFormField( // TODO Pridať WYSIWIG
-              initialValue: widget.event.description,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: "Popis",
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -195,7 +192,9 @@ class EventEditPageState extends State<EventEditPage> {
                       }
                       return null;
                     },
-                    onTap: () {displayTimeDialog(context, startDate, "start");},
+                    onTap: () {
+                      displayTimeDialog(context, startDate, "start");
+                    },
                   ),
                 ),
               ],
@@ -206,7 +205,7 @@ class EventEditPageState extends State<EventEditPage> {
                   child: TextFormField(
                     controller: TextEditingController(
                         text:
-                        "${DateFormat("E, d.M. yyyy", "sk_SK").format(endDate)}"),
+                            "${DateFormat("E, d.M. yyyy", "sk_SK").format(endDate)}"),
                     readOnly: true,
                     decoration: InputDecoration(
                       border: UnderlineInputBorder(),
@@ -227,7 +226,7 @@ class EventEditPageState extends State<EventEditPage> {
                   child: TextFormField(
                     controller: TextEditingController(
                         text:
-                        "${DateFormat("HH:mm", "sk_SK").format(endDate)}"),
+                            "${DateFormat("HH:mm", "sk_SK").format(endDate)}"),
                     readOnly: true,
                     decoration: InputDecoration(
                       border: UnderlineInputBorder(),
@@ -239,11 +238,39 @@ class EventEditPageState extends State<EventEditPage> {
                       }
                       return null;
                     },
-                    onTap: () {displayTimeDialog(context, endDate, "end");},
+                    onTap: () {
+                      displayTimeDialog(context, endDate, "end");
+                    },
                   ),
                 ),
               ],
             ),
+            HtmlEditor(
+              controller: htmlcontroller, //required
+              htmlEditorOptions: HtmlEditorOptions(
+                hint: "Your text here...",
+                initialText: event.description,
+                shouldEnsureVisible: true,
+              ),
+              htmlToolbarOptions: HtmlToolbarOptions(
+                toolbarPosition: ToolbarPosition.aboveEditor, //by default
+                toolbarType: ToolbarType.nativeScrollable, //by default
+                defaultToolbarButtons: [
+                  StyleButtons(),
+                  //FontSettingButtons(),
+                  FontButtons(),
+                  //ColorButtons(),
+                  ListButtons(listStyles: false),
+                  //ParagraphButtons(),
+                  //InsertButtons(),
+                  OtherButtons(),
+                ],
+              ),
+              otherOptions: OtherOptions(
+                height: 400,
+              ),
+            ),
+
             // Add TextFormFields and ElevatedButton here.
           ],
         ),
@@ -291,14 +318,15 @@ class EventEditPageState extends State<EventEditPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.push(
+              context.go("/events/"+widget.eventId);
+              /* Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => EventDetailPage(
-                    event: widget.event,
+                    eventId: event.id,
                   ),
                 ),
-              );
+              );*/
             },
           ),
         ],
@@ -306,11 +334,11 @@ class EventEditPageState extends State<EventEditPage> {
       body: SafeArea(
         child: ListView(
           children: [
-            Hero(
-              child: widget.event.image != null
+            /*Hero(
+              child: event.image != null
                   ? Image(
                       image: FirebaseImageProvider(
-                          FirebaseUrl(widget.event.image)),
+                          FirebaseUrl(event.image)),
                       fit: BoxFit.cover,
                       height: 300,
                       width: double.infinity,
@@ -325,75 +353,27 @@ class EventEditPageState extends State<EventEditPage> {
                       },
                     )
                   : SizedBox(),
-              tag: widget.event.image,
-            ),
+              tag: event.image,
+            ),*/
             Card(
                 child: buildForm(
-                    context) /* Column(children: <Widget>[
-                Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                color: Theme.of(context).dividerColor))),
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Text("$startDate\n$startTime - $endTime"),
-                          ),
-                          Expanded(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Text("EDIT ${widget.event.title ?? ''}",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline3),
-                                  Text("${widget.event.artist ?? ''}"),
-                                ]),
-                          ),
-                          Column(
-                            /*crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,*/
-                            children: <Widget>[
-                              Icon(Venues().getIcon(widget.event.location),
-                                  color:
-                                      Venues().getColor(widget.event.location),
-                                  size: 26),
-                              Text(Venues().getName(widget.event.location),
-                                  style: TextStyle(
-                                      color: Venues()
-                                          .getColor(widget.event.location))),
-                            ],
-                          ),
-                        ])),
-                widget.event.description != null
-                    ? Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Html(
-                          data: MD.markdownToHtml(widget.event.description),
-                          onLinkTap: (url, renderContext, map, element) =>
-                              API().launchURL(url),
-                        ))
-                    : SizedBox.shrink()
-              ]), */
+                    context)
                 ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (_formKey.currentState.validate()) {
-            // If the form is valid, display a snackbar. In the real world,
-            // you'd often call a server or save the information in a database.
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Processing Data')),
-            );
-          }
-          /*Navigator.push(
+      floatingActionButton: PointerInterceptor(
+        child: FloatingActionButton(
+          onPressed: () {
+            if (_formKey.currentState.validate()) {
+              // If the form is valid, display a snackbar. In the real world,
+              // you'd often call a server or save the information in a database.
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Processing Data')),
+              );
+            }
+            context.go("/events/"+widget.eventId);
+            /*Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => EventDetailPage(
@@ -401,8 +381,9 @@ class EventEditPageState extends State<EventEditPage> {
               ),
             ),
           );*/
-        },
-        child: const Icon(Icons.save),
+          },
+          child: const Icon(Icons.save),
+        ),
       ),
     );
   }

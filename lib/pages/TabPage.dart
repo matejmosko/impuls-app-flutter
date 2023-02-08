@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/views/CalendarView.dart';
-import 'package:scenickazatva_app/pages/SettingsPage.dart';
+//import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/views/InfoView.dart';
 import 'package:scenickazatva_app/views/NewsView.dart';
 //import 'package:scenickazatva_app/views/MagazineView.dart';
@@ -77,12 +78,7 @@ class _TabPageState extends State<TabPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsPage(),
-                ),
-              );
+              context.go('/settings');
             },
           ),
           kIsWeb != null ? IconButton(
@@ -91,19 +87,14 @@ class _TabPageState extends State<TabPage> {
               color: Colors.white,
             ),
             onPressed: () { // TODO Pridať možnosť prihlásiť sa na webe.
-              /*Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsPage(),
-                ),
-              );*/
+              context.go('/settings');
             },
           ) : null,
         ],
       ),
       body: Center(
         child: buildPageView(newsProvider, eventsProvider,
-            infoProvider), //TabPage._widgetOptions.elementAt(_selectedIndex),
+            infoProvider),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

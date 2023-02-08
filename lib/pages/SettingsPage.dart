@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+
 //import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -13,9 +15,11 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final bool _running = true;
 
+
   @override
   void initState() {
     super.initState();
+
   }
 
   Future<Map<Object, Object>> getPushSettings() async {
@@ -54,6 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    //const authProviders = [EmailAuthProvider()];
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -68,47 +73,66 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       body: Card(
-        child:Padding(
+        child: Padding(
           padding: EdgeInsets.all(16.0),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Text("Push notifikácie",
-              style: Theme.of(context).textTheme.headline3),
-          Text(
-              'Push notifikácie sú krátke správy o tom, že sa blíži predstavenie, ktoré sa zobrazujú medzi upozorneniami. Vyberte si tie podujatia, o ktorých chcete dostávať upozornenia.'),
-          StreamBuilder(
-              stream: _pushStream(),
-              builder: (context, AsyncSnapshot<Map<Object, Object>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return _buildLoadingScreen();
-                }
-                if (snapshot.hasData) {
-                  // bool x;
-                  final _festivals = snapshot.data;
-                  final _keys = _festivals.keys.toList();
-                  return Flexible(
-                    fit: FlexFit.tight,
-                    child: ListView.builder(
-                      itemCount: _keys != null ? _keys.length : 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        String item = _keys[index].toString();
-                        return SwitchListTile(
-                          title: Text(item),
-                          secondary: Icon(Icons.notifications),
-                          onChanged: (value) {
-                            setState(() {
-                              changeSubscription(item, value);
-                            });
-                          },
-                          value: _festivals[item],
-                        );
-                      },
-                    ),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text("Konto", style: Theme.of(context).textTheme.displaySmall),
+            StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              // If the user is already signed-in, use it as initial data
+              initialData: FirebaseAuth.instance.currentUser,
+              builder: (context, snapshot) {
+                // User is not signed in
+                if (!snapshot.hasData) {
+                  return SignInScreen(
+                      providers: []
                   );
-                } else {
-                  return _buildLoadingScreen();
                 }
-              }),
-        ]),
+
+                // Render your application if authenticated
+                return Text("Authenticated.");
+              },
+            ),
+            Text("Push notifikácie",
+                style: Theme.of(context).textTheme.displaySmall),
+            Text(
+                'Push notifikácie sú krátke správy o tom, že sa blíži predstavenie, ktoré sa zobrazujú medzi upozorneniami. Vyberte si tie podujatia, o ktorých chcete dostávať upozornenia.'),
+            StreamBuilder(
+                stream: _pushStream(),
+                builder:
+                    (context, AsyncSnapshot<Map<Object, Object>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return _buildLoadingScreen();
+                  }
+                  if (snapshot.hasData) {
+                    // bool x;
+                    final _festivals = snapshot.data;
+                    final _keys = _festivals.keys.toList();
+                    return Flexible(
+                      fit: FlexFit.tight,
+                      child: ListView.builder(
+                        itemCount: _keys != null ? _keys.length : 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          String item = _keys[index].toString();
+                          return SwitchListTile(
+                            title: Text(item),
+                            secondary: Icon(Icons.notifications),
+                            onChanged: (value) {
+                              setState(() {
+                                changeSubscription(item, value);
+                              });
+                            },
+                            value: _festivals[item],
+                          );
+                        },
+                      ),
+                    );
+                  } else {
+                    return _buildLoadingScreen();
+                  }
+                }),
+          ]),
         ),
       ),
     );

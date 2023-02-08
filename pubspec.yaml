@@ -37,6 +37,10 @@ dependencies:
   firebase_storage: ^11.0.10
   markdown: ^6.0.1
   firebase_cached_image: ^0.4.2
+  html_editor_enhanced: ^2.5.1
+  pointer_interceptor: ^0.9.3+4
+  firebase_ui_auth: ^1.1.9
+  go_router: ^6.0.4
 
 dev_dependencies:
   flutter_test:

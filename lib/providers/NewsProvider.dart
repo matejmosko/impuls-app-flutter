@@ -25,7 +25,7 @@ class NewsProvider extends ChangeNotifier {
 
   List<NewsPost> get articles => _articles;
 
-  void /*Future<List<NewsPost>>*/ fetchNews(src, {refresh: false}) async {
+  void /*Future<List<NewsPost>>*/ fetchNews(src, {refresh = false}) async {
     setLoading(true);
     if (refresh){
       allnews = false;
@@ -42,7 +42,7 @@ class NewsProvider extends ChangeNotifier {
     });
   }
 
-  void /* Future<List<NewsPost>>*/ fetchMagazine(src, {refresh:false}) async {
+  void /* Future<List<NewsPost>>*/ fetchMagazine(src, {refresh = false}) async {
     setLoading(true);
     if (refresh){
       allarticles = false;

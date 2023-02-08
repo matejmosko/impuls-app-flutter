@@ -25,7 +25,7 @@ class InfoDetailPage extends StatelessWidget {
         ),
         title: Text(
           "Scénická žatva 100",
-          style: Theme.of(context).textTheme.headline2,
+          style: Theme.of(context).textTheme.displayMedium,
         ),
       ),
       body: SafeArea(

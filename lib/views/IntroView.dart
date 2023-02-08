@@ -176,7 +176,7 @@ class IntroPageItem extends StatelessWidget {
       translationFactor: 200.0,
       child: Text(
         item.location,
-        style: textTheme.caption.copyWith(
+        style: textTheme.bodySmall.copyWith(
           color: Colors.white70,
           fontWeight: FontWeight.bold,
           letterSpacing: 2.0,
@@ -256,7 +256,7 @@ class IntroPageItem extends StatelessWidget {
       translationFactor: 200.0,
       child: Text(
         "$startTimeText $endTimeText",
-        style: textTheme.caption.copyWith(
+        style: textTheme.bodySmall.copyWith(
           color: Colors.white70,
           fontWeight: FontWeight.bold,
           letterSpacing: 2.0,

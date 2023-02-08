@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/models/Event.dart';
-import 'package:scenickazatva_app/pages/EventEditPage.dart';
+import 'package:provider/provider.dart';
+import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:markdown/markdown.dart' as MD;
+import 'package:go_router/go_router.dart';
 
 class EventDetailPage extends StatelessWidget {
-  final Event event;
+  final eventId;
 
-  EventDetailPage({@required this.event});
+  EventDetailPage({@required this.eventId});
 
   @override
   Widget build(BuildContext context) {
+
+    EventsProvider eventsProvider =
+    Provider.of<EventsProvider>(context, listen: false);
+    Event event = eventsProvider.events.where((element) => (element.id == eventId)).toList()[0];
+
     final startDate = event.startTime != null
         ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime)
         : '';
@@ -87,7 +94,7 @@ class EventDetailPage extends StatelessWidget {
                                   Text("${event.title ?? ''}",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .headline3),
+                                          .displaySmall),
                                   Text("${event.artist ?? ''}"),
                                 ]),
                           ),
@@ -117,14 +124,15 @@ class EventDetailPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
+          context.go("/events/"+event.id+"/edit");
+         /* Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => EventEditPage(
-                event: event,
+                eventId: event,
               ),
             ),
-          );
+          );*/
         },
         child: const Icon(Icons.edit),
       ),
