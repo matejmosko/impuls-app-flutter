@@ -12,6 +12,8 @@ import 'package:scenickazatva_app/views/NewsView.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
+  final initialIndex;
+  TabPage({this.initialIndex});
   @override
   _TabPageState createState() => _TabPageState();
 }
@@ -23,11 +25,18 @@ class _TabPageState extends State<TabPage> {
     InfoView(),
 //    MagazineView(),
   ];
-  int _selectedIndex = 1;
-  PageController _pageController = PageController(
-    initialPage: 1,
-    keepPage: true,
-  );
+
+  int _selectedIndex;
+  PageController _pageController;
+
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+    _pageController = PageController(
+      initialPage: widget.initialIndex,
+      keepPage: true,
+    );
+}
 
   void _itemTapped(int index, newsProvider, eventsProvider, infoProvider) {
     setState(() {
@@ -65,6 +74,7 @@ class _TabPageState extends State<TabPage> {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     final InfoProvider infoProvider = Provider.of<InfoProvider>(context);
+    
 
     return Scaffold(
       appBar: AppBar(

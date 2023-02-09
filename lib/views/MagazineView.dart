@@ -88,7 +88,7 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => NewsDetailPage(
-                                        news: item,
+                                        newsId: item.id,
                                       ),
                                     ),
                                   );

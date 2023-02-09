@@ -29,13 +29,14 @@ class EventEditPageState extends State<EventEditPage> {
   void initState() {
     super.initState();
     // Start listening to changes.
-
   }
 
   Widget buildForm(BuildContext context) {
     EventsProvider eventsProvider =
-    Provider.of<EventsProvider>(context, listen: false);
-    Event event = eventsProvider.events.where((element) => (element.id == widget.eventId)).toList()[0];
+        Provider.of<EventsProvider>(context, listen: false);
+    Event event = eventsProvider.events
+        .where((element) => (element.id == widget.eventId))
+        .toList()[0];
     print(event);
 
     startDate = event.startTime;
@@ -286,11 +287,12 @@ class EventEditPageState extends State<EventEditPage> {
         automaticallyImplyLeading: true,
         foregroundColor: Colors.redAccent,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+            icon: Icon(
+              Icons.arrow_back_ios,
+            ),
+            onPressed: () {
+              context.go("/events/" + widget.eventId);
+            }),
         title: Text(
           "Scénická žatva 100",
         ),
@@ -318,7 +320,7 @@ class EventEditPageState extends State<EventEditPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              context.go("/events/"+widget.eventId);
+              context.go("/events/" + widget.eventId);
               /* Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -355,10 +357,7 @@ class EventEditPageState extends State<EventEditPage> {
                   : SizedBox(),
               tag: event.image,
             ),*/
-            Card(
-                child: buildForm(
-                    context)
-                ),
+            Card(child: buildForm(context)),
           ],
         ),
       ),
@@ -372,7 +371,7 @@ class EventEditPageState extends State<EventEditPage> {
                 const SnackBar(content: Text('Processing Data')),
               );
             }
-            context.go("/events/"+widget.eventId);
+            context.go("/events/" + widget.eventId);
             /*Navigator.push(
             context,
             MaterialPageRoute(

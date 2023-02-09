@@ -1,11 +1,28 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 
 //import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:go_router/go_router.dart';
+
+class UserData {
+  final String id;
+  final String name;
+  final String profileImageUrl;
+  final String email;
+  final String bio;
+
+  UserData({
+    this.id,
+    this.name,
+    this.profileImageUrl,
+    this.email,
+    this.bio
+  });
+}
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -21,6 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
 
   }
+
 
   Future<Map<Object, Object>> getPushSettings() async {
     DatabaseReference festivalsdb =
@@ -58,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    //const authProviders = [EmailAuthProvider()];
+    final providers = [EmailAuthProvider()];
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -66,7 +84,9 @@ class _SettingsPageState extends State<SettingsPage> {
           icon: Icon(
             Icons.arrow_back_ios,
           ),
-          onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              context.go("/");
+            }
         ),
         title: Text(
           "Scénická žatva 100",
@@ -78,27 +98,49 @@ class _SettingsPageState extends State<SettingsPage> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Text("Konto", style: Theme.of(context).textTheme.displaySmall),
+          Flexible( child: Container(
+            child:
             StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
               // If the user is already signed-in, use it as initial data
               initialData: FirebaseAuth.instance.currentUser,
               builder: (context, snapshot) {
-                // User is not signed in
-                if (!snapshot.hasData) {
+                if (snapshot.hasData) {
+                  final user = snapshot.data;
+                  if (user.isAnonymous){
                   return SignInScreen(
-                      providers: []
+                    providers: providers,
+                    actions: [
+                      AuthStateChangeAction<SignedIn>((context, state) {
+                        Navigator.pushReplacementNamed(context, '/profile');
+                      }),
+                    ],
                   );
-                }
-
+                  } else {
+                    return ProfileScreen(
+                      providers: providers,
+                      actions: [
+                        SignedOutAction((context) {
+                           Navigator.pushReplacementNamed(context, '/sign-in'); // FIXME here
+                        }),
+                      ],
+                      children: [
+                        Text("User defined content"),
+                      ],
+                    );
+                  }
+                } else return null;
                 // Render your application if authenticated
-                return Text("Authenticated.");
+
               },
             ),
+          ),
+          ),
             Text("Push notifikácie",
                 style: Theme.of(context).textTheme.displaySmall),
             Text(
                 'Push notifikácie sú krátke správy o tom, že sa blíži predstavenie, ktoré sa zobrazujú medzi upozorneniami. Vyberte si tie podujatia, o ktorých chcete dostávať upozornenia.'),
-            StreamBuilder(
+            /*StreamBuilder(
                 stream: _pushStream(),
                 builder:
                     (context, AsyncSnapshot<Map<Object, Object>> snapshot) {
@@ -131,7 +173,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   } else {
                     return _buildLoadingScreen();
                   }
-                }),
+                }),*/
           ]),
         ),
       ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:scenickazatva_app/requests/api.dart';
+import 'package:go_router/go_router.dart';
 
 class InfoView extends StatelessWidget {
   static const TextStyle optionStyle =
@@ -47,14 +47,7 @@ class InfoView extends StatelessWidget {
                       ),
                       onTap: () {
                         Analytics().sendEvent(item.title);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => InfoDetailPage(
-                              info: item,
-                            ),
-                          ),
-                        );
+                        context.go("/info/"+item.id);
                       }
                       );
                 },

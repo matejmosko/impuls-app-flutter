@@ -8,22 +8,39 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:scenickazatva_app/pages/SettingsPage.dart';
-import 'package:scenickazatva_app/pages/TabPage.dart';
+
 import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/providers/AppSettings.dart';
+
+import 'package:scenickazatva_app/pages/SettingsPage.dart';
+import 'package:scenickazatva_app/pages/TabPage.dart';
 import 'package:scenickazatva_app/pages/EventDetailPage.dart';
 import 'package:scenickazatva_app/pages/EventEditPage.dart';
+import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
+import 'package:scenickazatva_app/pages/ProfilePage.dart';
+
 
 
 final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => TabPage(),
+      builder: (context, state) => TabPage(initialIndex: 1),
+    ),
+    GoRoute(
+      path: '/news',
+      builder: (context, state) => TabPage(initialIndex: 0),
+    ),
+    GoRoute(
+      path: '/events',
+      builder: (context, state) => TabPage(initialIndex: 1),
+    ),
+    GoRoute(
+      path: '/info',
+      builder: (context, state) => TabPage(initialIndex: 2),
     ),
     GoRoute(
       path: '/settings',
@@ -36,6 +53,14 @@ final _router = GoRouter(
     GoRoute(
       path: '/events/:eventId/edit',
       builder: (context, state) => EventEditPage(eventId: state.params["eventId"]),
+    ),
+    GoRoute(
+      path: '/info/:infoId',
+      builder: (context, state) => InfoDetailPage(infoId: state.params["infoId"]),
+    ),
+    GoRoute(
+      path: '/user',
+      builder: (context, state) => ProfilePage(),
     ),
   ],
 );

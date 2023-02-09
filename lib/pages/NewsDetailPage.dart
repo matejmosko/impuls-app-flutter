@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:scenickazatva_app/models/NewsPost.dart';
+import 'package:scenickazatva_app/providers/NewsProvider.dart';
+import 'package:provider/provider.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 
 class NewsDetailPage extends StatelessWidget {
-  final NewsPost news;
+  final newsId;
 
-  NewsDetailPage({@required this.news});
+  NewsDetailPage({@required this.newsId});
 
   @override
   Widget build(BuildContext context) {
+    final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
+    NewsPost news = newsProvider.news.where((element) => (element.id == newsId)).toList()[0];
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -18,7 +24,9 @@ class NewsDetailPage extends StatelessWidget {
           icon: Icon(
             Icons.arrow_back_ios,
           ),
-          onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              context.go("/news");
+            }
         ),
         title: Text(
           "Scénická žatva 100",

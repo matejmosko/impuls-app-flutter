@@ -97,7 +97,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => NewsDetailPage(
-                                      news: item,
+                                      newsId: item.id,
                                     ),
                                   ),
                                 );

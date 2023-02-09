@@ -18,6 +18,8 @@ class EventDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+
+
     EventsProvider eventsProvider =
     Provider.of<EventsProvider>(context, listen: false);
     Event event = eventsProvider.events.where((element) => (element.id == eventId)).toList()[0];
@@ -41,7 +43,9 @@ class EventDetailPage extends StatelessWidget {
           icon: Icon(
             Icons.arrow_back_ios,
           ),
-          onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              context.go("/events");
+            }
         ),
         title: Text(
           "Scénická žatva 100",
