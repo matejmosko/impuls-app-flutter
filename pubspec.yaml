@@ -35,7 +35,7 @@ dependencies:
   firebase_messaging: ^14.2.1
   firebase_analytics: ^10.1.0
   firebase_storage: ^11.0.10
-  markdown: ^6.0.1
+  markdown: ^7.0.0
   firebase_cached_image: ^0.4.2
   html_editor_enhanced: ^2.5.1
   pointer_interceptor: ^0.9.3+4

@@ -109,7 +109,7 @@ class _CalendarViewState extends State<CalendarView>
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     return Container(
-      color: Theme.of(context).primaryColor,
+      color: Theme.of(context).colorScheme.secondary,
       child: TableCalendar(
         locale: 'sk_SK',
         firstDay: _rangeStart,
@@ -141,8 +141,8 @@ class _CalendarViewState extends State<CalendarView>
         },
         calendarStyle: CalendarStyle(
           outsideDaysVisible: true,
-          outsideTextStyle: TextStyle(color: Theme.of(context).dividerColor),
-          defaultTextStyle: TextStyle(color: Theme.of(context).colorScheme.background),
+          outsideTextStyle: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+          defaultTextStyle: TextStyle(color: Theme.of(context).colorScheme.tertiary),
         ),
         calendarBuilders: CalendarBuilders(
           selectedBuilder: (context, date, _) {
@@ -154,7 +154,7 @@ class _CalendarViewState extends State<CalendarView>
                 height: 100,
                 decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Theme.of(context).colorScheme.secondary),
+                    color: Theme.of(context).colorScheme.primary),
                 child: Center(
                   child: Text(
                     '${date.day}',
@@ -208,7 +208,7 @@ class _CalendarViewState extends State<CalendarView>
         child: Text(
           '${events.length}',
           style: TextStyle().copyWith(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 12.0,
           ),
         ),
@@ -239,7 +239,6 @@ class EventListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
 //    String Formatting
     //Start & End-time
     final startTime = event.startTime != null

@@ -3,26 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:scenickazatva_app/requests/auth_service.dart';
 
 //import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:go_router/go_router.dart';
-
-class UserData {
-  final String id;
-  final String name;
-  final String profileImageUrl;
-  final String email;
-  final String bio;
-
-  UserData({
-    this.id,
-    this.name,
-    this.profileImageUrl,
-    this.email,
-    this.bio
-  });
-}
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -31,14 +16,12 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final bool _running = true;
-
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-
   }
-
 
   Future<Map<Object, Object>> getPushSettings() async {
     DatabaseReference festivalsdb =
@@ -74,6 +57,42 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  Widget buildForm(BuildContext context, user){
+    String roleValue = "user";
+    return Container(
+        padding: EdgeInsets.all(45),
+        child: Form(
+            key: _formKey,
+            child: Column(children: <Widget>[
+                TextFormField(
+                  initialValue: user.displayName,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.person),
+                    hintText: 'Ako ťa volajú?',
+                    labelText: 'Meno',
+                  ),
+                ),
+               DropdownButtonFormField(
+                  value: roleValue,
+                  items: <String>["admin", "editor", "user"]
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      roleValue = newValue;
+                    });
+                  },
+                ),
+            ])));
+  }
+
   @override
   Widget build(BuildContext context) {
     final providers = [EmailAuthProvider()];
@@ -81,13 +100,12 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-          ),
+            icon: Icon(
+              Icons.arrow_back_ios,
+            ),
             onPressed: () {
               context.go("/");
-            }
-        ),
+            }),
         title: Text(
           "Scénická žatva 100",
         ),
@@ -98,44 +116,44 @@ class _SettingsPageState extends State<SettingsPage> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Text("Konto", style: Theme.of(context).textTheme.displaySmall),
-          Flexible( child: Container(
-            child:
-            StreamBuilder(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              // If the user is already signed-in, use it as initial data
-              initialData: FirebaseAuth.instance.currentUser,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final user = snapshot.data;
-                  if (user.isAnonymous){
-                  return SignInScreen(
-                    providers: providers,
-                    actions: [
-                      AuthStateChangeAction<SignedIn>((context, state) {
-                        Navigator.pushReplacementNamed(context, '/profile');
-                      }),
-                    ],
-                  );
-                  } else {
-                    return ProfileScreen(
-                      providers: providers,
-                      actions: [
-                        SignedOutAction((context) {
-                           Navigator.pushReplacementNamed(context, '/sign-in'); // FIXME here
-                        }),
-                      ],
-                      children: [
-                        Text("User defined content"),
-                      ],
-                    );
-                  }
-                } else return null;
-                // Render your application if authenticated
-
-              },
+            Flexible(
+              child: Container(
+                child: StreamBuilder(
+                  stream: FirebaseAuth.instance.authStateChanges(),
+                  // If the user is already signed-in, use it as initial data
+                  initialData: FirebaseAuth.instance.currentUser,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final user = snapshot.data;
+                      if (user.isAnonymous) {
+                        return SignInScreen(
+                          providers: providers,
+                          actions: [
+                            AuthStateChangeAction<SignedIn>((context, state) {
+                              Navigator.pushReplacementNamed(
+                                  context, '/profile');
+                            }),
+                          ],
+                        );
+                      } else {
+                        return ProfileScreen(
+                          providers: providers,
+                          actions: [
+                            SignedOutAction((context) {
+                              Navigator.pushReplacementNamed(
+                                  context, '/sign-in'); // FIXME here
+                            }),
+                          ],
+                          children: [buildForm(context, user)],
+                        );
+                      }
+                    } else
+                      return null;
+                    // Render your application if authenticated
+                  },
+                ),
+              ),
             ),
-          ),
-          ),
             Text("Push notifikácie",
                 style: Theme.of(context).textTheme.displaySmall),
             Text(

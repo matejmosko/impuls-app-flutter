@@ -304,14 +304,7 @@ class EventEditPageState extends State<EventEditPage> {
             ),
             onPressed: () {
               // TODO Delete event
-/*              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EventDetailPage(
-                    event: event,
-                  ),
-                ),
-              ); */
+              context.go("/events/"+widget.eventId);
             },
           ),
           IconButton(

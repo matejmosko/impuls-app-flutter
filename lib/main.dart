@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:scenickazatva_app/requests/auth_service.dart';
 
 import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
@@ -22,7 +23,8 @@ import 'package:scenickazatva_app/pages/EventEditPage.dart';
 import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
 import 'package:scenickazatva_app/pages/ProfilePage.dart';
 
-
+import 'package:scenickazatva_app/models/ColorScheme.dart';
+import 'package:scenickazatva_app/models/UserData.dart';
 
 final _router = GoRouter(
   routes: [
@@ -48,15 +50,18 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/events/:eventId',
-      builder: (context, state) => EventDetailPage(eventId: state.params["eventId"]),
+      builder: (context, state) =>
+          EventDetailPage(eventId: state.params["eventId"]),
     ),
     GoRoute(
       path: '/events/:eventId/edit',
-      builder: (context, state) => EventEditPage(eventId: state.params["eventId"]),
+      builder: (context, state) =>
+          EventEditPage(eventId: state.params["eventId"]),
     ),
     GoRoute(
       path: '/info/:infoId',
-      builder: (context, state) => InfoDetailPage(infoId: state.params["infoId"]),
+      builder: (context, state) =>
+          InfoDetailPage(infoId: state.params["infoId"]),
     ),
     GoRoute(
       path: '/user',
@@ -69,13 +74,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // print("Notification shown!");
 }
 
+/*
 void authFirebase() async {
   try {
     final userCredential = await FirebaseAuth.instance.signInAnonymously();
     userData = userCredential;
 
-      /* Log user login time */
-
+    /* Log user login time */
   } on FirebaseAuthException catch (e) {
     /* Catch login errors */
     switch (e.code) {
@@ -110,6 +115,7 @@ Future<String> getFCMtoken() async {
   final fcmToken = await _messaging.getToken();
   return fcmToken;
 }
+*/
 
 void main() async {
   //if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android) {
@@ -118,7 +124,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await authFirebase();
+  await authService().authFirebase();
 
   FirebaseAuth.instance.idTokenChanges().listen((User user) async {
     if (user == null) {
@@ -129,14 +135,20 @@ void main() async {
       var fcmToken = "";
       if (!kIsWeb) {
         FirebaseDatabase.instance.setPersistenceEnabled(true);
-        fcmToken = await getFCMtoken();
+        fcmToken = await authService().getFCMtoken();
       }
 
-
-      final Map<String, Object> userSettings = {
+      /*final Map<String, Object> initialSettings = {
         "timestamp": DateTime.now().toString(),
         "fcmtoken": fcmToken != null ? fcmToken : "",
-      };
+        "id": user.uid,
+      };*/
+
+      var userSettings = await authService().getUserData(user);
+
+        userSettings.timestamp = DateTime.now().toString();
+      userSettings.fcmtoken = fcmToken != null ? fcmToken : "";
+      userSettings.id = user.uid;
 
       DatabaseReference festivals =
           await FirebaseDatabase.instance.ref("appsettings/festivals");
@@ -159,11 +171,11 @@ void main() async {
           }
         });
 
-        userSettings["notifications"] = _notifications;
+        userSettings.notifications = _notifications;
 
         FirebaseDatabase.instance
             .ref("users/" + user.uid)
-            .update(userSettings)
+            .update(userSettings.toJson())
             .then((_) {
           //   print("Firebase save success");
         }).catchError((error) {
@@ -202,10 +214,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Color darkColor = Colors.black87;
-    Color lightColor = Colors.white;
-    Color accentColor = Color(0xffdf9f4a);
-
     return MultiProvider(
       providers: [
         /*ChangeNotifierProvider<ColorProvider>.value(
@@ -228,14 +236,55 @@ class MyApp extends StatelessWidget {
         title: "Scénická žatva 100",
         theme: ThemeData(
             useMaterial3: true,
-            colorSchemeSeed: accentColor,
-            dividerColor: Colors.grey,
-            cardColor: lightColor,
+            colorScheme: lightColorScheme,
             fontFamily: 'Hind',
+            appBarTheme: AppBarTheme(
+                iconTheme: IconThemeData(color: accentColor),
+                backgroundColor: darkColor,
+                foregroundColor: accentColor
+            ),
+            cardTheme: CardTheme(
+              color: lightColor
+            ),
+            textTheme: TextTheme(
+              displayLarge: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+                //color: accentColor
+              ),
+              displayMedium: TextStyle(
+                fontSize: 18.0,
+                fontStyle: FontStyle.italic,
+                //color: accentColor
+              ),
+              displaySmall: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+                //color: darkColor
+              ),
+              titleLarge: TextStyle(
+                fontSize: 19.0,
+                //fontWeight: FontWeight.bold,
+                //    color: accentColor
+              ),
+              bodyLarge: TextStyle(
+                fontSize: 14.0, fontFamily: 'Hind',
+                //    color: darkColor
+              ),
+              bodyMedium: TextStyle(
+                fontSize: 14.0, fontFamily: 'Hind',
+                //color: darkColor
+              ),
+            )),
+        darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
+        /*theme: ThemeData(
+            useMaterial3: true,
+            colorSchemeSeed: accentColor,
+            fontFamily: 'Hind',/*
             appBarTheme: AppBarTheme(
               backgroundColor: darkColor,
               foregroundColor: accentColor,
-            ),
+            )*/
 
             // Define the default `TextTheme`. Use this to specify the default
             // text styling for headlines, titles, bodies of text, and more.
@@ -243,24 +292,33 @@ class MyApp extends StatelessWidget {
               displayLarge: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
-                  color: accentColor),
+                  //color: accentColor
+     ),
               displayMedium: TextStyle(
                   fontSize: 18.0,
                   fontStyle: FontStyle.italic,
-                  color: accentColor),
+                  //color: accentColor
+     ),
               displaySmall: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
-                  color: darkColor),
+                  //color: darkColor
+    ),
               titleLarge: TextStyle(
                   fontSize: 19.0,
                   //fontWeight: FontWeight.bold,
-                  color: accentColor),
+              //    color: accentColor
+              ),
               bodyLarge: TextStyle(
-                  fontSize: 14.0, fontFamily: 'Hind', color: lightColor),
+                  fontSize: 14.0, fontFamily: 'Hind',
+              //    color: darkColor
+              ),
               bodyMedium: TextStyle(
-                  fontSize: 14.0, fontFamily: 'Hind', color: darkColor),
-            )),
+                  fontSize: 14.0, fontFamily: 'Hind',
+                  //color: darkColor
+    ),
+
+            )),*/
         debugShowCheckedModeBanner: false,
         //home: TabPage(),
         routerConfig: _router,

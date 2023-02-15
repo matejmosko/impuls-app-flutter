@@ -53,7 +53,6 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                       itemBuilder: (BuildContext context, int index) {
                         final item = newsProvider.news[index];
                         return Card(
-                          elevation: 10,
                           child: GestureDetector(
                               child: Row(
                                   mainAxisSize: MainAxisSize.min,
