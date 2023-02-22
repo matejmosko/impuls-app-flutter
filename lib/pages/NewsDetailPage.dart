@@ -36,12 +36,10 @@ class NewsDetailPage extends StatelessWidget {
         child: ListView(
           children: [
             Hero(
-              child: news.image != null
-                  ? CachedNetworkImage(imageUrl: news.image,
+              child: CachedNetworkImage(imageUrl: news.image,
                 placeholder: (context, url) => Image.asset('assets/images/icon512.png'),
                 errorWidget: (context, url, error) => Image.asset('assets/images/icon512.png'),
-              )
-                  : SizedBox(),
+              ),
               tag: news.id,
             ),
             Card(
@@ -49,8 +47,7 @@ class NewsDetailPage extends StatelessWidget {
                 children: <Widget>[
                   Text("${news.title}",
                       style: Theme.of(context).textTheme.displayLarge),
-                  news.description != null
-                      ? Padding(
+                      Padding(
                           padding: EdgeInsets.all(12),
                           child: //Text("${news.content ?? ''}"),
                               Html(
@@ -58,7 +55,7 @@ class NewsDetailPage extends StatelessWidget {
                             onLinkTap: (url, renderContext, map, element) => API().launchURL(url),
                           ),
                         )
-                      : SizedBox.shrink()
+
                 ],
               ),
             ),

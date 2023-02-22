@@ -33,15 +33,15 @@ class Location {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id != null ? id : "",
-      'displayName': displayName != null ? displayName : "",
-      'description': description != null ? description : "",
-      'address': address != null ? address : "",
-      'city': city != null ? city : "",
-      'longitude': longitude != null ? longitude : "",
-      'latitude': latitude != null ? latitude : "",
-      'icon': icon != null ? icon : "",
-      'color': color != null ? color : ""
+      'id': id,
+      'displayName': displayName,
+      'description': description,
+      'address': address,
+      'city': city,
+      'longitude': longitude,
+      'latitude': latitude,
+      'icon': icon,
+      'color': color
     };
   }
 }

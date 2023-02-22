@@ -38,14 +38,13 @@ class InfoDetailPage extends StatelessWidget {
         child: ListView(
           children: [
             Hero(
-              child: info.image != null
-                  ? CachedNetworkImage(
+              child: CachedNetworkImage(
                       imageUrl: info.image,
                       placeholder: (context, url) =>
                           SizedBox.shrink(),
                       errorWidget: (context, url, error) =>
-                          SizedBox.shrink())
-                  : SizedBox(),
+                          SizedBox.shrink()),
+
               tag: info.id,
             ),
             Card(
@@ -54,14 +53,13 @@ class InfoDetailPage extends StatelessWidget {
                 ListTile(
                   title: Text("${info.title}"),
                 ),
-                info.description != null
-                    ? Padding(
+                Padding(
                         padding: EdgeInsets.all(12),
                         child: Html(
                           data: MD.markdownToHtml(info.description),
                           onLinkTap: (url, renderContext, map, element) => API().launchURL(url),
                         ))
-                    : SizedBox.shrink()
+
               ],
             ))
           ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:scenickazatva_app/pages/NewsDetailPage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:provider/provider.dart';
@@ -64,13 +63,11 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                         subtitle: Html(data: item.description),
                                       ),
                                     ),
-                                    item.image != null
-                                        ? Container(
+                                    Container(
                                             width: 120.0,
                                             height: 120.0,
                                             child: Hero(
-                                              child: item.image != ""
-                                                  ? CachedNetworkImage(
+                                              child: CachedNetworkImage(
                                                       imageUrl: item.image,
                                                       fit: BoxFit.cover,
                                                       height: double.infinity,
@@ -83,13 +80,10 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                                               url, error) =>
                                                           Image.asset(
                                                               'assets/images/icon512.png'),
-                                                    )
-                                                  : Image.asset(
-                                                      'assets/images/icon512.png'),
+                                                    ),
                                               tag: item.id,
                                             ),
-                                          )
-                                        : SizedBox.shrink(),
+                                          ),
                                   ]),
                               onTap: () {
                                 Analytics().sendEvent(item.title);

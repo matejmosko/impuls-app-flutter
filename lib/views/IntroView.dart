@@ -280,17 +280,21 @@ class IntroPageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var image = item.imgUrl != null
-        ? CachedNetworkImage(
+    var image = CachedNetworkImage(
             imageUrl: item.imgUrl,
             fit: BoxFit.cover,
             alignment: FractionalOffset(
               0.5 + (pageVisibility.pagePosition / 3),
               0.5,
             ),
-          )
-        : DecoratedBox(
-            decoration: BoxDecoration(color: themeLight),
+      placeholder: (context,
+          url) =>
+          Image.asset(
+              'assets/images/icon512.png'),
+      errorWidget: (context,
+          url, error) =>
+          Image.asset(
+              'assets/images/icon512.png'),
           );
 
     var imageOverlayGradient = DecoratedBox(

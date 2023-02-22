@@ -41,7 +41,7 @@ class InfoView extends StatelessWidget {
                       leading: Icon(
                           IconData(item.icon, fontFamily: 'MaterialIcons')),
                       subtitle: Text(
-                        item.description != null ? item.description : '',
+                        item.description,
                         overflow: TextOverflow.fade,
                         maxLines: 1,
                       ),

@@ -140,14 +140,14 @@ class EventsProvider extends ChangeNotifier {
   IconData getLocationIcon(loc){
     Location _venue = _venues.where((element) => (element.id == loc))
         .toList()[0];
-    int icon = _venue !=null ? _venue.icon : 57402;
+    int icon = _venue != {} ? _venue.icon : 57402;
     return IconData(icon, fontFamily: 'MaterialIcons');
   }
 
   Color getLocationColor(loc){
     Location _venue = _venues.where((element) => (element.id == loc))
         .toList()[0];
-    String colorString = _venue !=null ? _venue.color : "FFFFFFFF";
+    String colorString = _venue != {} ? _venue.color : "FFFFFFFF";
     int colorInt = int.parse(colorString, radix: 16);
     Color color = new Color(colorInt);
     return color;
@@ -156,7 +156,7 @@ class EventsProvider extends ChangeNotifier {
   String getLocationName(loc){
     Location _venue = _venues.where((element) => (element.id == loc))
         .toList()[0];
-    String name = _venue !=null ? _venue.displayName : "";
+    String name = _venue !={} ? _venue.displayName : "";
     return name;
   }
 

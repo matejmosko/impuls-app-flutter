@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:scenickazatva_app/requests/auth_service.dart'; // TODO Pridať ukladanie zmien pri úprave profilu.
+//import 'package:scenickazatva_app/requests/auth_service.dart'; // TODO Pridať ukladanie zmien pri úprave profilu.
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:go_router/go_router.dart';
@@ -42,7 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
           _data[key] = _user[key] != null ? _user[key] : true;
         }
       });
-      return _data != null ? _data : {};
+      return _data;
     } else {
       print('No data in AppSettings');
       return {};

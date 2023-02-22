@@ -47,7 +47,7 @@ class API {
       }*/
 
 
-      if (file != null && await file.exists()) {
+      if (await file.exists()) {
         final text = await file.readAsString();
         return text;
       }

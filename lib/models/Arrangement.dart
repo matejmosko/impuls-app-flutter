@@ -24,12 +24,12 @@ class Arrangement {
         : null;
 
     return Arrangement(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      location: json['location'] as String,
+      id: json['id'] ?? "",
+      title: json['title'] ?? "",
+      location: json['location'] ?? "",
       startTime: startTime,
       endTime: endTime,
-      imgUrl: json['imgUrl'] as String,
+      imgUrl: json['imgUrl'] ?? "",
     );
   }
 }

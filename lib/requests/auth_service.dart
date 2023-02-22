@@ -17,6 +17,7 @@ class authService {
     try {
       final userCredential = await _firebaseAuth.signInAnonymously();
       userData = userCredential;
+      return userData;
 
       /* Log user login time */
     } on FirebaseAuthException catch (e) {
@@ -28,6 +29,7 @@ class authService {
         default:
           print("Firebase Auth FAILED: " + e.code);
       }
+      return null;
     }
   }
 
@@ -83,7 +85,7 @@ class authService {
   }
 
   Future<UserData> saveUserData(UserData _user) async{
-    if (_user == null) {
+    if (_user == {}) {
       print('(saving) User is currently signed out! We cannot get data');
     } else {
       print('(saving) User is signed in with UID: ' + _user.id);

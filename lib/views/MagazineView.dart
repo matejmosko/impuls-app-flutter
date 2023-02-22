@@ -66,8 +66,7 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
                                               Html(data: item.description),
                                         ),
                                       ),
-                                      item.image != null
-                                          ? Container(
+                                      Container(
                                               width: 120.0,
                                               height: 120.0,
                                               child: Hero(
@@ -76,11 +75,18 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
                                                   fit: BoxFit.cover,
                                                   height: double.infinity,
                                                   width: double.infinity,
+                                                  placeholder: (context,
+                                                      url) =>
+                                                      Image.asset(
+                                                          'assets/images/icon512.png'),
+                                                  errorWidget: (context,
+                                                      url, error) =>
+                                                      Image.asset(
+                                                          'assets/images/icon512.png'),
                                                 ),
                                                 tag: item.id,
                                               ),
-                                            )
-                                          : SizedBox.shrink(),
+                                            ),
                                     ]),
                                 onTap: () {
                                   Analytics().sendEvent(item.title);

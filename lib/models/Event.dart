@@ -29,14 +29,14 @@ class Event {
         : null;
 
     return Event(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      location: json['location'] as String,
+      id: json['id'] ?? "",
+      title: json['title'] ?? "",
+      description: json['description'] ?? "",
+      location: json['location'] ?? "",
       startTime: startTime,
       endTime: endTime,
-      image: json['image'] as String,
-      artist: json['artist'],
+      image: json['image'] ?? "",
+      artist: json['artist'] ?? "",
     );
   }
 }

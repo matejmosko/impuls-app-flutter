@@ -18,14 +18,13 @@ class NewsPost {
     });
 
   NewsPost.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    title = json['title']['rendered'];
-    description = json['excerpt']['rendered'];
-    content = json['content']['rendered'];
-    location = json['format'];
-    publishTime = json['date'];
-    image = json['_embedded']['wp:featuredmedia'] != null ? json['_embedded']['wp:featuredmedia'][0]['source_url'] : '';
-    //arrangement = json['arrangement'].cast<String>();
+    id = json['id'] ?? 0;
+    title = json['title']['rendered'] ?? "";
+    description = json['excerpt']['rendered'] ?? "";
+    content = json['content']['rendered'] ?? "";
+    location = json['format'] ?? "";
+    publishTime = json['date'] ?? "";
+    image = json['_embedded']['wp:featuredmedia'][0]['source_url'] ?? "";
   }
 
   Map<String, dynamic> toJson() {

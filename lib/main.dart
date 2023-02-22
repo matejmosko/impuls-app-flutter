@@ -142,7 +142,6 @@ void main() async {
       print('User is currently signed out! We cannot get data');
     } else {
       print('User is signed in with UID: ' + user.uid);
-      var _uid = user.uid;
       var fcmToken = "";
       if (!kIsWeb) {
         FirebaseDatabase.instance.setPersistenceEnabled(true);
@@ -158,28 +157,26 @@ void main() async {
       var userSettings = await authService().getUserData(user);
 
         userSettings.timestamp = DateTime.now().toString();
-      userSettings.fcmtoken = fcmToken != null ? fcmToken : "";
+      userSettings.fcmtoken = fcmToken;
       userSettings.id = user.uid;
-
+/*
       DatabaseReference festivals =
           await FirebaseDatabase.instance.ref("appsettings/festivals");
+      var _uid = user.uid;
 
       festivals.onValue.listen((DatabaseEvent event) async {
         DatabaseReference _usersdb =
             FirebaseDatabase.instance.ref("users/$_uid/notifications");
         final _users = await _usersdb.get();
+        print(_users.value);
         final _currentUser = (_users.value as Map);
 
         final data = (event.snapshot.value as Map);
         final _notifications = {};
 
         data.forEach((key, value) {
-          if (_currentUser != null) {
-            _notifications[key] =
-                _currentUser[key] != null ? _currentUser[key] : true;
-          } else {
-            _notifications[key] = true;
-          }
+          _notifications[key] = _currentUser != null ? _currentUser[key] : true;
+
         });
 
         userSettings.notifications = _notifications;
@@ -192,7 +189,7 @@ void main() async {
         }).catchError((error) {
           print(error);
         });
-      });
+      });*/
     }
   });
 

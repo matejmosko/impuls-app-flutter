@@ -17,23 +17,23 @@ class UserData {
       this.fcmtoken = ""});
 
   UserData.fromData(Map<String, dynamic> data)
-      : id = data['id'],
-        fullName = data['fullName'],
-        email = data['email'],
-        userRole = data['userRole'],
-        notifications = data['notifications'],
-        timestamp = data['timestamp'],
-        fcmtoken = data['fcmtoken'];
+      : id = data['id'] ?? "",
+        fullName = data['fullName'] ?? "",
+        email = data['email'] ?? "",
+        userRole = data['userRole'] ?? "",
+        notifications = data['notifications'] ?? {},
+        timestamp = data['timestamp'] ?? "",
+        fcmtoken = data['fcmtoken'] ?? "";
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id != null ? id : "",
-      'fullName': fullName != null ? fullName : "",
-      'email': email != null ? email : "",
-      'userRole': userRole != null ? userRole : "user",
-      'notifications': notifications != null ? notifications : {},
-      'timestamp': timestamp != null ? timestamp : "",
-      'fcmtoken': fcmtoken != null ? fcmtoken : ""
+      'id': id,
+      'fullName': fullName,
+      'email': email,
+      'userRole': userRole,
+      'notifications': notifications,
+      'timestamp': timestamp,
+      'fcmtoken': fcmtoken
     };
   }
 }

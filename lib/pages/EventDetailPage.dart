@@ -52,9 +52,7 @@ class EventDetailPage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            Hero(
-              child: event.image != null
-                  ? Image(
+            Hero(child: Image(
                       image: FirebaseImageProvider(FirebaseUrl(event.image)),
                       fit: BoxFit.cover,
                       height: 300,
@@ -68,8 +66,7 @@ class EventDetailPage extends StatelessWidget {
                           width: double.infinity,
                         );
                       },
-                    )
-                  : SizedBox(),
+                    ),
               tag: event.image,
             ),
             Card(
@@ -113,7 +110,7 @@ class EventDetailPage extends StatelessWidget {
                             ],
                           ),
                         ])),
-                event.description != null
+                event.description != ""
                     ? Padding(
                         padding: EdgeInsets.all(12),
                         child: Html(

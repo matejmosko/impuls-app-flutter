@@ -55,7 +55,7 @@ class LocationProvider extends ChangeNotifier {
     Location _venue = _venues.where((element) => (element.id == loc))
         .toList()[0];
 
-    int icon = _venue !=null ? _venue.icon : 57402;
+    int icon = _venue != {} ? _venue.icon : 57402;
     return IconData(icon, fontFamily: 'MaterialIcons');
 
 
