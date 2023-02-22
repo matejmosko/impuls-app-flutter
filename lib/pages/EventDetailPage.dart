@@ -3,7 +3,6 @@ import 'package:scenickazatva_app/models/Event.dart';
 import 'package:provider/provider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:intl/intl.dart';
-import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -17,12 +16,11 @@ class EventDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     EventsProvider eventsProvider =
-    Provider.of<EventsProvider>(context, listen: false);
-    Event event = eventsProvider.events.where((element) => (element.id == eventId)).toList()[0];
+        Provider.of<EventsProvider>(context, listen: false);
+    Event event = eventsProvider.events
+        .where((element) => (element.id == eventId))
+        .toList()[0];
 
     final startDate = event.startTime != null
         ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime)
@@ -40,36 +38,34 @@ class EventDetailPage extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-          ),
+            icon: Icon(
+              Icons.arrow_back_ios,
+            ),
             onPressed: () {
               context.go("/events");
-            }
-        ),
+            }),
         title: Text(
-          "Scénická žatva 100",
+          "TVOR•BA 2023",
         ),
       ),
-
       body: SafeArea(
         child: ListView(
           children: [
             Hero(
               child: event.image != null
                   ? Image(
-                      image: FirebaseImageProvider(
-                          FirebaseUrl(event.image)
-                      ),
+                      image: FirebaseImageProvider(FirebaseUrl(event.image)),
                       fit: BoxFit.cover,
                       height: 300,
                       width: double.infinity,
                       errorBuilder: (BuildContext context, Object exception,
                           StackTrace stackTrace) {
-                        return Image.asset('assets/images/icon512.png',
+                        return Image.asset(
+                          'assets/images/icon512.png',
                           fit: BoxFit.cover,
                           height: 300,
-                          width: double.infinity,);
+                          width: double.infinity,
+                        );
                       },
                     )
                   : SizedBox(),
@@ -106,9 +102,13 @@ class EventDetailPage extends StatelessWidget {
                             /*crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,*/
                             children: <Widget>[
-                              Icon(Venues().getIcon(event.location), color: Venues().getColor(event.location), size: 26),
-                              Text(Venues().getName(event.location),
-                                  style: TextStyle(color: Venues().getColor(event.location))),
+                              Icon(eventsProvider.getLocationIcon(event.location),
+                                  color: eventsProvider.getLocationColor(event.location),
+                                  size: 26),
+                              Text(eventsProvider.getLocationName(event.location),
+                                  style: TextStyle(
+                                      color:
+                                      eventsProvider.getLocationColor(event.location))),
                             ],
                           ),
                         ])),
@@ -117,9 +117,9 @@ class EventDetailPage extends StatelessWidget {
                         padding: EdgeInsets.all(12),
                         child: Html(
                           data: MD.markdownToHtml(event.description),
-                          onLinkTap: (url, renderContext, map, element) => API().launchURL(url),
-                        )
-                )
+                          onLinkTap: (url, renderContext, map, element) =>
+                              API().launchURL(url),
+                        ))
                     : SizedBox.shrink()
               ]),
             ),
@@ -128,8 +128,8 @@ class EventDetailPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go("/events/"+event.id+"/edit");
-         /* Navigator.push(
+          context.go("/events/" + event.id + "/edit");
+          /* Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => EventEditPage(

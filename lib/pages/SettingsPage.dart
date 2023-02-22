@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:scenickazatva_app/requests/auth_service.dart';
+import 'package:scenickazatva_app/requests/auth_service.dart'; // TODO Pridať ukladanie zmien pri úprave profilu.
 
-//import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,7 +14,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final bool _running = true;
+  //final bool _running = true;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -32,10 +31,10 @@ class _SettingsPageState extends State<SettingsPage> {
       DatabaseReference usersdb =
           FirebaseDatabase.instance.ref("users/$_uid/notifications");
 
-      final usersettings = await usersdb.get();
+      final userSettings = await usersdb.get();
 
       final _festivals = festivals.value as Map;
-      final _user = usersettings.value as Map;
+      final _user = userSettings.value as Map;
       Map<String, bool> _data = {};
 
       _festivals.forEach((key, value) {
@@ -49,13 +48,13 @@ class _SettingsPageState extends State<SettingsPage> {
       return {};
     }
   }
-
+/*
   Stream<Map<Object, Object>> _pushStream() async* {
     while (_running) {
       Map<Object, Object> _data = await getPushSettings();
       yield _data;
     }
-  }
+  }*/
 
   Widget buildForm(BuildContext context, user){
     String roleValue = "user";
@@ -107,7 +106,7 @@ class _SettingsPageState extends State<SettingsPage> {
               context.go("/");
             }),
         title: Text(
-          "Scénická žatva 100",
+          "TVOR•BA 2023",
         ),
       ),
       body: Card(
@@ -211,7 +210,7 @@ class _SettingsPageState extends State<SettingsPage> {
       "notifications/$topic": value,
     }).then((_) {});
   }
-
+/*
   Widget _buildLoadingScreen() {
     return Center(
       child: Container(
@@ -221,4 +220,5 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
+ */
 }

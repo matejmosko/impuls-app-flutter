@@ -10,9 +10,7 @@ class NewsProvider extends ChangeNotifier {
   bool allnews = false;
   bool allarticles = false;
   int newspage = 1;
-  //int totalnewspages = 1;
   int magazinepage = 1;
-  //int totalmagazinepages = 1;
 
   NewsProvider() {
     fetchNews("news_src");

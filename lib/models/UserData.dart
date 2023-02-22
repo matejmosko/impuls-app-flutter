@@ -7,7 +7,15 @@ class UserData {
   String timestamp;
   String fcmtoken;
 
-  UserData({this.id, this.fullName, this.email, this.userRole, this.notifications, this.timestamp, this.fcmtoken});
+  UserData(
+      {this.id,
+      this.fullName,
+      this.email,
+      this.userRole,
+      this.notifications,
+      this.timestamp,
+      this.fcmtoken});
+
   UserData.fromData(Map<String, dynamic> data)
       : id = data['id'],
         fullName = data['fullName'],
@@ -19,12 +27,12 @@ class UserData {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id != null ? id : "" ,
-      'fullName': fullName != null ? fullName : "" ,
-      'email': email != null ? email : "" ,
-      'userRole': userRole != null ? userRole : "user" ,
-      'notifications': notifications != null ? notifications : {} ,
-      'timestamp': timestamp != null ? timestamp : "" ,
+      'id': id != null ? id : "",
+      'fullName': fullName != null ? fullName : "",
+      'email': email != null ? email : "",
+      'userRole': userRole != null ? userRole : "user",
+      'notifications': notifications != null ? notifications : {},
+      'timestamp': timestamp != null ? timestamp : "",
       'fcmtoken': fcmtoken != null ? fcmtoken : ""
     };
   }

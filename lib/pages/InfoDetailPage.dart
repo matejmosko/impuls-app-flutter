@@ -31,8 +31,7 @@ class InfoDetailPage extends StatelessWidget {
             }
         ),
         title: Text(
-          "Scénická žatva 100",
-          style: Theme.of(context).textTheme.displayMedium,
+          "TVOR•BA 2023",
         ),
       ),
       body: SafeArea(
@@ -53,7 +52,6 @@ class InfoDetailPage extends StatelessWidget {
                 child: Column(
               children: <Widget>[
                 ListTile(
-//                  leading: Text("$startTime$location$endTime"),
                   title: Text("${info.title ?? ''}"),
                 ),
                 info.description != null

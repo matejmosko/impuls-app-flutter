@@ -15,7 +15,7 @@ class authService {
 
   void authFirebase() async {
     try {
-      final userCredential = await FirebaseAuth.instance.signInAnonymously();
+      final userCredential = await _firebaseAuth.signInAnonymously();
       userData = userCredential;
 
       /* Log user login time */
@@ -76,9 +76,10 @@ class authService {
         saveUserData(result);
         return result;
       } catch (e) {
-
+        print(e);
       }
     }
+    return null;
   }
 
   Future<UserData> saveUserData(UserData _user) async{
@@ -96,6 +97,7 @@ class authService {
           print(error);
         });
     }
+    return null;
   }
 
 }

@@ -14,17 +14,15 @@ import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
-import 'package:scenickazatva_app/providers/AppSettings.dart';
-
+import 'package:scenickazatva_app/providers/LocationProvider.dart';
 import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/pages/TabPage.dart';
 import 'package:scenickazatva_app/pages/EventDetailPage.dart';
 import 'package:scenickazatva_app/pages/EventEditPage.dart';
 import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
-import 'package:scenickazatva_app/pages/ProfilePage.dart';
 
 import 'package:scenickazatva_app/models/ColorScheme.dart';
-import 'package:scenickazatva_app/models/UserData.dart';
+
 
 final _router = GoRouter(
   routes: [
@@ -65,7 +63,7 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/user',
-      builder: (context, state) => ProfilePage(),
+      builder: (context, state) => SettingsPage(),
     ),
   ],
 );
@@ -231,20 +229,24 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<ArrangementProvider>.value(
           value: ArrangementProvider(),
         ),
+        ChangeNotifierProvider<LocationProvider>.value(
+          value: LocationProvider(),
+        ),
+
       ],
       child: MaterialApp.router(
-        title: "Scénická žatva 100",
+        title: "TVOR•BA 2023",
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
             fontFamily: 'Hind',
             appBarTheme: AppBarTheme(
-                iconTheme: IconThemeData(color: accentColor),
-                backgroundColor: darkColor,
-                foregroundColor: accentColor
+                iconTheme: IconThemeData(color: lightColor),
+                backgroundColor: accentColor,
+                foregroundColor: lightColor
             ),
-            cardTheme: CardTheme(
-              color: lightColor
+            navigationBarTheme: NavigationBarThemeData(
+              labelTextStyle: MaterialStateProperty.all(TextStyle(color: Colors.white)),
             ),
             textTheme: TextTheme(
               displayLarge: TextStyle(

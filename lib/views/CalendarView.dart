@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
-import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -24,13 +23,14 @@ class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _selectedDay;
-  DateTime _rangeStart = DateTime.utc(2022, 8, 29);
-  DateTime _rangeEnd = DateTime.utc(2022, 9, 4);
+  DateTime _rangeStart = DateTime.utc(2023, 3, 9);
+  DateTime _rangeEnd = DateTime.utc(2023, 3, 12);
   DateTime _focusedDay = (DateTime.now().isBefore(DateTime.utc(2022, 8, 29)) ||
           DateTime.now().isAfter(DateTime.utc(2022, 9, 4)))
-      ? DateTime.utc(2022, 8, 30)
+      ? DateTime.utc(2023, 3, 9)
       : DateTime.now();
   AnimationController _animationController;
+  List venues;
   // List events;
 
   @override
@@ -45,6 +45,7 @@ class _CalendarViewState extends State<CalendarView>
     _animationController.forward();
 
     _selectedDay = _focusedDay;
+
   }
 
   @override
@@ -56,7 +57,7 @@ class _CalendarViewState extends State<CalendarView>
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
     final events = eventsProvider.events;
-    return events.where((event) {
+     return events.where((event) {
       return event.startTime.year == day.year &&
           event.startTime.month == day.month &&
           event.startTime.day == day.day;
@@ -87,6 +88,7 @@ class _CalendarViewState extends State<CalendarView>
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
@@ -109,7 +111,7 @@ class _CalendarViewState extends State<CalendarView>
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     return Container(
-      color: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.primary,
       child: TableCalendar(
         locale: 'sk_SK',
         firstDay: _rangeStart,
@@ -141,9 +143,21 @@ class _CalendarViewState extends State<CalendarView>
         },
         calendarStyle: CalendarStyle(
           outsideDaysVisible: true,
-          outsideTextStyle: TextStyle(color: Theme.of(context).colorScheme.tertiary),
-          defaultTextStyle: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+          outsideTextStyle:
+              TextStyle(color: Theme.of(context).colorScheme.secondary),
+          defaultTextStyle:
+              TextStyle(color: Theme.of(context).colorScheme.secondary),
+          disabledTextStyle: TextStyle(color: Colors.white38),
+          weekendTextStyle:
+              TextStyle(color: Theme.of(context).colorScheme.secondary),
         ),
+        daysOfWeekStyle: DaysOfWeekStyle(
+            weekdayStyle: TextStyle(
+              color: Colors.white54,
+            ),
+            weekendStyle: TextStyle(
+              color: Colors.white54,
+            )),
         calendarBuilders: CalendarBuilders(
           selectedBuilder: (context, date, _) {
             return FadeTransition(
@@ -154,11 +168,13 @@ class _CalendarViewState extends State<CalendarView>
                 height: 100,
                 decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
-                    color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.inverseSurface),
                 child: Center(
                   child: Text(
                     '${date.day}',
-                    style: TextStyle().copyWith(fontSize: 16.0),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.surface)
+                            .copyWith(fontSize: 16.0),
                   ),
                 ),
               ),
@@ -208,7 +224,7 @@ class _CalendarViewState extends State<CalendarView>
         child: Text(
           '${events.length}',
           style: TextStyle().copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: Colors.white54,
             fontSize: 12.0,
           ),
         ),
@@ -218,6 +234,7 @@ class _CalendarViewState extends State<CalendarView>
 
   Widget _buildEventList() {
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
+
     return Container(
         child: AnimatedOpacity(
       opacity: eventsProvider.events.length > 0 ? 1.0 : 0.0,
@@ -239,6 +256,7 @@ class EventListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
 //    String Formatting
     //Start & End-time
     final startTime = event.startTime != null
@@ -253,7 +271,7 @@ class EventListItem extends StatelessWidget {
     /*final description = event.description != null
         ? event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
         : '';*/
-
+    final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     return GestureDetector(
       child: Card(
           child: Row(children: <Widget>[
@@ -265,11 +283,11 @@ class EventListItem extends StatelessWidget {
                 /*crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,*/
                 children: <Widget>[
-                  Icon(Venues().getIcon(event.location),
-                      color: Venues().getColor(event.location), size: 26),
+                  Icon(eventsProvider.getLocationIcon(event.location),
+                      color: eventsProvider.getLocationColor(event.location), size: 26),
                   Text("$location",
                       style:
-                          TextStyle(color: Venues().getColor(event.location)),
+                          TextStyle(color: eventsProvider.getLocationColor(event.location)),
                       textAlign: TextAlign.center),
                   Text("$startTime"),
                 ],
@@ -305,9 +323,7 @@ class EventListItem extends StatelessWidget {
                 height: 120.0,
                 child: Hero(
                   child: Image(
-                    image: FirebaseImageProvider(
-                        FirebaseUrl(event.image)
-                    ),
+                    image: FirebaseImageProvider(FirebaseUrl(event.image)),
                     fit: BoxFit.cover,
                     height: double.infinity,
                     width: double.infinity,
@@ -323,7 +339,7 @@ class EventListItem extends StatelessWidget {
       ])),
       onTap: () {
         Analytics().sendEvent(event.title);
-        context.go("/events/"+event.id);
+        context.go("/events/" + event.id);
 /*        Navigator.push(
           context,
           MaterialPageRoute(

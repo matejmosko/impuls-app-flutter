@@ -1,17 +1,23 @@
 //import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/models/Event.dart';
+import 'package:scenickazatva_app/models/Location.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:scenickazatva_app/requests/api.dart';
 
 class EventsProvider extends ChangeNotifier {
   Map<DateTime, List<Event>> _mappedEvents = {};
   List<Event> _events = [];
+  List<Location> _venues = [];
   DateTime _selectedDay = DateTime.now();
   bool _loading = false;
 
   EventsProvider() {
     fetchAllEvents();
+    fetchLocations();
+    //locationIcon("default");
   }
 
   DateTime get selectedDay => _selectedDay;
@@ -19,6 +25,8 @@ class EventsProvider extends ChangeNotifier {
   Map<DateTime, List> get mappedEvents => _mappedEvents;
 
   List<Event> get events => _events;
+
+  List<Location> get venues => _venues;
 
   bool get loading => _loading;
 
@@ -51,7 +59,7 @@ class EventsProvider extends ChangeNotifier {
     setLoading(true);
     //FirebaseDatabase database = FirebaseDatabase.instance;
     //database.setPersistenceEnabled(true);
-    String festival = "scenickazatva2022";
+    String festival = await API().getDefaultFestival();
     DatabaseReference eventsdb = FirebaseDatabase.instance.ref("festivals/$festival/events");
     Stream<DatabaseEvent> stream = eventsdb.onValue;
 
@@ -94,5 +102,69 @@ class EventsProvider extends ChangeNotifier {
 
     _events.sort((a, b) => a.startTime.compareTo(b.startTime));
     notifyListeners();
+  }
+
+  void /*Future<List<InfoPost>>*/ fetchLocations() async {
+    setLoading(true);
+    FirebaseDatabase database = FirebaseDatabase.instance;
+    if(!kIsWeb){database.setPersistenceEnabled(true);}
+
+
+    String festival = await API().getDefaultFestival();
+    final locationdb = FirebaseDatabase.instance.ref("festivals/$festival/locations");
+    if(!kIsWeb){locationdb.keepSynced(true);}
+    // Get the Stream
+    Stream<DatabaseEvent> stream = locationdb.onValue;
+
+// Subscribe to the stream!
+    stream.listen((DatabaseEvent venue) {
+      List<dynamic> list = [];
+      Map validMap = json.decode(json.encode(venue.snapshot.value));
+      for (var e in validMap.values){
+        list.add(e);
+      }
+      print(list);
+      setLocations(
+          _venues = list.map((model) => Location.fromData(model)).toList()
+      );
+    });
+    /*API().fetchInfo().then((data) {
+      if (data.statusCode == 200) {
+        Iterable list = json.decode(utf8.decode(data.bodyBytes));
+        setInfo(
+          list.map((model) => InfoPost.fromJson(model)).toList(),
+        );
+      }
+    });*/
+  }
+
+  IconData getLocationIcon(loc){
+    Location _venue = _venues.where((element) => (element.id == loc))
+        .toList()[0];
+    int icon = _venue !=null ? _venue.icon : 57402;
+    return IconData(icon, fontFamily: 'MaterialIcons');
+  }
+
+  Color getLocationColor(loc){
+    Location _venue = _venues.where((element) => (element.id == loc))
+        .toList()[0];
+    String colorString = _venue !=null ? _venue.color : "FFFFFFFF";
+    int colorInt = int.parse(colorString, radix: 16);
+    Color color = new Color(colorInt);
+    return color;
+  }
+
+  String getLocationName(loc){
+    Location _venue = _venues.where((element) => (element.id == loc))
+        .toList()[0];
+    String name = _venue !=null ? _venue.displayName : "";
+    return name;
+  }
+
+
+  void setLocations(List<Location> list) {
+    _venues = list;
+    notifyListeners();
+    setLoading(false);
   }
 }

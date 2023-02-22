@@ -294,7 +294,7 @@ class EventEditPageState extends State<EventEditPage> {
               context.go("/events/" + widget.eventId);
             }),
         title: Text(
-          "Scénická žatva 100",
+          "TVOR•BA 2023",
         ),
         actions: <Widget>[
           IconButton(

@@ -5,10 +5,8 @@ import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/views/CalendarView.dart';
-//import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/views/InfoView.dart';
 import 'package:scenickazatva_app/views/NewsView.dart';
-//import 'package:scenickazatva_app/views/MagazineView.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
@@ -50,6 +48,7 @@ class _TabPageState extends State<TabPage> {
       newsProvider.fetchNews("news_src");
     } else if (index == 1) {
       eventsProvider.fetchAllEvents();
+      eventsProvider.fetchLocations();
     } else if (index == 2) {
       infoProvider.fetchInfo();
     }/* else if (index == 3) {
@@ -79,7 +78,7 @@ class _TabPageState extends State<TabPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Scénická žatva 100",
+          "TVOR•BA 2023",
         ),
         actions: <Widget>[
           IconButton(
@@ -106,17 +105,18 @@ class _TabPageState extends State<TabPage> {
         child: buildPageView(newsProvider, eventsProvider,
             infoProvider),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black87,
-        unselectedItemColor: Colors.white70,
-        selectedItemColor: Color(0xffdf9f4a),
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+      bottomNavigationBar: NavigationBar(
+        //type: BottomNavigationBarType.fixed,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        //unselectedItemColor: Colors.white70,
+        //selectedItemColor: Color(0xffdf9f4a),
+        destinations: <Widget>[
+          NavigationDestination(
             icon: Icon(Icons.notifications),
+
             label: 'Novinky',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.calendar_today),
             label: 'Kalendár',
           ),
@@ -124,17 +124,17 @@ class _TabPageState extends State<TabPage> {
             icon: Icon(Icons.article),
             label: 'Festník',
           ),*/
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.info),
             label: 'Info',
           ),
         ],
-        currentIndex: _selectedIndex,
+        selectedIndex: _selectedIndex,
         /* selectedItemColor: colorTheme.textColor,
         unselectedItemColor: colorTheme.textColor,*/
-        showUnselectedLabels: true,
-        onTap: (index) =>
-            _itemTapped(index, newsProvider, eventsProvider, infoProvider),
+        //showUnselectedLabels: true,
+        onDestinationSelected: (index) =>
+            _itemTapped(index, newsProvider, eventsProvider, infoProvider)
       ),
     );
   }

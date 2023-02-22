@@ -6,8 +6,8 @@ Color darkColor = Colors.black87;
 Color darkColorLighter = Colors.blueGrey;
 Color lightColor = Colors.white;
 Color lightColorDarker = Color(0xFFF0F0F0);
-Color accentColor = Color(0xffdf9f4a);
-Color accentColorDarker = Color(0xFF855400);
+Color accentColor = Color(0xFF660066);
+Color accentColorDarker = Color(0xFF330033);
 Color lightColorTransparent = Colors.white54;
 
 var lightColorScheme = ColorScheme(
@@ -16,11 +16,11 @@ var lightColorScheme = ColorScheme(
   onPrimary: darkColor,
   primaryContainer: lightColor,
   onPrimaryContainer: darkColor,
-  secondary: darkColor,
-  onSecondary: accentColor,
+  secondary: lightColor,
+  onSecondary: darkColor,
   secondaryContainer: accentColor,
-  onSecondaryContainer: darkColor,
-  tertiary: lightColor,
+  onSecondaryContainer: lightColor,
+  tertiary: darkColor,
   onTertiary: darkColor,
   tertiaryContainer: lightColor,
   onTertiaryContainer: darkColor,
@@ -32,11 +32,11 @@ var lightColorScheme = ColorScheme(
   onBackground: darkColor,
   surface: lightColor,
   onSurface: darkColor,
-  surfaceVariant: lightColorDarker,
-  onSurfaceVariant: darkColorLighter,
+  surfaceVariant: darkColorLighter,
+  onSurfaceVariant: lightColorTransparent,
   outline: darkColorLighter,
   onInverseSurface: lightColorDarker,
-  inverseSurface: accentColor,
+  inverseSurface: accentColorDarker,
   inversePrimary: darkColor,
   shadow: Color(0xFF000000),
   surfaceTint: lightColor,

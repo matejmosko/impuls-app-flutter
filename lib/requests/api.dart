@@ -21,13 +21,17 @@ class API {
       return null;
     }
   }
-/*
-  Future<http.Response> fetchArrangements() {
-    var result = http.get(Uri.parse(url2 + '/events.json'),
-        headers: {'Content-Type': 'application/json; charset=utf-8'});
-    return result;
+
+  Future<String> getDefaultFestival() async {
+    DatabaseReference optionsdb = FirebaseDatabase.instance.ref("appsettings");
+    final options = await optionsdb.get();
+    if (options.exists) {
+      final _options = (options.value as Map);
+      return _options["defaultfestival"];
+    } else {
+      return null;
+    }
   }
-  */
 
   Future<String> fetchNews(src, page) async {
     try {

@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-
 var userData;
 
+/*
 class Venues {
   Map Locations = {
     "Štúdio": {"color": Colors.orangeAccent, "icon": Icons.corporate_fare, "name": "Štúdio SKD"},
@@ -28,8 +27,9 @@ class Venues {
   String getName(String loc) {
     return Locations[loc] !=null ? Locations[loc]["name"] : loc;
   }
-}
+}*/
 
+/*
 class ColorProvider extends ChangeNotifier {
   static Color themeDark = Color(0xff021f2d);
   static Color themeDarker = Color(0xff000d14);
@@ -70,4 +70,4 @@ class ColorProvider extends ChangeNotifier {
       setLightTheme();
     }
   }
-}
+}*/
