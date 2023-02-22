@@ -52,7 +52,7 @@ class InfoDetailPage extends StatelessWidget {
                 child: Column(
               children: <Widget>[
                 ListTile(
-                  title: Text("${info.title ?? ''}"),
+                  title: Text("${info.title}"),
                 ),
                 info.description != null
                     ? Padding(

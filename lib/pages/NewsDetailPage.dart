@@ -15,7 +15,7 @@ class NewsDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
-    NewsPost news = newsProvider.news.where((element) => (element.id == newsId)).toList()[0];
+    NewsPost news = newsProvider.news.where((element) => (element.id.toString() == newsId)).toList()[0];
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +47,7 @@ class NewsDetailPage extends StatelessWidget {
             Card(
               child: Column(
                 children: <Widget>[
-                  Text("${news.title ?? ''}",
+                  Text("${news.title}",
                       style: Theme.of(context).textTheme.displayLarge),
                   news.description != null
                       ? Padding(

@@ -13,7 +13,7 @@ class authService {
     authFirebase();
   }
 
-  void authFirebase() async {
+  Future<UserCredential?> authFirebase() async {
     try {
       final userCredential = await _firebaseAuth.signInAnonymously();
       userData = userCredential;
@@ -51,7 +51,7 @@ class authService {
     }
 
     final fcmToken = await _messaging.getToken();
-    return fcmToken;
+    return fcmToken ?? "";
   }
 
   Future<UserData> getUserData(user) async{
@@ -71,7 +71,7 @@ class authService {
           ));
           _user = await _usersdb.get();
         }
-        var result = UserData.fromData(_user.value);
+        var result = UserData.fromData(_user.value as Map<String, dynamic>);
         print(await result.id);
         saveUserData(result);
         return result;
@@ -79,7 +79,7 @@ class authService {
         print(e);
       }
     }
-    return null;
+    return user;
   }
 
   Future<UserData> saveUserData(UserData _user) async{
@@ -97,7 +97,7 @@ class authService {
           print(error);
         });
     }
-    return null;
+    return _user;
   }
 
 }

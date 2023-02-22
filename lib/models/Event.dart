@@ -1,25 +1,23 @@
 
 class Event {
-  final String id;
-  final String title;
-  final String description;
-  final String location;
-  final DateTime startTime;
-  final DateTime endTime;
-  String image;
-  final String artist;
-  final List<dynamic> arrangement;
+  String id = "";
+  String title = "";
+  String description = "";
+  String location = "";
+  DateTime? startTime;
+  DateTime? endTime;
+  String image = "";
+  String artist = "";
 
   Event({
-    this.id,
-    this.title,
+    this.id = "",
+    this.title = "",
     this.startTime,
     this.endTime,
-    this.location,
-    this.image,
-    this.description,
-    this.artist,
-    this.arrangement,
+    this.location = "",
+    this.image = "",
+    this.description = "",
+    this.artist = "",
   });
 
   factory Event.fromJson(Map<String, dynamic> json){
@@ -38,7 +36,6 @@ class Event {
       startTime: startTime,
       endTime: endTime,
       image: json['image'] as String,
-      arrangement: json['arrangement'],
       artist: json['artist'],
     );
   }

@@ -1,18 +1,18 @@
 class Arrangement {
-  final String id;
-  final String title;
-  final String location;
-  final DateTime startTime;
-  final DateTime endTime;
-  final String imgUrl;
+  String id = "";
+  String title = "";
+  String location = "";
+  DateTime? startTime;
+  DateTime? endTime;
+  String imgUrl = "";
 
   Arrangement({
-    this.id,
-    this.title,
+    this.id = "",
+    this.title = "",
     this.startTime,
     this.endTime,
-    this.location,
-    this.imgUrl,
+    this.location = "",
+    this.imgUrl = "",
   });
 
   factory Arrangement.fromJson(Map<String, dynamic> json) {

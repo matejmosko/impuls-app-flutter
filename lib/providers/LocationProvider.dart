@@ -35,7 +35,6 @@ class LocationProvider extends ChangeNotifier {
       for (var e in validMap.values){
         list.add(e);
       }
-      print(list);
       setLocations(
         _venues = list.map((model) => Location.fromData(model)).toList()
       );
@@ -52,10 +51,9 @@ class LocationProvider extends ChangeNotifier {
 
   IconData getIcon(loc){
     if (_venues == []) {fetchLocations();}
-    print(_venues);
+
     Location _venue = _venues.where((element) => (element.id == loc))
         .toList()[0];
-    print(_venue);
 
     int icon = _venue !=null ? _venue.icon : 57402;
     return IconData(icon, fontFamily: 'MaterialIcons');

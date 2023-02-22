@@ -106,7 +106,7 @@ class IntroPageView extends StatelessWidget {
 /// to easily do it, in the form of [PageVisibility].
 class PageTransformer extends StatefulWidget {
   PageTransformer({
-    @required this.pageViewBuilder,
+    required this.pageViewBuilder,
   });
 
   final PageViewBuilder pageViewBuilder;
@@ -116,12 +116,12 @@ class PageTransformer extends StatefulWidget {
 }
 
 class _PageTransformerState extends State<PageTransformer> {
-  PageVisibilityResolver _visibilityResolver;
+  PageVisibilityResolver? _visibilityResolver;
 
   @override
   Widget build(BuildContext context) {
     final pageView = widget.pageViewBuilder(
-        context, _visibilityResolver ?? PageVisibilityResolver());
+        context, _visibilityResolver!);
 
     final controller = pageView.controller;
     final viewPortFraction = controller.viewportFraction;
@@ -135,6 +135,7 @@ class _PageTransformerState extends State<PageTransformer> {
             viewPortFraction: viewPortFraction,
           );
         });
+        return true;
       },
       child: pageView,
     );
@@ -143,16 +144,16 @@ class _PageTransformerState extends State<PageTransformer> {
 
 class IntroPageItem extends StatelessWidget {
   IntroPageItem({
-    @required this.item,
-    @required this.pageVisibility,
+    required this.item,
+    required this.pageVisibility,
   });
 
   final Arrangement item;
   final PageVisibility pageVisibility;
 
   Widget _applyTextEffects({
-    @required double translationFactor,
-    @required Widget child,
+    required double translationFactor,
+    required Widget child,
   }) {
     final double xTranslation = pageVisibility.pagePosition * translationFactor;
 
@@ -176,7 +177,7 @@ class IntroPageItem extends StatelessWidget {
       translationFactor: 200.0,
       child: Text(
         item.location,
-        style: textTheme.bodySmall.copyWith(
+        style: textTheme.bodySmall!.copyWith(
           color: Colors.white70,
           fontWeight: FontWeight.bold,
           letterSpacing: 2.0,
@@ -199,54 +200,54 @@ class IntroPageItem extends StatelessWidget {
     );
 
     var weekDays = [
-      "Mandag",
-      "Tirsdag",
-      "Onsdag",
-      "Torsdag",
-      "Fredag",
-      "Lørdag",
-      "Søndag",
+      "Pondelok",
+      "Utorok",
+      "Streda",
+      "Štvrtok",
+      "Piatok",
+      "Sobota",
+      "Nedeľa",
     ];
 
     var months = [
-      "Januar",
-      "Februar",
-      "Mars",
-      "April",
-      "Mai",
-      "Juni",
-      "Juli",
+      "Január",
+      "Február",
+      "Marec",
+      "Apríl",
+      "Máj",
+      "Jún",
+      "Júl",
       "August",
       "September",
-      "Oktober",
+      "Október",
       "November",
-      "Desember"
+      "December"
     ];
 
     var startsAndEndsInDifferentYears = item.startTime != null &&
         item.endTime != null &&
-        item.startTime.year != item.endTime.year;
+        item.startTime?.year != item.endTime?.year;
 
     var startTimeText = item.startTime != null
-        ? " ${weekDays[item.startTime.weekday - 1]} ${item.startTime.day}."
+        ? " ${weekDays[item.startTime!.weekday - 1]} ${item.startTime!.day}."
         : '';
     var endTimeText = item.endTime != null
-        ? "-> ${weekDays[item.endTime.weekday - 1]} ${item.endTime.day}. ${months[item.endTime.month - 1]} ${item.endTime.year}"
+        ? "-> ${weekDays[item.endTime!.weekday - 1]} ${item.endTime!.day}. ${months[item.endTime!.month - 1]} ${item.endTime!.year}"
         : '';
 
     if (item.endTime != null) {
       var startsAndEndsInDifferentMonths =
-          item.startTime.month != item.endTime.month;
+          item.startTime?.month != item.endTime?.month;
       if (startsAndEndsInDifferentMonths || startsAndEndsInDifferentYears) {
-        startTimeText = "$startTimeText ${months[item.startTime.month - 1]}";
+        startTimeText = "$startTimeText ${months[item.startTime!.month - 1]}";
       }
     } else {
       startTimeText =
-          "$startTimeText ${months[item.startTime.month - 1]} ${item.startTime.year}";
+          "$startTimeText ${months[item.startTime!.month - 1]} ${item.startTime?.year}";
     }
 
     if (startsAndEndsInDifferentYears) {
-      startTimeText = "$startTimeText ${item.startTime.year}";
+      startTimeText = "$startTimeText ${item.startTime?.year}";
     }
 
 //    var startTimeText = 'sometime';
@@ -256,7 +257,7 @@ class IntroPageItem extends StatelessWidget {
       translationFactor: 200.0,
       child: Text(
         "$startTimeText $endTimeText",
-        style: textTheme.bodySmall.copyWith(
+        style: textTheme.bodySmall!.copyWith(
           color: Colors.white70,
           fontWeight: FontWeight.bold,
           letterSpacing: 2.0,
@@ -337,9 +338,9 @@ typedef PageView PageViewBuilder(
 /// the current page.
 class PageVisibilityResolver {
   PageVisibilityResolver({
-    ScrollMetrics metrics,
-    double viewPortFraction,
-  })  : this._pageMetrics = metrics,
+    ScrollMetrics? metrics,
+    double viewPortFraction = 1.0,
+  })  : this._pageMetrics = metrics!,
         this._viewPortFraction = viewPortFraction;
 
   final ScrollMetrics _pageMetrics;
@@ -368,11 +369,11 @@ class PageVisibilityResolver {
   }
 
   double _calculatePagePosition(int index) {
-    final double viewPortFraction = _viewPortFraction ?? 1.0;
+    final double viewPortFraction = _viewPortFraction;
     final double pageViewWidth =
-        (_pageMetrics?.viewportDimension ?? 1.0) * viewPortFraction;
+        (_pageMetrics.viewportDimension) * viewPortFraction;
     final double pageX = pageViewWidth * index;
-    final double scrollX = (_pageMetrics?.pixels ?? 0.0);
+    final double scrollX = (_pageMetrics.pixels);
     final double pagePosition = (pageX - scrollX) / pageViewWidth;
     final double safePagePosition = !pagePosition.isNaN ? pagePosition : 0.0;
 
@@ -389,8 +390,8 @@ class PageVisibilityResolver {
 /// A class that contains visibility information about the current page.
 class PageVisibility {
   PageVisibility({
-    @required this.visibleFraction,
-    @required this.pagePosition,
+    required this.visibleFraction,
+    required this.pagePosition,
   });
 
   /// How much of the page is currently visible, between 0.0 and 1.0.

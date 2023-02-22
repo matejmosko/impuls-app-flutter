@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:scenickazatva_app/pages/NewsDetailPage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -92,14 +93,15 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                   ]),
                               onTap: () {
                                 Analytics().sendEvent(item.title);
-                                Navigator.push(
+                                context.go("/news/" + item.id.toString());
+/*                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => NewsDetailPage(
                                       newsId: item.id,
                                     ),
                                   ),
-                                );
+                                );*/
                               }),
                         );
                       },

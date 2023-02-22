@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:provider/provider.dart';
@@ -23,13 +24,13 @@ class EventDetailPage extends StatelessWidget {
         .toList()[0];
 
     final startDate = event.startTime != null
-        ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime)
+        ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime!)
         : '';
     final startTime = event.startTime != null
-        ? new DateFormat("HH:mm").format(event.startTime)
+        ? new DateFormat("HH:mm").format(event.startTime!)
         : '';
     final endTime = event.endTime != null
-        ? "\n${new DateFormat("HH:mm").format(event.endTime)}"
+        ? "\n${new DateFormat("HH:mm").format(event.endTime!)}"
         : '';
 
     //Location
@@ -59,7 +60,7 @@ class EventDetailPage extends StatelessWidget {
                       height: 300,
                       width: double.infinity,
                       errorBuilder: (BuildContext context, Object exception,
-                          StackTrace stackTrace) {
+                          StackTrace? stackTrace) {
                         return Image.asset(
                           'assets/images/icon512.png',
                           fit: BoxFit.cover,
@@ -91,11 +92,11 @@ class EventDetailPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
-                                  Text("${event.title ?? ''}",
+                                  Text("${event.title}",
                                       style: Theme.of(context)
                                           .textTheme
                                           .displaySmall),
-                                  Text("${event.artist ?? ''}"),
+                                  Text("${event.artist}"),
                                 ]),
                           ),
                           Column(
@@ -126,7 +127,7 @@ class EventDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: kIsWeb == true ? FloatingActionButton(
         onPressed: () {
           context.go("/events/" + event.id + "/edit");
           /* Navigator.push(
@@ -139,7 +140,7 @@ class EventDetailPage extends StatelessWidget {
           );*/
         },
         child: const Icon(Icons.edit),
-      ),
+      ) : SizedBox(),
     );
   }
 }

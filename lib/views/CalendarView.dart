@@ -11,7 +11,7 @@ import 'package:markdown/markdown.dart' as MD;
 import 'package:go_router/go_router.dart';
 
 class CalendarView extends StatefulWidget {
-  CalendarView({Key key, this.title}) : super(key: key);
+  CalendarView({Key? key, this.title = ""}) : super(key: key);
 
   final String title;
 
@@ -22,15 +22,15 @@ class CalendarView extends StatefulWidget {
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime _selectedDay;
+  DateTime? _selectedDay;
   DateTime _rangeStart = DateTime.utc(2023, 3, 9);
   DateTime _rangeEnd = DateTime.utc(2023, 3, 12);
   DateTime _focusedDay = (DateTime.now().isBefore(DateTime.utc(2022, 8, 29)) ||
           DateTime.now().isAfter(DateTime.utc(2022, 9, 4)))
       ? DateTime.utc(2023, 3, 9)
       : DateTime.now();
-  AnimationController _animationController;
-  List venues;
+  AnimationController? _animationController;
+  List venues = [];
   // List events;
 
   @override
@@ -42,7 +42,7 @@ class _CalendarViewState extends State<CalendarView>
       duration: const Duration(milliseconds: 400),
     );
 
-    _animationController.forward();
+    _animationController?.forward();
 
     _selectedDay = _focusedDay;
 
@@ -58,15 +58,15 @@ class _CalendarViewState extends State<CalendarView>
         Provider.of<EventsProvider>(context, listen: false);
     final events = eventsProvider.events;
      return events.where((event) {
-      return event.startTime.year == day.year &&
-          event.startTime.month == day.month &&
-          event.startTime.day == day.day;
+      return event.startTime?.year == day.year &&
+          event.startTime?.month == day.month &&
+          event.startTime?.day == day.day;
     }).toList();
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _animationController?.dispose();
     super.dispose();
   }
 
@@ -162,7 +162,7 @@ class _CalendarViewState extends State<CalendarView>
           selectedBuilder: (context, date, _) {
             return FadeTransition(
               opacity:
-                  Tween(begin: 0.0, end: 1.0).animate(_animationController),
+                  Tween(begin: 0.0, end: 1.0).animate(_animationController!),
               child: Container(
                 width: 100,
                 height: 100,
@@ -241,7 +241,7 @@ class _CalendarViewState extends State<CalendarView>
       duration: Duration(milliseconds: 500),
       child: ListView(
         padding: EdgeInsets.all(8),
-        children: _fetchEvents(_selectedDay)
+        children: _fetchEvents(_selectedDay!)
             .map((event) => EventListItem(event: event))
             .toList(),
       ),
@@ -252,7 +252,7 @@ class _CalendarViewState extends State<CalendarView>
 class EventListItem extends StatelessWidget {
   final event;
 
-  const EventListItem({Key key, @required this.event}) : super(key: key);
+  const EventListItem({Key? key, @required this.event}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -328,7 +328,7 @@ class EventListItem extends StatelessWidget {
                     height: double.infinity,
                     width: double.infinity,
                     errorBuilder: (BuildContext context, Object exception,
-                        StackTrace stackTrace) {
+                        StackTrace? stackTrace) {
                       return Image.asset('assets/images/icon512.png');
                     },
                   ),

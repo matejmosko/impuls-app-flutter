@@ -1,22 +1,20 @@
 class NewsPost {
-  int id;
-  String title;
-  String description;
-  String content;
-  String location;
-  String publishTime;
-  String image;
-  List<String> arrangement;
+  int id = 0;
+  String title = "";
+  String description = "";
+  String content = "";
+  String location = "";
+  String publishTime = "";
+  String image = "";
 
   NewsPost(
-      {this.id,
-      this.title,
-      this.description,
-      this.content,
-      this.location,
-      this.publishTime,
-      this.image,
-    //  this.arrangement
+      {this.id = 0,
+      this.title = "",
+      this.description = "",
+      this.content = "",
+      this.location = "",
+      this.publishTime = "",
+      this.image = "",
     });
 
   NewsPost.fromJson(Map<String, dynamic> json) {

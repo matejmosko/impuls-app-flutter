@@ -18,6 +18,7 @@ import 'package:scenickazatva_app/providers/LocationProvider.dart';
 import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/pages/TabPage.dart';
 import 'package:scenickazatva_app/pages/EventDetailPage.dart';
+import 'package:scenickazatva_app/pages/NewsDetailPage.dart';
 import 'package:scenickazatva_app/pages/EventEditPage.dart';
 import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
 
@@ -29,41 +30,53 @@ final _router = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) => TabPage(initialIndex: 1),
-    ),
-    GoRoute(
-      path: '/news',
-      builder: (context, state) => TabPage(initialIndex: 0),
-    ),
-    GoRoute(
-      path: '/events',
-      builder: (context, state) => TabPage(initialIndex: 1),
-    ),
-    GoRoute(
-      path: '/info',
-      builder: (context, state) => TabPage(initialIndex: 2),
-    ),
-    GoRoute(
-      path: '/settings',
-      builder: (context, state) => SettingsPage(),
-    ),
-    GoRoute(
-      path: '/events/:eventId',
-      builder: (context, state) =>
-          EventDetailPage(eventId: state.params["eventId"]),
-    ),
-    GoRoute(
-      path: '/events/:eventId/edit',
-      builder: (context, state) =>
-          EventEditPage(eventId: state.params["eventId"]),
-    ),
-    GoRoute(
-      path: '/info/:infoId',
-      builder: (context, state) =>
-          InfoDetailPage(infoId: state.params["infoId"]),
-    ),
-    GoRoute(
-      path: '/user',
-      builder: (context, state) => SettingsPage(),
+      routes: [
+        GoRoute(
+            path: 'news',
+            builder: (context, state) => TabPage(initialIndex: 0),
+            routes: [
+              GoRoute(
+                path: ':newsId',
+                builder: (context, state) =>
+                    NewsDetailPage(newsId: state.params["newsId"]),
+              ),
+            ]
+        ),
+        GoRoute(
+            path: 'events',
+            builder: (context, state) => TabPage(initialIndex: 1),
+            routes: [
+
+              GoRoute(
+                path: ':eventId',
+                builder: (context, state) =>
+                    EventDetailPage(eventId: state.params["eventId"]),
+              ),
+              GoRoute(
+                path: ':eventId/edit',
+                builder: (context, state) =>
+                    EventEditPage(eventId: state.params["eventId"]),
+              ),
+            ]
+        ),
+        GoRoute(
+            path: 'info',
+            builder: (context, state) => TabPage(initialIndex: 2),
+            routes: [
+              GoRoute(
+                path: ':infoId',
+                builder: (context, state) =>
+                    InfoDetailPage(infoId: state.params["infoId"]),
+              )]
+        ),
+        GoRoute(
+          path: 'settings',
+          builder: (context, state) => SettingsPage(),
+        ),
+        GoRoute(
+          path: 'user',
+          builder: (context, state) => SettingsPage(),
+        ),]
     ),
   ],
 );
@@ -124,7 +137,7 @@ void main() async {
   );
   await authService().authFirebase();
 
-  FirebaseAuth.instance.idTokenChanges().listen((User user) async {
+  FirebaseAuth.instance.idTokenChanges().listen((User? user) async {
     if (user == null) {
       print('User is currently signed out! We cannot get data');
     } else {

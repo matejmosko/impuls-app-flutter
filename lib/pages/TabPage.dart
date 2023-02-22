@@ -24,8 +24,8 @@ class _TabPageState extends State<TabPage> {
 //    MagazineView(),
   ];
 
-  int _selectedIndex;
-  PageController _pageController;
+  int _selectedIndex = 0;
+  PageController? _pageController;
 
   void initState() {
     super.initState();
@@ -39,7 +39,7 @@ class _TabPageState extends State<TabPage> {
   void _itemTapped(int index, newsProvider, eventsProvider, infoProvider) {
     setState(() {
       _selectedIndex = index;
-      _pageController.jumpToPage(index);
+      _pageController?.jumpToPage(index);
     });
   }
 
@@ -81,7 +81,7 @@ class _TabPageState extends State<TabPage> {
           "TVOR•BA 2023",
         ),
         actions: <Widget>[
-          IconButton(
+          kIsWeb == true ? IconButton(
             icon: Icon(
               Icons.settings,
               color: Colors.white,
@@ -89,8 +89,8 @@ class _TabPageState extends State<TabPage> {
             onPressed: () {
               context.go('/settings');
             },
-          ),
-          kIsWeb != null ? IconButton(
+          ) : SizedBox(),
+          kIsWeb == true ? IconButton(
             icon: Icon(
               Icons.person,
               color: Colors.white,
@@ -98,7 +98,7 @@ class _TabPageState extends State<TabPage> {
             onPressed: () { // TODO Pridať možnosť prihlásiť sa na webe.
               context.go('/settings');
             },
-          ) : null,
+          ) : SizedBox(),
         ],
       ),
       body: Center(

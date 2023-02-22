@@ -1,30 +1,23 @@
 class InfoPost {
-  String id;
-  String title;
-  String description;
-  int index;
-  bool published;
-  String image;
-  int icon;
-  List<String> arrangement;
+  String id = "";
+  String title = "";
+  String description = "";
+  int index = 0;
+  bool published = false;
+  String image = "";
+  int icon = 0;
 
   InfoPost(
-      {this.id,
-      this.title,
-      this.description,
-      this.index,
-      this.published,
-      this.image,
-      this.icon,
-      this.arrangement});
+      {this.id = "",
+      this.title = "",
+      this.description = "",
+      this.icon = 0,
+      });
 
   InfoPost.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     description = json['description'];
-    index = json['index'];
-    published = json['published'];
-    image = json['image'];
     icon = json['icon'];
   }
 
@@ -33,11 +26,7 @@ class InfoPost {
     data['id'] = this.id;
     data['title'] = this.title;
     data['description'] = this.description;
-    data['index'] = this.index;
-    data['published'] = this.published;
-    data['image'] = this.image;
     data['icon'] = this.icon;
-    data['arrangement'] = this.arrangement;
     return data;
   }
 }

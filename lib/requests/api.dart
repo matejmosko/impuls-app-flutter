@@ -18,7 +18,7 @@ class API {
       return _options["festivals"][_options["defaultfestival"]][src];
     } else {
       print('No data in AppSettings');
-      return null;
+      return "";
     }
   }
 
@@ -29,7 +29,7 @@ class API {
       final _options = (options.value as Map);
       return _options["defaultfestival"];
     } else {
-      return null;
+      return "";
     }
   }
 

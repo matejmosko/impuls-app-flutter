@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
         FirebaseDatabase.instance.ref("appsettings/festivals");
     final festivals = await festivalsdb.get();
     if (festivals.exists) {
-      final _uid = FirebaseAuth.instance.currentUser.uid;
+      final _uid = FirebaseAuth.instance.currentUser?.uid;
       DatabaseReference usersdb =
           FirebaseDatabase.instance.ref("users/$_uid/notifications");
 
@@ -83,11 +83,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     );
                   }).toList(),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      roleValue = newValue;
-                    });
-                  },
+                  onChanged: (String? newValue) => setState(() {
+                      roleValue = newValue!;
+                    }),
                 ),
             ])));
   }
@@ -124,7 +122,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final user = snapshot.data;
-                      if (user.isAnonymous) {
+                      if (FirebaseAuth.instance.currentUser!.isAnonymous) {
                         return SignInScreen(
                           providers: providers,
                           actions: [
@@ -147,7 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         );
                       }
                     } else
-                      return null;
+                      return SizedBox();
                     // Render your application if authenticated
                   },
                 ),
@@ -198,7 +196,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void changeSubscription(topic, value) async {
-    final _uid = FirebaseAuth.instance.currentUser.uid;
+    final _uid = FirebaseAuth.instance.currentUser?.uid;
     if (value == true) {
       await FirebaseMessaging.instance.subscribeToTopic(topic);
     } else {

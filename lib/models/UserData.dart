@@ -1,20 +1,20 @@
 class UserData {
-  String id;
-  String fullName;
-  String email;
-  String userRole;
-  Map notifications;
-  String timestamp;
-  String fcmtoken;
+  String id = "";
+  String fullName = "";
+  String email = "";
+  String userRole = "";
+  late Map? notifications;
+  String timestamp = "";
+  String fcmtoken = "";
 
   UserData(
-      {this.id,
-      this.fullName,
-      this.email,
-      this.userRole,
+      {this.id = "",
+      this.fullName = "",
+      this.email = "",
+      this.userRole = "",
       this.notifications,
-      this.timestamp,
-      this.fcmtoken});
+      this.timestamp = "",
+      this.fcmtoken = ""});
 
   UserData.fromData(Map<String, dynamic> data)
       : id = data['id'],

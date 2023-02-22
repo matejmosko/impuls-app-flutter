@@ -33,9 +33,9 @@ class EventsProvider extends ChangeNotifier {
 
   List<Event> get selectedEvents {
     return _events.where((event) {
-      return event.startTime.year == _selectedDay.year &&
-          event.startTime.month == _selectedDay.month &&
-          event.startTime.day == _selectedDay.day;
+      return event.startTime?.year == _selectedDay.year &&
+          event.startTime?.month == _selectedDay.month &&
+          event.startTime?.day == _selectedDay.day;
     }).toList();
   }
 
@@ -91,16 +91,16 @@ class EventsProvider extends ChangeNotifier {
     //Todo: Refactor to not have so many lists... and do it in parent method fetchEventsForArrangement
     _events.forEach((event) async {
       var key = DateTime(
-          event.startTime.year, event.startTime.month, event.startTime.day);
+          event.startTime!.year, event.startTime!.month, event.startTime!.day);
 
       if (!_mappedEvents.containsKey(key)) {
         _mappedEvents.putIfAbsent(key, () => [event]);
       } else {
-        _mappedEvents[key].addAll([event]);
+        _mappedEvents[key]!.addAll([event]);
       }
     });
 
-    _events.sort((a, b) => a.startTime.compareTo(b.startTime));
+    _events.sort((a, b) => a.startTime!.compareTo(b.startTime!));
     notifyListeners();
   }
 
@@ -123,7 +123,6 @@ class EventsProvider extends ChangeNotifier {
       for (var e in validMap.values){
         list.add(e);
       }
-      print(list);
       setLocations(
           _venues = list.map((model) => Location.fromData(model)).toList()
       );

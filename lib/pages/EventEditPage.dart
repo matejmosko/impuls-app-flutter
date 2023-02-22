@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 class EventEditPage extends StatefulWidget {
   //const EventEditPage({super.key, @required this.event});
   final eventId;
-  const EventEditPage({Key key, @required this.eventId}) : super(key: key);
+  const EventEditPage({Key? key, @required this.eventId}) : super(key: key);
 
   @override
   EventEditPageState createState() => EventEditPageState();
@@ -23,7 +23,7 @@ class EventEditPageState extends State<EventEditPage> {
   final _formKey = GlobalKey<FormState>();
   var startDate;
   var endDate;
-  Event event;
+  late Event event;
 
   @override
   void initState() {
@@ -45,10 +45,10 @@ class EventEditPageState extends State<EventEditPage> {
     HtmlEditorController htmlcontroller = HtmlEditorController();
 
     Future<void> displayTimeDialog(BuildContext context, iniTime, field) async {
-      final TimeOfDay time = await showTimePicker(
+      final TimeOfDay? time = await showTimePicker(
           context: context,
           initialTime: TimeOfDay.fromDateTime(iniTime),
-          builder: (ctx, child) => PointerInterceptor(child: child));
+          builder: (ctx, child) => PointerInterceptor(child: child!));
       if (time != null) {
         setState(() {
           if (field == "start") {
@@ -62,13 +62,13 @@ class EventEditPageState extends State<EventEditPage> {
       }
     }
 
-    Future<void> displayDateDialog(BuildContext context, iniDate, field) async {
-      final DateTime date = await showDatePicker(
+    Future<DateTime?> displayDateDialog(BuildContext context, iniDate, field) async {
+      final DateTime? date = await showDatePicker(
           context: context,
           initialDate: iniDate,
           firstDate: DateTime(1970),
           lastDate: DateTime(2201),
-          builder: (ctx, child) => PointerInterceptor(child: child));
+          builder: (ctx, child) => PointerInterceptor(child: child!));
 
       if (date != null) {
         setState(() {
@@ -357,7 +357,7 @@ class EventEditPageState extends State<EventEditPage> {
       floatingActionButton: PointerInterceptor(
         child: FloatingActionButton(
           onPressed: () {
-            if (_formKey.currentState.validate()) {
+            if (_formKey.currentState!.validate()) {
               // If the form is valid, display a snackbar. In the real world,
               // you'd often call a server or save the information in a database.
               ScaffoldMessenger.of(context).showSnackBar(
