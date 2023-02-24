@@ -50,5 +50,10 @@
       <string>http</string>
       <string>https</string>
     </array>
+    <key>NSPhotoLibraryUsageDescription</key>
+        <string>App needs to access the photo library to upload profile picture when desired.
+        </string>
+    <key>aps-environment</key>
+        <string>production</string> <!-- Either development or production -->
 </dict>
 </plist>
