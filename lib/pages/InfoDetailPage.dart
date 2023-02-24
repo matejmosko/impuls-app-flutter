@@ -15,21 +15,23 @@ class InfoDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final InfoProvider infoProvider = Provider.of<InfoProvider>(context);
-    InfoPost info = infoProvider.info.where((element) => (element.id == infoId)).toList()[0];
+    InfoPost info = InfoPost();
+    List<InfoPost> information = infoProvider.info;
+    if (information.where((element) => (element.id == infoId)).length > 0) {
+      info = information.where((element) => (element.id == infoId)).toList()[0];
+    }
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-          ),
+            icon: Icon(
+              Icons.arrow_back_ios,
+            ),
             onPressed: () {
               context.go("/info");
-            }
-        ),
+            }),
         title: Text(
           "TVOR•BA 2023",
         ),
@@ -37,16 +39,10 @@ class InfoDetailPage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            Hero(
-              child: CachedNetworkImage(
-                      imageUrl: info.image,
-                      placeholder: (context, url) =>
-                          SizedBox.shrink(),
-                      errorWidget: (context, url, error) =>
-                          SizedBox.shrink()),
-
-              tag: info.id,
-            ),
+            CachedNetworkImage(
+                imageUrl: info.image,
+                placeholder: (context, url) => SizedBox.shrink(),
+                errorWidget: (context, url, error) => SizedBox.shrink()),
             Card(
                 child: Column(
               children: <Widget>[
@@ -54,12 +50,12 @@ class InfoDetailPage extends StatelessWidget {
                   title: Text("${info.title}"),
                 ),
                 Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Html(
-                          data: MD.markdownToHtml(info.description),
-                          onLinkTap: (url, renderContext, map, element) => API().launchURL(url),
-                        ))
-
+                    padding: EdgeInsets.all(12),
+                    child: Html(
+                      data: MD.markdownToHtml(info.description),
+                      onLinkTap: (url, renderContext, map, element) =>
+                          API().launchURL(url),
+                    ))
               ],
             ))
           ],

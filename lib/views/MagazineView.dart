@@ -17,7 +17,8 @@ class MagazineView extends StatefulWidget {
   _MagazineViewState createState() => _MagazineViewState();
 }
 
-class _MagazineViewState extends State<MagazineView> with TickerProviderStateMixin {
+class _MagazineViewState extends State<MagazineView>
+    with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
@@ -44,11 +45,11 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
               child: Column(
             children: <Widget>[
               Flexible(
-                    child: LazyLoadScrollView(
-                      onEndOfPage: () => newsProvider.fetchMagazine("magazine_src"),
-                      isLoading: newsProvider.loading,
-                      scrollOffset: 50,
-                        child: RefreshIndicator(
+                child: LazyLoadScrollView(
+                  onEndOfPage: () => newsProvider.fetchMagazine("magazine_src"),
+                  isLoading: newsProvider.loading,
+                  scrollOffset: 50,
+                  child: RefreshIndicator(
                       child: ListView.builder(
                         itemCount: newsProvider.articles.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -67,26 +68,21 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
                                         ),
                                       ),
                                       Container(
-                                              width: 120.0,
-                                              height: 120.0,
-                                              child: Hero(
-                                                child: CachedNetworkImage(
-                                                  imageUrl: item.image,
-                                                  fit: BoxFit.cover,
-                                                  height: double.infinity,
-                                                  width: double.infinity,
-                                                  placeholder: (context,
-                                                      url) =>
-                                                      Image.asset(
-                                                          'assets/images/icon512.png'),
-                                                  errorWidget: (context,
-                                                      url, error) =>
-                                                      Image.asset(
-                                                          'assets/images/icon512.png'),
-                                                ),
-                                                tag: item.id,
-                                              ),
-                                            ),
+                                        width: 120.0,
+                                        height: 120.0,
+                                        child: CachedNetworkImage(
+                                          imageUrl: item.image,
+                                          fit: BoxFit.cover,
+                                          height: double.infinity,
+                                          width: double.infinity,
+                                          placeholder: (context, url) =>
+                                              Image.asset(
+                                                  'assets/images/icon512.png'),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                                  'assets/images/icon512.png'),
+                                        ),
+                                      ),
                                     ]),
                                 onTap: () {
                                   Analytics().sendEvent(item.title);
@@ -102,21 +98,21 @@ class _MagazineViewState extends State<MagazineView> with TickerProviderStateMix
                           );
                         },
                       ),
-                    onRefresh: () {
-                      return Future.delayed(Duration(seconds: 0), () {
-                        /// adding elements in list after [1 seconds] delay
-                        /// to mimic network call
-                        ///
-                        /// Remember: [setState] is necessary so that
-                        /// build method will run again otherwise
-                        /// list will not show all elements
-                        setState(() {
-                          newsProvider.fetchMagazine("magazine_src",refresh: true);
+                      onRefresh: () {
+                        return Future.delayed(Duration(seconds: 0), () {
+                          /// adding elements in list after [1 seconds] delay
+                          /// to mimic network call
+                          ///
+                          /// Remember: [setState] is necessary so that
+                          /// build method will run again otherwise
+                          /// list will not show all elements
+                          setState(() {
+                            newsProvider.fetchMagazine("magazine_src",
+                                refresh: true);
+                          });
                         });
-                      });
-                    }),
-
-                    ),
+                      }),
+                ),
               ),
               Container(
                   child: (newsProvider.loading && !newsProvider.allarticles)

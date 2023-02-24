@@ -47,9 +47,8 @@ class InfoView extends StatelessWidget {
                       ),
                       onTap: () {
                         Analytics().sendEvent(item.title);
-                        context.go("/info/"+item.id);
-                      }
-                      );
+                        context.go("/info/" + item.id);
+                      });
                 },
               ),
             ),

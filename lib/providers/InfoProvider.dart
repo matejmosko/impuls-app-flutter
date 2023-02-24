@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 
 class InfoProvider extends ChangeNotifier {
-  List<InfoPost> _info = [];
+  List<InfoPost> _info = [InfoPost()];
   bool loading = false;
 
   InfoProvider() {

@@ -24,7 +24,6 @@ import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
 
 import 'package:scenickazatva_app/models/ColorScheme.dart';
 
-
 final _router = GoRouter(
   routes: [
     GoRoute(
@@ -84,49 +83,6 @@ final _router = GoRouter(
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // print("Notification shown!");
 }
-
-/*
-void authFirebase() async {
-  try {
-    final userCredential = await FirebaseAuth.instance.signInAnonymously();
-    userData = userCredential;
-
-    /* Log user login time */
-  } on FirebaseAuthException catch (e) {
-    /* Catch login errors */
-    switch (e.code) {
-      case "operation-not-allowed":
-        print("Anonymous auth hasn't been enabled for this project.");
-        break;
-      default:
-        print("Firebase Auth FAILED: " + e.code);
-    }
-  }
-}
-
-Future<String> getFCMtoken() async {
-  FirebaseMessaging _messaging;
-  _messaging = FirebaseMessaging.instance;
-
-  NotificationSettings settings = await _messaging.requestPermission(
-    alert: true,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: false,
-  );
-
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission: ${settings.authorizationStatus}');
-  } else {
-    print('User declined or has not accepted permission');
-  }
-
-  final fcmToken = await _messaging.getToken();
-  return fcmToken;
-}
-*/
 
 void main() async {
   //if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android) {
@@ -223,10 +179,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    EventsProvider eventsProvider =
-    Provider.of<EventsProvider>(context, listen: false);
-    eventsProvider.fetchAllEvents();
     return MultiProvider(
       providers: [
         /*ChangeNotifierProvider<ColorProvider>.value(

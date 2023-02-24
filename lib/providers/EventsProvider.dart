@@ -9,8 +9,8 @@ import 'package:scenickazatva_app/requests/api.dart';
 
 class EventsProvider extends ChangeNotifier {
   Map<DateTime, List<Event>> _mappedEvents = {};
-  List<Event> _events = [];
-  List<Location> _venues = [];
+  List<Event> _events = [Event()];
+  List<Location> _venues = [Location()];
   DateTime _selectedDay = DateTime.now();
   bool _loading = false;
 
@@ -137,25 +137,34 @@ class EventsProvider extends ChangeNotifier {
   }
 
   IconData getLocationIcon(loc){
-    Location _venue = _venues.where((element) => (element.id == loc))
-        .toList()[0];
-    int icon = _venue != {} ? _venue.icon : 57402;
+    Location _venue = Location();
+    if (_venues.where((element) => (element.id == loc)).length > 0){
+      _venue = _venues.where((element) => (element.id == loc))
+          .toList()[0];
+    }
+    int icon = _venue.icon;
     return IconData(icon, fontFamily: 'MaterialIcons');
   }
 
   Color getLocationColor(loc){
-    Location _venue = _venues.where((element) => (element.id == loc))
-        .toList()[0];
-    String colorString = _venue != {} ? _venue.color : "FFFFFFFF";
+    Location _venue = Location();
+    if (_venues.where((element) => (element.id == loc)).length > 0){
+      _venue = _venues.where((element) => (element.id == loc))
+          .toList()[0];
+    }
+    String colorString = _venue.color;
     int colorInt = int.parse(colorString, radix: 16);
     Color color = new Color(colorInt);
     return color;
   }
 
   String getLocationName(loc){
-    Location _venue = _venues.where((element) => (element.id == loc))
-        .toList()[0];
-    String name = _venue !={} ? _venue.displayName : "";
+    Location _venue = Location();
+    if (_venues.where((element) => (element.id == loc)).length > 0) {
+      _venue = _venues.where((element) => (element.id == loc))
+          .toList()[0];
+    }
+    String name = _venue.displayName;
     return name;
   }
 

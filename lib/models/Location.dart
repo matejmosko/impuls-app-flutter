@@ -17,8 +17,8 @@ class Location {
       this.longitude = "",
         this.city = "",
       this.latitude = "",
-      this.icon = 0,
-        this.color = ""});
+      this.icon = 57045,
+        this.color = "333333FF"});
 
   Location.fromData(Map<String, dynamic> data)
       : id = data['id'],

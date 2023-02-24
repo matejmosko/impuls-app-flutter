@@ -45,7 +45,6 @@ class _CalendarViewState extends State<CalendarView>
     _animationController?.forward();
 
     _selectedDay = _focusedDay;
-
   }
 
   @override
@@ -57,7 +56,7 @@ class _CalendarViewState extends State<CalendarView>
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
     final events = eventsProvider.events;
-     return events.where((event) {
+    return events.where((event) {
       return event.startTime?.year == day.year &&
           event.startTime?.month == day.month &&
           event.startTime?.day == day.day;
@@ -88,7 +87,6 @@ class _CalendarViewState extends State<CalendarView>
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
@@ -256,7 +254,6 @@ class EventListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
 //    String Formatting
     //Start & End-time
     final startTime = event.startTime != null
@@ -284,10 +281,12 @@ class EventListItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,*/
                 children: <Widget>[
                   Icon(eventsProvider.getLocationIcon(event.location),
-                      color: eventsProvider.getLocationColor(event.location), size: 26),
+                      color: eventsProvider.getLocationColor(event.location),
+                      size: 26),
                   Text("$location",
-                      style:
-                          TextStyle(color: eventsProvider.getLocationColor(event.location)),
+                      style: TextStyle(
+                          color:
+                              eventsProvider.getLocationColor(event.location)),
                       textAlign: TextAlign.center),
                   Text("$startTime"),
                 ],
@@ -317,25 +316,22 @@ class EventListItem extends StatelessWidget {
             ],
           ),
         ),
-        event.image != null
-            ? Container(
-                width: 120.0,
-                height: 120.0,
-                child: Hero(
-                  child: Image(
-                    image: FirebaseImageProvider(FirebaseUrl(event.image)),
-                    fit: BoxFit.cover,
-                    height: double.infinity,
-                    width: double.infinity,
-                    errorBuilder: (BuildContext context, Object exception,
-                        StackTrace? stackTrace) {
-                      return Image.asset('assets/images/icon512.png');
-                    },
-                  ),
-                  tag: event.image,
-                ),
-              )
-            : SizedBox.shrink(),
+        Container(
+          width: 120.0,
+          height: 120.0,
+          child: event.image != ""
+              ? Image(
+                  image: FirebaseImageProvider(FirebaseUrl(event.image)),
+                  fit: BoxFit.cover,
+                  height: double.infinity,
+                  width: double.infinity,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Image.asset('assets/images/icon512.png');
+                  },
+                )
+              : Image.asset('assets/images/icon512.png'),
+        ),
       ])),
       onTap: () {
         Analytics().sendEvent(event.title);

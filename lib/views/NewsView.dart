@@ -66,8 +66,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                     Container(
                                             width: 120.0,
                                             height: 120.0,
-                                            child: Hero(
-                                              child: CachedNetworkImage(
+                                            child: CachedNetworkImage(
                                                       imageUrl: item.image,
                                                       fit: BoxFit.cover,
                                                       height: double.infinity,
@@ -80,8 +79,6 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                                               url, error) =>
                                                           Image.asset(
                                                               'assets/images/icon512.png'),
-                                                    ),
-                                              tag: item.id,
                                             ),
                                           ),
                                   ]),

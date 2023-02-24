@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
   final initialIndex;
-  TabPage({this.initialIndex});
+  TabPage({required this.initialIndex});
   @override
   _TabPageState createState() => _TabPageState();
 }
@@ -25,7 +25,7 @@ class _TabPageState extends State<TabPage> {
   ];
 
   int _selectedIndex = 0;
-  PageController? _pageController;
+  PageController _pageController = PageController();
 
   void initState() {
     super.initState();
@@ -34,24 +34,25 @@ class _TabPageState extends State<TabPage> {
       initialPage: widget.initialIndex,
       keepPage: true,
     );
-}
+  }
 
   void _itemTapped(int index, newsProvider, eventsProvider, infoProvider) {
     setState(() {
       _selectedIndex = index;
-      _pageController?.jumpToPage(index);
+      _pageController.jumpToPage(index);
     });
   }
 
-  void pageChanged(int index, newsProvider, eventsProvider, infoProvider) {
+  void pageChanged(
+      int index, newsProvider, eventsProvider, infoProvider) async {
     if (index == 0) {
       newsProvider.fetchNews("news_src");
     } else if (index == 1) {
-      eventsProvider.fetchAllEvents();
-      eventsProvider.fetchLocations();
+      await eventsProvider.fetchAllEvents();
+      await eventsProvider.fetchLocations();
     } else if (index == 2) {
-      infoProvider.fetchInfo();
-    }/* else if (index == 3) {
+      await infoProvider.fetchInfo();
+    } /* else if (index == 3) {
       newsProvider.fetchMagazine("magazine_src");
     }*/
     setState(() {
@@ -73,7 +74,6 @@ class _TabPageState extends State<TabPage> {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     final InfoProvider infoProvider = Provider.of<InfoProvider>(context);
-    
 
     return Scaffold(
       appBar: AppBar(
@@ -81,61 +81,63 @@ class _TabPageState extends State<TabPage> {
           "TVOR•BA 2023",
         ),
         actions: <Widget>[
-          kIsWeb == true ? IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              context.go('/settings');
-            },
-          ) : SizedBox(),
-          kIsWeb == true ? IconButton(
-            icon: Icon(
-              Icons.person,
-              color: Colors.white,
-            ),
-            onPressed: () { // TODO Pridať možnosť prihlásiť sa na webe.
-              context.go('/settings');
-            },
-          ) : SizedBox(),
+          kIsWeb == true
+              ? IconButton(
+                  icon: Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    context.go('/settings');
+                  },
+                )
+              : SizedBox(),
+          kIsWeb == true
+              ? IconButton(
+                  icon: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    // TODO Pridať možnosť prihlásiť sa na webe.
+                    context.go('/settings');
+                  },
+                )
+              : SizedBox(),
         ],
       ),
       body: Center(
-        child: buildPageView(newsProvider, eventsProvider,
-            infoProvider),
+        child: buildPageView(newsProvider, eventsProvider, infoProvider),
       ),
       bottomNavigationBar: NavigationBar(
-        //type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        //unselectedItemColor: Colors.white70,
-        //selectedItemColor: Color(0xffdf9f4a),
-        destinations: <Widget>[
-          NavigationDestination(
-            icon: Icon(Icons.notifications),
-
-            label: 'Novinky',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_today),
-            label: 'Kalendár',
-          ),
-          /*BottomNavigationBarItem(
+          //type: BottomNavigationBarType.fixed,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          //unselectedItemColor: Colors.white70,
+          //selectedItemColor: Color(0xffdf9f4a),
+          destinations: <Widget>[
+            NavigationDestination(
+              icon: Icon(Icons.notifications),
+              label: 'Novinky',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.calendar_today),
+              label: 'Kalendár',
+            ),
+            /*BottomNavigationBarItem(
             icon: Icon(Icons.article),
             label: 'Festník',
           ),*/
-          NavigationDestination(
-            icon: Icon(Icons.info),
-            label: 'Info',
-          ),
-        ],
-        selectedIndex: _selectedIndex,
-        /* selectedItemColor: colorTheme.textColor,
+            NavigationDestination(
+              icon: Icon(Icons.info),
+              label: 'Info',
+            ),
+          ],
+          selectedIndex: _selectedIndex,
+          /* selectedItemColor: colorTheme.textColor,
         unselectedItemColor: colorTheme.textColor,*/
-        //showUnselectedLabels: true,
-        onDestinationSelected: (index) =>
-            _itemTapped(index, newsProvider, eventsProvider, infoProvider)
-      ),
+          //showUnselectedLabels: true,
+          onDestinationSelected: (index) =>
+              _itemTapped(index, newsProvider, eventsProvider, infoProvider)),
     );
   }
 }

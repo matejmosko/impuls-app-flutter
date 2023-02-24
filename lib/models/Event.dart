@@ -4,8 +4,8 @@ class Event {
   String title = "";
   String description = "";
   String location = "";
-  DateTime? startTime;
-  DateTime? endTime;
+  DateTime? startTime = DateTime.now();
+  DateTime? endTime = DateTime.now();
   String image = "";
   String artist = "";
 

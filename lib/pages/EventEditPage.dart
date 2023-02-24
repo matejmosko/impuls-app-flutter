@@ -3,9 +3,6 @@ import 'package:scenickazatva_app/models/Event.dart';
 import 'package:provider/provider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:intl/intl.dart';
-//import 'package:scenickazatva_app/providers/AppSettings.dart';
-//import 'package:scenickazatva_app/requests/api.dart';
-//import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:go_router/go_router.dart';
@@ -329,27 +326,6 @@ class EventEditPageState extends State<EventEditPage> {
       body: SafeArea(
         child: ListView(
           children: [
-            /*Hero(
-              child: event.image != null
-                  ? Image(
-                      image: FirebaseImageProvider(
-                          FirebaseUrl(event.image)),
-                      fit: BoxFit.cover,
-                      height: 300,
-                      width: double.infinity,
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace stackTrace) {
-                        return Image.asset(
-                          'assets/images/icon512.png',
-                          fit: BoxFit.cover,
-                          height: 300,
-                          width: double.infinity,
-                        );
-                      },
-                    )
-                  : SizedBox(),
-              tag: event.image,
-            ),*/
             Card(child: buildForm(context)),
           ],
         ),

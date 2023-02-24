@@ -4,13 +4,12 @@ import 'package:scenickazatva_app/providers/AppSettings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:scenickazatva_app/models/UserData.dart';
 
-
 class authService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   authService() {
-    getFCMtoken();
-    authFirebase();
+    //getFCMtoken();
+    //authFirebase();
   }
 
   Future<UserCredential?> authFirebase() async {
@@ -57,6 +56,7 @@ class authService {
   }
 
   Future<UserData> getUserData(user) async{
+    UserData result = UserData();
     if (user == null) {
       print('(getting) User is currently signed out! We cannot get data');
     } else {
@@ -73,7 +73,7 @@ class authService {
           ));
           _user = await _usersdb.get();
         }
-        var result = UserData.fromData(_user.value as Map<String, dynamic>);
+        result = UserData.fromData(_user.value as Map<String, dynamic>);
         print(await result.id);
         saveUserData(result);
         return result;
@@ -81,7 +81,7 @@ class authService {
         print(e);
       }
     }
-    return user;
+    return result;
   }
 
   Future<UserData> saveUserData(UserData _user) async{

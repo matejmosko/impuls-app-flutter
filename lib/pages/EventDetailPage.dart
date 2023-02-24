@@ -19,9 +19,11 @@ class EventDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
-    Event event = eventsProvider.events
-        .where((element) => (element.id == eventId))
-        .toList()[0];
+    List<Event> events = eventsProvider.events;
+    Event event = Event();
+    if (events.where((element) => (element.id == eventId)).length > 0) {
+      event = events.where((element) => (element.id == eventId)).toList()[0];
+    }
 
     final startDate = event.startTime != null
         ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime!)
@@ -52,24 +54,28 @@ class EventDetailPage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            Hero(
-              child: Image(
-                image: FirebaseImageProvider(FirebaseUrl(event.image)),
-                fit: BoxFit.cover,
-                height: 300,
-                width: double.infinity,
-                errorBuilder: (BuildContext context, Object exception,
-                    StackTrace? stackTrace) {
-                  return Image.asset(
+            event.image != ""
+                ? Image(
+                    image: FirebaseImageProvider(FirebaseUrl(event.image)),
+                    fit: BoxFit.cover,
+                    height: 300,
+                    width: double.infinity,
+                    errorBuilder: (BuildContext context, Object exception,
+                        StackTrace? stackTrace) {
+                      return Image.asset(
+                        'assets/images/icon512.png',
+                        fit: BoxFit.cover,
+                        height: 300,
+                        width: double.infinity,
+                      );
+                    },
+                  )
+                : Image.asset(
                     'assets/images/icon512.png',
                     fit: BoxFit.cover,
                     height: 300,
                     width: double.infinity,
-                  );
-                },
-              ),
-              tag: event.image,
-            ),
+                  ),
             Card(
               child: Column(children: <Widget>[
                 Container(

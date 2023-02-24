@@ -15,19 +15,21 @@ class NewsDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
-    NewsPost news = newsProvider.news.where((element) => (element.id.toString() == newsId)).toList()[0];
+    List<NewsPost> allNews = newsProvider.news;
+    NewsPost news = NewsPost();
+    news = allNews.where((element) => (element.id.toString() == newsId))
+        .toList()[0];
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-          ),
+            icon: Icon(
+              Icons.arrow_back_ios,
+            ),
             onPressed: () {
               context.go("/news");
-            }
-        ),
+            }),
         title: Text(
           "TVOR•BA 2023",
         ),
@@ -35,27 +37,27 @@ class NewsDetailPage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            Hero(
-              child: CachedNetworkImage(imageUrl: news.image,
-                placeholder: (context, url) => Image.asset('assets/images/icon512.png'),
-                errorWidget: (context, url, error) => Image.asset('assets/images/icon512.png'),
-              ),
-              tag: news.id,
+            CachedNetworkImage(
+              imageUrl: news.image,
+              placeholder: (context, url) =>
+                  Image.asset('assets/images/icon512.png'),
+              errorWidget: (context, url, error) =>
+                  Image.asset('assets/images/icon512.png'),
             ),
             Card(
               child: Column(
                 children: <Widget>[
                   Text("${news.title}",
                       style: Theme.of(context).textTheme.displayLarge),
-                      Padding(
-                          padding: EdgeInsets.all(12),
-                          child: //Text("${news.content ?? ''}"),
-                              Html(
-                            data: news.content,
-                            onLinkTap: (url, renderContext, map, element) => API().launchURL(url),
-                          ),
-                        )
-
+                  Padding(
+                    padding: EdgeInsets.all(12),
+                    child: //Text("${news.content ?? ''}"),
+                        Html(
+                      data: news.content,
+                      onLinkTap: (url, renderContext, map, element) =>
+                          API().launchURL(url),
+                    ),
+                  )
                 ],
               ),
             ),
