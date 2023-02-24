@@ -17,14 +17,13 @@ class EventsProvider extends ChangeNotifier {
   EventsProvider() {
     fetchAllEvents();
     fetchLocations();
-    //locationIcon("default");
   }
 
   DateTime get selectedDay => _selectedDay;
 
   Map<DateTime, List> get mappedEvents => _mappedEvents;
 
-  List<Event> get events => _events;
+  List<Event> get events => _events != [] ? _events : [];
 
   List<Location> get venues => _venues;
 

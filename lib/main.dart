@@ -220,8 +220,13 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+
+    EventsProvider eventsProvider =
+    Provider.of<EventsProvider>(context, listen: false);
+    eventsProvider.fetchAllEvents();
     return MultiProvider(
       providers: [
         /*ChangeNotifierProvider<ColorProvider>.value(

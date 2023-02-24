@@ -52,21 +52,22 @@ class EventDetailPage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            Hero(child: Image(
-                      image: FirebaseImageProvider(FirebaseUrl(event.image)),
-                      fit: BoxFit.cover,
-                      height: 300,
-                      width: double.infinity,
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace? stackTrace) {
-                        return Image.asset(
-                          'assets/images/icon512.png',
-                          fit: BoxFit.cover,
-                          height: 300,
-                          width: double.infinity,
-                        );
-                      },
-                    ),
+            Hero(
+              child: Image(
+                image: FirebaseImageProvider(FirebaseUrl(event.image)),
+                fit: BoxFit.cover,
+                height: 300,
+                width: double.infinity,
+                errorBuilder: (BuildContext context, Object exception,
+                    StackTrace? stackTrace) {
+                  return Image.asset(
+                    'assets/images/icon512.png',
+                    fit: BoxFit.cover,
+                    height: 300,
+                    width: double.infinity,
+                  );
+                },
+              ),
               tag: event.image,
             ),
             Card(
@@ -100,13 +101,18 @@ class EventDetailPage extends StatelessWidget {
                             /*crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,*/
                             children: <Widget>[
-                              Icon(eventsProvider.getLocationIcon(event.location),
-                                  color: eventsProvider.getLocationColor(event.location),
+                              Icon(
+                                  eventsProvider
+                                      .getLocationIcon(event.location),
+                                  color: eventsProvider
+                                      .getLocationColor(event.location),
                                   size: 26),
-                              Text(eventsProvider.getLocationName(event.location),
+                              Text(
+                                  eventsProvider
+                                      .getLocationName(event.location),
                                   style: TextStyle(
-                                      color:
-                                      eventsProvider.getLocationColor(event.location))),
+                                      color: eventsProvider
+                                          .getLocationColor(event.location))),
                             ],
                           ),
                         ])),
@@ -124,10 +130,11 @@ class EventDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: kIsWeb == true ? FloatingActionButton(
-        onPressed: () {
-          context.go("/events/" + event.id + "/edit");
-          /* Navigator.push(
+      floatingActionButton: kIsWeb == true
+          ? FloatingActionButton(
+              onPressed: () {
+                context.go("/events/" + event.id + "/edit");
+                /* Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => EventEditPage(
@@ -135,9 +142,10 @@ class EventDetailPage extends StatelessWidget {
               ),
             ),
           );*/
-        },
-        child: const Icon(Icons.edit),
-      ) : SizedBox(),
+              },
+              child: const Icon(Icons.edit),
+            )
+          : SizedBox(),
     );
   }
 }
