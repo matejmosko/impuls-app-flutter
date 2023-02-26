@@ -142,8 +142,7 @@ class EventsProvider extends ChangeNotifier {
       _venue = _venues.where((element) => (element.id == loc))
           .toList()[0];
     }
-    int icon = _venue.icon;
-    return IconData(icon, fontFamily: 'MaterialIcons');
+    return IconData(int.parse(_venue.icon), fontFamily: 'MaterialIcons');
   }
 
   Color getLocationColor(loc){

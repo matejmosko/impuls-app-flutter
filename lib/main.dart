@@ -14,7 +14,6 @@ import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
-import 'package:scenickazatva_app/providers/LocationProvider.dart';
 import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/pages/TabPage.dart';
 import 'package:scenickazatva_app/pages/EventDetailPage.dart';
@@ -195,9 +194,6 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<ArrangementProvider>.value(
           value: ArrangementProvider(),
-        ),
-        ChangeNotifierProvider<LocationProvider>.value(
-          value: LocationProvider(),
         ),
 
       ],

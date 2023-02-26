@@ -6,7 +6,7 @@ class Location {
   String city;
   String longitude;
   String latitude;
-  int icon;
+  String icon;
   String color;
 
   Location(
@@ -17,7 +17,7 @@ class Location {
       this.longitude = "",
         this.city = "",
       this.latitude = "",
-      this.icon = 57045,
+      this.icon = "0xe88a",
         this.color = "333333FF"});
 
   Location.fromData(Map<String, dynamic> data)
@@ -28,7 +28,7 @@ class Location {
         city = data['city'] ?? "",
         longitude = data['longitude'] ?? "",
         latitude = data['latitude'] ?? "",
-        icon = data['icon'] ?? 0,
+        icon = data['icon'] ?? "0xe88a",
         color = data['color'] ?? "";
 
   Map<String, dynamic> toJson() {
