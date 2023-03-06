@@ -39,4 +39,17 @@ class Event {
       artist: json['artist'] ?? "",
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'location': location,
+      'startTime': startTime.toString(),
+      'endTime': endTime.toString(),
+      'image': image,
+      'artist': artist
+    };
+  }
 }

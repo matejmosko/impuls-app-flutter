@@ -6,6 +6,7 @@ import 'package:scenickazatva_app/models/Event.dart';
 import 'package:scenickazatva_app/models/Location.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:scenickazatva_app/requests/api.dart';
+import 'package:intl/intl.dart';
 
 class EventsProvider extends ChangeNotifier {
   Map<DateTime, List<Event>> _mappedEvents = {};
@@ -167,10 +168,31 @@ class EventsProvider extends ChangeNotifier {
     return name;
   }
 
+  void updateEvent(Event _e) async{
+    setLoading(true);
+    //FirebaseDatabase database = FirebaseDatabase.instance;
+    //database.setPersistenceEnabled(true);
+    String _festival = await API().getDefaultFestival();
+    if (_e.id != "") {
+      String _key = DateFormat("dd-MM-HHmm-", "sk_SK").format(_e.startTime!)+_e.id;
+      print(_key);
+      FirebaseDatabase.instance
+          .ref("festivals/$_festival/events/$_key/")
+          .update(_e.toJson())
+          .then((_) {
+        print("Firebase save success");
+      }).catchError((error) {
+        print(error);
+      });
+    }
+  }
+
 
   void setLocations(List<Location> list) {
     _venues = list;
     notifyListeners();
     setLoading(false);
   }
+
+
 }

@@ -19,6 +19,8 @@ class EventDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
+    eventsProvider.fetchAllEvents();
+    eventsProvider.fetchLocations();
     List<Event> events = eventsProvider.events;
     Event event = Event();
     if (events.where((element) => (element.id == eventId)).length > 0) {

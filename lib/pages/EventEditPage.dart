@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/scheduler.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:provider/provider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
@@ -21,25 +22,33 @@ class EventEditPageState extends State<EventEditPage> {
   var startDate;
   var endDate;
   late Event event;
+  Event edited = Event();
+  HtmlEditorController htmlcontroller = HtmlEditorController(
+      processInputHtml: true,
+      processNewLineAsBr: false,
+      processOutputHtml: true
+  );
 
   @override
   void initState() {
     super.initState();
+
     // Start listening to changes.
   }
 
   Widget buildForm(BuildContext context) {
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
-    Event event = eventsProvider.events
+    event = eventsProvider.events
         .where((element) => (element.id == widget.eventId))
         .toList()[0];
-    print(event);
+    edited = event;
 
     startDate = event.startTime;
     endDate = event.endTime;
+    //Event edited = Event();
 
-    HtmlEditorController htmlcontroller = HtmlEditorController();
+
 
     Future<void> displayTimeDialog(BuildContext context, iniTime, field) async {
       final TimeOfDay? time = await showTimePicker(
@@ -72,8 +81,6 @@ class EventEditPageState extends State<EventEditPage> {
           if (field == "start") {
             startDate = DateTime(
                 date.year, date.month, date.day, iniDate.hour, iniDate.minute);
-            print("after");
-            print(startDate.toLocal());
           } else if (field == "end") {
             endDate = DateTime(
                 date.year, date.month, date.day, iniDate.hour, iniDate.minute);
@@ -93,6 +100,7 @@ class EventEditPageState extends State<EventEditPage> {
             Row(children: <Widget>[
               Expanded(
                 child: TextFormField(
+                  onSaved: (value){edited.title=value!; },
                   initialValue: event.title,
                   decoration: InputDecoration(
                     border: UnderlineInputBorder(),
@@ -108,6 +116,7 @@ class EventEditPageState extends State<EventEditPage> {
               ),
               Flexible(
                 child: TextFormField(
+                  onSaved: (value){edited.id=value!; },
                   initialValue: event.id,
                   readOnly: true,
                   decoration: InputDecoration(
@@ -125,6 +134,7 @@ class EventEditPageState extends State<EventEditPage> {
             ]),
 
             TextFormField(
+              onSaved: (value){edited.artist=value!;},
               initialValue: event.artist,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
@@ -138,6 +148,7 @@ class EventEditPageState extends State<EventEditPage> {
               },
             ),
             TextFormField(
+              onSaved: (value){edited.location=value!;},
               initialValue: event
                   .location, // TODO Prerobiť location na DropdownButtonFormField() - na to ale treba zmeniť aj spôsob priraďovania miest podujatí a prehodiť to na firebase (teraz je to hardcoded)
               decoration: InputDecoration(
@@ -155,6 +166,7 @@ class EventEditPageState extends State<EventEditPage> {
               children: <Widget>[
                 Flexible(
                   child: TextFormField(
+                    onSaved: (value){edited.startTime=startDate!;},
                     controller: TextEditingController(
                         text:
                             "${DateFormat("E, d.M. yyyy", "sk_SK").format(startDate)}"),
@@ -201,6 +213,7 @@ class EventEditPageState extends State<EventEditPage> {
               children: <Widget>[
                 Flexible(
                   child: TextFormField(
+                    onSaved: (value){edited.endTime=endDate!;},
                     controller: TextEditingController(
                         text:
                             "${DateFormat("E, d.M. yyyy", "sk_SK").format(endDate)}"),
@@ -255,18 +268,24 @@ class EventEditPageState extends State<EventEditPage> {
                 toolbarType: ToolbarType.nativeScrollable, //by default
                 defaultToolbarButtons: [
                   StyleButtons(),
-                  //FontSettingButtons(),
+                  FontSettingButtons(),
                   FontButtons(),
                   //ColorButtons(),
                   ListButtons(listStyles: false),
                   //ParagraphButtons(),
-                  //InsertButtons(),
+                  InsertButtons(),
                   OtherButtons(),
                 ],
               ),
               otherOptions: OtherOptions(
                 height: 400,
               ),
+              callbacks: Callbacks(
+                onChangeContent: (String? text){
+                 // edited.description = text!;
+                }
+              ),
+
             ),
 
             // Add TextFormFields and ElevatedButton here.
@@ -276,7 +295,21 @@ class EventEditPageState extends State<EventEditPage> {
     );
   }
 
+
+
+
   Widget build(BuildContext context) {
+
+    void _saveForm() async{
+      String desc = await htmlcontroller.getText();
+      edited.description = desc;
+      _formKey.currentState!.save();
+
+      EventsProvider eventsProvider =
+      Provider.of<EventsProvider>(context, listen: false);
+      eventsProvider.updateEvent(edited);
+    }
+
     //Location
     //final location = widget.event.location != null ? "\n${widget.event.location}" : '';
     return Scaffold(
@@ -334,21 +367,15 @@ class EventEditPageState extends State<EventEditPage> {
         child: FloatingActionButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
+              _saveForm();
               // If the form is valid, display a snackbar. In the real world,
               // you'd often call a server or save the information in a database.
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Processing Data')),
               );
+
             }
             context.go("/events/" + widget.eventId);
-            /*Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EventDetailPage(
-                event: widget.event,
-              ),
-            ),
-          );*/
           },
           child: const Icon(Icons.save),
         ),
