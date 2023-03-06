@@ -41,6 +41,12 @@ Replace the `icon.png` located `assets/images/icon.png` & run the following comm
 flutter pub run flutter_launcher_icons:main
 ```
 
+Moreover I needed to generate icons for iOS at https://www.appicon.co/ and upload them to 
+
+```
+ios/Runner/Assets.xcassets/AppIcon.appiconset 
+```
+
 ## Updating splash screen
 
 <img src="assets/images/splash.png" alt="Splash" width="200"/>
