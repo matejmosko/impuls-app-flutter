@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter/scheduler.dart';
+import 'dart:collection';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:provider/provider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/scheduler.dart';
 
 class EventEditPage extends StatefulWidget {
   //const EventEditPage({super.key, @required this.event});
@@ -21,7 +22,7 @@ class EventEditPageState extends State<EventEditPage> {
   final _formKey = GlobalKey<FormState>();
   var startDate;
   var endDate;
-  late Event event;
+  late Event event = Event();
   Event edited = Event();
   HtmlEditorController htmlcontroller = HtmlEditorController(
       processInputHtml: true,
@@ -39,9 +40,19 @@ class EventEditPageState extends State<EventEditPage> {
   Widget buildForm(BuildContext context) {
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
-    event = eventsProvider.events
-        .where((element) => (element.id == widget.eventId))
-        .toList()[0];
+    List<Event> events = eventsProvider.events;
+    if (events.where((element) => (element.id == widget.eventId)).length > 0) {
+      event = events
+          .where((element) => (element.id == widget.eventId))
+          .toList()[0];
+    }
+
+    if (event.id == "") {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        context.go('/events');
+      });
+    }
+
     edited = event;
 
     startDate = event.startTime;
@@ -169,7 +180,7 @@ class EventEditPageState extends State<EventEditPage> {
                     onSaved: (value){edited.startTime=startDate!;},
                     controller: TextEditingController(
                         text:
-                            "${DateFormat("E, d.M. yyyy", "sk_SK").format(startDate)}"),
+                            "${DateFormat("E, d.M. yyyy", "sk_SK").format(startDate ?? DateTime.now())}"),
                     readOnly: true,
                     decoration: InputDecoration(
                       border: UnderlineInputBorder(),
@@ -190,7 +201,7 @@ class EventEditPageState extends State<EventEditPage> {
                   child: TextFormField(
                     controller: TextEditingController(
                         text:
-                            "${DateFormat("HH:mm", "sk_SK").format(startDate)}"),
+                            "${DateFormat("HH:mm", "sk_SK").format(startDate ?? DateTime.now())}"),
                     readOnly: true,
                     decoration: InputDecoration(
                       border: UnderlineInputBorder(),
@@ -216,7 +227,7 @@ class EventEditPageState extends State<EventEditPage> {
                     onSaved: (value){edited.endTime=endDate!;},
                     controller: TextEditingController(
                         text:
-                            "${DateFormat("E, d.M. yyyy", "sk_SK").format(endDate)}"),
+                            "${DateFormat("E, d.M. yyyy", "sk_SK").format(endDate ?? DateTime.now())}"),
                     readOnly: true,
                     decoration: InputDecoration(
                       border: UnderlineInputBorder(),
@@ -237,7 +248,7 @@ class EventEditPageState extends State<EventEditPage> {
                   child: TextFormField(
                     controller: TextEditingController(
                         text:
-                            "${DateFormat("HH:mm", "sk_SK").format(endDate)}"),
+                            "${DateFormat("HH:mm", "sk_SK").format(endDate ?? DateTime.now())}"),
                     readOnly: true,
                     decoration: InputDecoration(
                       border: UnderlineInputBorder(),
@@ -262,6 +273,18 @@ class EventEditPageState extends State<EventEditPage> {
                 hint: "Your text here...",
                 initialText: event.description,
                 shouldEnsureVisible: true,
+                  webInitialScripts: UnmodifiableListView([
+                    WebScript(name: "stripPasted", script: """
+                    document.querySelectorAll(".note-editable font")
+                      .forEach((element) => element = element.innerHTML); 
+                    document.querySelectorAll(".note-editable *")
+                      .forEach((element) => {
+                        for (let i = 0; i < element.attributes.length; i++) {
+                         element.removeAttribute(element.attributes[i].name);
+                       }
+                      });
+                    """),
+                  ]),
               ),
               htmlToolbarOptions: HtmlToolbarOptions(
                 toolbarPosition: ToolbarPosition.aboveEditor, //by default
@@ -277,12 +300,16 @@ class EventEditPageState extends State<EventEditPage> {
                   OtherButtons(),
                 ],
               ),
+
               otherOptions: OtherOptions(
                 height: 400,
               ),
               callbacks: Callbacks(
                 onChangeContent: (String? text){
                  // edited.description = text!;
+                },
+                onPaste: (){
+                  htmlcontroller.evaluateJavascriptWeb('stripPasted');
                 }
               ),
 

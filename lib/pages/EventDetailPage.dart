@@ -9,6 +9,7 @@ import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:markdown/markdown.dart' as MD;
 import 'package:go_router/go_router.dart';
+import 'package:flutter/scheduler.dart';
 
 class EventDetailPage extends StatelessWidget {
   final eventId;
@@ -19,8 +20,6 @@ class EventDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
-    eventsProvider.fetchAllEvents();
-    eventsProvider.fetchLocations();
     List<Event> events = eventsProvider.events;
     Event event = Event();
     if (events.where((element) => (element.id == eventId)).length > 0) {
@@ -28,14 +27,21 @@ class EventDetailPage extends StatelessWidget {
     }
 
     final startDate = event.startTime != null
-        ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime!)
+        ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime ?? DateTime.now())
         : '';
     final startTime = event.startTime != null
-        ? new DateFormat("HH:mm").format(event.startTime!)
+        ? new DateFormat("HH:mm").format(event.startTime ?? DateTime.now())
         : '';
     final endTime = event.endTime != null
-        ? "\n${new DateFormat("HH:mm").format(event.endTime!)}"
+        ? "\n${new DateFormat("HH:mm").format(event.endTime ?? DateTime.now())}"
         : '';
+
+    if (event.id == "") {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        context.go('/events');
+      });
+      return Scaffold();
+    }
 
     //Location
     //final location = event.location != null ? "\n${event.location}" : '';

@@ -4,8 +4,8 @@ class Event {
   String title = "";
   String description = "";
   String location = "";
-  DateTime? startTime = DateTime.now();
-  DateTime? endTime = DateTime.now();
+  DateTime? startTime;
+  DateTime? endTime;
   String image = "";
   String artist = "";
 
@@ -33,8 +33,8 @@ class Event {
       title: json['title'] ?? "",
       description: json['description'] ?? "",
       location: json['location'] ?? "",
-      startTime: startTime,
-      endTime: endTime,
+      startTime: startTime ?? DateTime.now(),
+      endTime: endTime ?? DateTime.now(),
       image: json['image'] ?? "",
       artist: json['artist'] ?? "",
     );
