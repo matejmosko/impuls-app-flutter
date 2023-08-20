@@ -37,10 +37,8 @@ class API {
     try {
       var _url = await getRestSrc(src);
       _url = _url.toString() + page.toString();
-      print(_url);
       /* if (!kIsWeb) { */
-        var file = await DefaultCacheManager().getSingleFile(_url, headers: {'Cache-Control':	'max-age=5'});
-        print(file);
+        var file = await DefaultCacheManager().getSingleFile(_url, headers: {'Cache-Control':	'max-age=0'});
       /*} else {
         print(_url);
         file = await getFileForWeb(_url);

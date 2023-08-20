@@ -21,7 +21,6 @@ class InfoDetailPage extends StatelessWidget {
     if (information.where((element) => (element.id == infoId)).length > 0) {
       info = information.where((element) => (element.id == infoId)).toList()[0];
     }
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,

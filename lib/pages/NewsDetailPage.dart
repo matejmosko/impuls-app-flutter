@@ -18,10 +18,6 @@ class NewsDetailPage extends StatelessWidget {
     List<NewsPost> allNews = newsProvider.news;
     List<NewsPost> allArticles = newsProvider.articles;
     NewsPost news = NewsPost();
-    print(GoRouterState.of(context).uri.toString());
-    print(newsId);
-    print(allNews[0].id);
-    print(allArticles[0].id);
 
     if (GoRouterState.of(context).uri.toString().contains("magazine") && allArticles.map((element) => (element.id == newsId)).length > 0) {
         news = allArticles

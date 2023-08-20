@@ -6,8 +6,8 @@ Color darkColor = Colors.black87;
 Color darkColorLighter = Colors.blueGrey;
 Color lightColor = Colors.white;
 Color lightColorDarker = Color(0xFFF0F0F0);
-Color accentColor = Color(0xFF660066);
-Color accentColorDarker = Color(0xFF330033);
+Color accentColor = Color(0xFF18003a);
+Color accentColorDarker = Color(0xFF513582);
 Color lightColorTransparent = Colors.white54;
 
 var lightColorScheme = ColorScheme(
