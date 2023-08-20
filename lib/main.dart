@@ -27,7 +27,7 @@ final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => TabPage(initialIndex: 1),
+      builder: (context, state) => TabPage(initialIndex: 0),
       routes: [
         GoRoute(
             path: 'news',
@@ -36,7 +36,18 @@ final _router = GoRouter(
               GoRoute(
                 path: ':newsId',
                 builder: (context, state) =>
-                    NewsDetailPage(newsId: state.params["newsId"]),
+                    NewsDetailPage(newsId: state.pathParameters["newsId"]),
+              ),
+            ]
+        ),
+        GoRoute(
+            path: 'magazine',
+            builder: (context, state) => TabPage(initialIndex: 0),
+            routes: [
+              GoRoute(
+                path: ':magazineId',
+                builder: (context, state) =>
+                    NewsDetailPage(newsId: state.pathParameters["magazineId"]),
               ),
             ]
         ),
@@ -48,12 +59,12 @@ final _router = GoRouter(
               GoRoute(
                 path: ':eventId',
                 builder: (context, state) =>
-                    EventDetailPage(eventId: state.params["eventId"]),
+                    EventDetailPage(eventId: state.pathParameters["eventId"]),
               ),
               GoRoute(
                 path: ':eventId/edit',
                 builder: (context, state) =>
-                    EventEditPage(eventId: state.params["eventId"]),
+                    EventEditPage(eventId: state.pathParameters["eventId"]),
               ),
             ]
         ),
@@ -64,7 +75,7 @@ final _router = GoRouter(
               GoRoute(
                 path: ':infoId',
                 builder: (context, state) =>
-                    InfoDetailPage(infoId: state.params["infoId"]),
+                    InfoDetailPage(infoId: state.pathParameters["infoId"]),
               )]
         ),
         GoRoute(
@@ -198,7 +209,7 @@ class MyApp extends StatelessWidget {
 
       ],
       child: MaterialApp.router(
-        title: "TVOR•BA 2023",
+        title: "Scénická žatva 101",
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,

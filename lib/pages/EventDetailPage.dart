@@ -56,7 +56,7 @@ class EventDetailPage extends StatelessWidget {
               context.go("/events");
             }),
         title: Text(
-          "TVOR•BA 2023",
+          "Scénická žatva 101",
         ),
       ),
       body: SafeArea(
@@ -135,7 +135,7 @@ class EventDetailPage extends StatelessWidget {
                         padding: EdgeInsets.all(12),
                         child: Html(
                           data: MD.markdownToHtml(event.description),
-                          onLinkTap: (url, renderContext, map, element) =>
+                          onLinkTap: (url, map, element) =>
                               API().launchURL(url),
                         ))
                     : SizedBox.shrink()

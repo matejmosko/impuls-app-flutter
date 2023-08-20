@@ -20,7 +20,6 @@ class NewsProvider extends ChangeNotifier {
   //List<NewsPost> get arrangements => _news;
 
   List<NewsPost> get news => _news;
-
   List<NewsPost> get articles => _articles;
 
   void /*Future<List<NewsPost>>*/ fetchNews(src, {refresh = false}) async {

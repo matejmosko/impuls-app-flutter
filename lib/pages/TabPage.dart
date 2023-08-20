@@ -7,6 +7,7 @@ import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/views/CalendarView.dart';
 import 'package:scenickazatva_app/views/InfoView.dart';
 import 'package:scenickazatva_app/views/NewsView.dart';
+import 'package:scenickazatva_app/views/MagazineView.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
@@ -20,6 +21,7 @@ class _TabPageState extends State<TabPage> {
   static List<Widget> _widgetOptions = <Widget>[
     NewsView(),
     CalendarView(),
+    MagazineView(),
     InfoView(),
 //    MagazineView(),
   ];
@@ -50,11 +52,11 @@ class _TabPageState extends State<TabPage> {
     } else if (index == 1) {
       await eventsProvider.fetchAllEvents();
       await eventsProvider.fetchLocations();
-    } else if (index == 2) {
+    } else if (index == 3) {
       await infoProvider.fetchInfo();
-    } /* else if (index == 3) {
+    } else if (index == 2) {
       newsProvider.fetchMagazine("magazine_src");
-    }*/
+    }
     setState(() {
       _selectedIndex = index;
     });
@@ -78,7 +80,7 @@ class _TabPageState extends State<TabPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "TVOR•BA 2023",
+          "Scénická žatva 101",
         ),
         actions: <Widget>[
           kIsWeb == true
@@ -123,10 +125,10 @@ class _TabPageState extends State<TabPage> {
               icon: Icon(Icons.calendar_today),
               label: 'Kalendár',
             ),
-            /*BottomNavigationBarItem(
+            NavigationDestination(
             icon: Icon(Icons.article),
-            label: 'Festník',
-          ),*/
+            label: 'javisko.sk',
+          ),
             NavigationDestination(
               icon: Icon(Icons.info),
               label: 'Info',

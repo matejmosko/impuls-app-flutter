@@ -33,7 +33,7 @@ class InfoDetailPage extends StatelessWidget {
               context.go("/info");
             }),
         title: Text(
-          "TVOR•BA 2023",
+          "Scénická žatva 101",
         ),
       ),
       body: SafeArea(
@@ -53,7 +53,7 @@ class InfoDetailPage extends StatelessWidget {
                     padding: EdgeInsets.all(12),
                     child: Html(
                       data: MD.markdownToHtml(info.description),
-                      onLinkTap: (url, renderContext, map, element) =>
+                      onLinkTap: (url, map, element) =>
                           API().launchURL(url),
                     ))
               ],

@@ -104,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
               context.go("/");
             }),
         title: Text(
-          "TVOR•BA 2023",
+          "Scénická žatva 101",
         ),
       ),
       body: Card(

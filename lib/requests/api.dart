@@ -37,15 +37,15 @@ class API {
     try {
       var _url = await getRestSrc(src);
       _url = _url.toString() + page.toString();
+      print(_url);
       /* if (!kIsWeb) { */
-        var file = await DefaultCacheManager().getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
-      //var file = await _newsCache.getSingleFile(_url, headers: {'Cache-Control':	'max-age=60'});
+        var file = await DefaultCacheManager().getSingleFile(_url, headers: {'Cache-Control':	'max-age=5'});
+        print(file);
       /*} else {
         print(_url);
         file = await getFileForWeb(_url);
         print(file);
       }*/
-
 
       if (await file.exists()) {
         final text = await file.readAsString();

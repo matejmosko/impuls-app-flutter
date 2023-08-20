@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:scenickazatva_app/pages/NewsDetailPage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +20,6 @@ class MagazineView extends StatefulWidget {
 class _MagazineViewState extends State<MagazineView>
     with TickerProviderStateMixin {
   Widget build(BuildContext context) {
-    //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
 
     return Stack(
@@ -48,14 +47,13 @@ class _MagazineViewState extends State<MagazineView>
                 child: LazyLoadScrollView(
                   onEndOfPage: () => newsProvider.fetchMagazine("magazine_src"),
                   isLoading: newsProvider.loading,
-                  scrollOffset: 50,
+                  scrollOffset: 10,
                   child: RefreshIndicator(
                       child: ListView.builder(
                         itemCount: newsProvider.articles.length,
                         itemBuilder: (BuildContext context, int index) {
                           final item = newsProvider.articles[index];
                           return Card(
-                            elevation: 10,
                             child: GestureDetector(
                                 child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -86,14 +84,7 @@ class _MagazineViewState extends State<MagazineView>
                                     ]),
                                 onTap: () {
                                   Analytics().sendEvent(item.title);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => NewsDetailPage(
-                                        newsId: item.id,
-                                      ),
-                                    ),
-                                  );
+                                  context.go("/magazine/" + item.id.toString());
                                 }),
                           );
                         },

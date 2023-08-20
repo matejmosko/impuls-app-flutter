@@ -6,7 +6,6 @@ import 'package:scenickazatva_app/models/Event.dart';
 import 'package:scenickazatva_app/models/Location.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:scenickazatva_app/requests/api.dart';
-import 'package:intl/intl.dart';
 
 class EventsProvider extends ChangeNotifier {
   Map<DateTime, List<Event>> _mappedEvents = {};

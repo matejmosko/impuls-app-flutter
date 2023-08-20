@@ -46,7 +46,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
               child: LazyLoadScrollView(
                   onEndOfPage: () => newsProvider.fetchNews("news_src"),
           isLoading: newsProvider.loading,
-          scrollOffset: 50,
+          scrollOffset: 10,
           child: RefreshIndicator(
                     child: ListView.builder(
                       itemCount: newsProvider.news.length,

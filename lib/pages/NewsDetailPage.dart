@@ -16,9 +16,23 @@ class NewsDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
     List<NewsPost> allNews = newsProvider.news;
+    List<NewsPost> allArticles = newsProvider.articles;
     NewsPost news = NewsPost();
-    news = allNews.where((element) => (element.id.toString() == newsId))
-        .toList()[0];
+    print(GoRouterState.of(context).uri.toString());
+    print(newsId);
+    print(allNews[0].id);
+    print(allArticles[0].id);
+
+    if (GoRouterState.of(context).uri.toString().contains("magazine") && allArticles.map((element) => (element.id == newsId)).length > 0) {
+        news = allArticles
+            .where((element) => (element.id.toString() == newsId))
+            .toList()[0];
+    } else if (GoRouterState.of(context).uri.toString().contains("news") &&
+        allNews.map((element) => (element.id == newsId)).length > 0) {
+      news = allNews
+          .where((element) => (element.id.toString() == newsId))
+          .toList()[0];
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -31,7 +45,7 @@ class NewsDetailPage extends StatelessWidget {
               context.go("/news");
             }),
         title: Text(
-          "TVOR•BA 2023",
+          "Scénická žatva 101",
         ),
       ),
       body: SafeArea(
@@ -54,8 +68,7 @@ class NewsDetailPage extends StatelessWidget {
                     child: //Text("${news.content ?? ''}"),
                         Html(
                       data: news.content,
-                      onLinkTap: (url, renderContext, map, element) =>
-                          API().launchURL(url),
+                      onLinkTap: (url, map, element) => API().launchURL(url),
                     ),
                   )
                 ],
