@@ -52,6 +52,11 @@
 		</array>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>App needs to access the photo library to upload profile picture when desired.</string>
+		<key>UIBackgroundModes</key>
+        <array>
+           <string>fetch</string>
+           <string>remote-notification</string>
+        </array>
 		<key>aps-environment</key>
 		<string>production</string>
 		<!-- Either development or production -->
