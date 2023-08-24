@@ -60,6 +60,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                     Expanded(
                                       child: ListTile(
                                         title: Text(item.title),
+                                        titleTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 20.0),
                                         subtitle: Html(data: item.description),
                                       ),
                                     ),
