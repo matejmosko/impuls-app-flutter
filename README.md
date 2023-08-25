@@ -4,13 +4,9 @@ Open-Source Festival-app written in Flutter for iOS & Android (and possibly web)
 
 [![Codemagic build status](https://api.codemagic.io/apps/62bf24e71d8501daf7e6f5ce/62bf24e71d8501daf7e6f5cd/status_badge.svg)](https://codemagic.io/apps/62bf24e71d8501daf7e6f5ce/62bf24e71d8501daf7e6f5cd/latest_build)
 
-- [Impuls-App-Flutter](#impuls-app-flutter)
-    - [Get in touch](#get-in-touch)
-    - [Report issues / feature requests](#report-issues--feature-requests)
-    - [ZenHub](#zenhub)
+- Scénická žatva app
     - [Dependencies](#dependencies)
         - [Flutter](#flutter)
-    - [Getting started with developing](#getting-started-with-developing)
     - [Updating icon](#updating-icon)
     - [Updating splash screen](#updating-splash-screen)
     - [Folder structure](#folder-structure)
@@ -18,7 +14,6 @@ Open-Source Festival-app written in Flutter for iOS & Android (and possibly web)
         - [Main.dart](#maindart)
         - [Models](#models)
         - [Pages](#pages)
-            - [Navigate to SomePage](#navigate-to-somepage)
         - [Providers](#providers)
         - [Requests](#requests)
         - [Views](#views)
@@ -157,20 +152,6 @@ pages
 └── counter.dart
 ```
 
-#### Navigate to SomePage
-
-```dart
-FlatButton(
-  child: Text("Navigate to SomePage"),
-  onPressed: () => Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => SomePage(),
-    ),
-  ),
-);
-```
-
 > See https://flutter.dev/docs/cookbook/navigation/navigation-basics for a good introduction to navigation.
 
 ### Providers
@@ -271,7 +252,7 @@ Devices:
 - [x] 12.9 inch (3rd generation iPad Pro)
 - [x] 12.9 inch (2nd generation iPad Pro)
 
-
+I use this service to generate nice mockups <https://studio.app-mockup.com/>
 
 ## Generate native libs for play console
 

@@ -9,6 +9,8 @@
 .history
 .svn/
 .signing/
+*.aab
+*.apk
 
 # IntelliJ related
 *.iml
