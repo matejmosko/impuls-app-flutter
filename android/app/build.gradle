@@ -31,27 +31,12 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
-
 android {
     namespace "sk.panakrala.scenickazatva"
     compileSdkVersion 33
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlin {
-        jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of("17"))
-        }
     }
 
 
