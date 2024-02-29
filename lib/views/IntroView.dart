@@ -124,7 +124,7 @@ class _PageTransformerState extends State<PageTransformer> {
         context, _visibilityResolver!);
 
     final controller = pageView.controller;
-    final viewPortFraction = controller.viewportFraction;
+    final viewPortFraction = controller!.viewportFraction;
 
     return NotificationListener<ScrollNotification>(
       // ignore: missing_return

@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:scenickazatva_app/requests/auth_service.dart';
-
 import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
@@ -20,73 +19,68 @@ import 'package:scenickazatva_app/pages/EventDetailPage.dart';
 import 'package:scenickazatva_app/pages/NewsDetailPage.dart';
 import 'package:scenickazatva_app/pages/EventEditPage.dart';
 import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
-
 import 'package:scenickazatva_app/models/ColorScheme.dart';
 
 final _router = GoRouter(
   routes: [
     GoRoute(
-      path: '/',
-      builder: (context, state) => TabPage(initialIndex: 0),
-      routes: [
-        GoRoute(
-            path: 'news',
-            builder: (context, state) => TabPage(initialIndex: 0),
-            routes: [
-              GoRoute(
-                path: ':newsId',
-                builder: (context, state) =>
-                    NewsDetailPage(newsId: state.pathParameters["newsId"]),
-              ),
-            ]
-        ),
-        GoRoute(
-            path: 'magazine',
-            builder: (context, state) => TabPage(initialIndex: 0),
-            routes: [
-              GoRoute(
-                path: ':magazineId',
-                builder: (context, state) =>
-                    NewsDetailPage(newsId: state.pathParameters["magazineId"]),
-              ),
-            ]
-        ),
-        GoRoute(
-            path: 'events',
-            builder: (context, state) => TabPage(initialIndex: 1),
-            routes: [
-
-              GoRoute(
-                path: ':eventId',
-                builder: (context, state) =>
-                    EventDetailPage(eventId: state.pathParameters["eventId"]),
-              ),
-              GoRoute(
-                path: ':eventId/edit',
-                builder: (context, state) =>
-                    EventEditPage(eventId: state.pathParameters["eventId"]),
-              ),
-            ]
-        ),
-        GoRoute(
-            path: 'info',
-            builder: (context, state) => TabPage(initialIndex: 2),
-            routes: [
-              GoRoute(
-                path: ':infoId',
-                builder: (context, state) =>
-                    InfoDetailPage(infoId: state.pathParameters["infoId"]),
-              )]
-        ),
-        GoRoute(
-          path: 'settings',
-          builder: (context, state) => SettingsPage(),
-        ),
-        GoRoute(
-          path: 'user',
-          builder: (context, state) => SettingsPage(),
-        ),]
-    ),
+        path: '/',
+        builder: (context, state) => TabPage(initialIndex: 0),
+        routes: [
+          GoRoute(
+              path: 'news',
+              builder: (context, state) => TabPage(initialIndex: 0),
+              routes: [
+                GoRoute(
+                  path: ':newsId',
+                  builder: (context, state) =>
+                      NewsDetailPage(newsId: state.pathParameters["newsId"]),
+                ),
+              ]),
+          GoRoute(
+              path: 'magazine',
+              builder: (context, state) => TabPage(initialIndex: 0),
+              routes: [
+                GoRoute(
+                  path: ':magazineId',
+                  builder: (context, state) => NewsDetailPage(
+                      newsId: state.pathParameters["magazineId"]),
+                ),
+              ]),
+          GoRoute(
+              path: 'events',
+              builder: (context, state) => TabPage(initialIndex: 1),
+              routes: [
+                GoRoute(
+                  path: ':eventId',
+                  builder: (context, state) =>
+                      EventDetailPage(eventId: state.pathParameters["eventId"]),
+                ),
+                GoRoute(
+                  path: ':eventId/edit',
+                  builder: (context, state) =>
+                      EventEditPage(eventId: state.pathParameters["eventId"]),
+                ),
+              ]),
+          GoRoute(
+              path: 'info',
+              builder: (context, state) => TabPage(initialIndex: 2),
+              routes: [
+                GoRoute(
+                  path: ':infoId',
+                  builder: (context, state) =>
+                      InfoDetailPage(infoId: state.pathParameters["infoId"]),
+                )
+              ]),
+          GoRoute(
+            path: 'settings',
+            builder: (context, state) => SettingsPage(),
+          ),
+          GoRoute(
+            path: 'user',
+            builder: (context, state) => SettingsPage(),
+          ),
+        ]),
   ],
 );
 
@@ -122,7 +116,7 @@ void main() async {
 
       var userSettings = await authService().getUserData(user);
 
-        userSettings.timestamp = DateTime.now().toString();
+      userSettings.timestamp = DateTime.now().toString();
       userSettings.fcmtoken = fcmToken;
       userSettings.id = user.uid;
 /*
@@ -186,7 +180,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -203,7 +196,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<ArrangementProvider>.value(
           value: ArrangementProvider(),
         ),
-
       ],
       child: MaterialApp.router(
         title: "Scénická žatva 101",
@@ -214,10 +206,10 @@ class MyApp extends StatelessWidget {
             appBarTheme: AppBarTheme(
                 iconTheme: IconThemeData(color: lightColor),
                 backgroundColor: accentColor,
-                foregroundColor: lightColor
-            ),
+                foregroundColor: lightColor),
             navigationBarTheme: NavigationBarThemeData(
-              labelTextStyle: MaterialStateProperty.all(TextStyle(color: Colors.white)),
+              labelTextStyle:
+                  MaterialStateProperty.all(TextStyle(color: Colors.white)),
             ),
             textTheme: TextTheme(
               displayLarge: TextStyle(
