@@ -198,18 +198,21 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp.router(
-        title: "Scénická žatva 101",
+        title: "TVOR•BA 2024 ",
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
-            fontFamily: 'Hind',
+            fontFamily: 'Inter',
             appBarTheme: AppBarTheme(
-                iconTheme: IconThemeData(color: lightColor),
-                backgroundColor: accentColor,
-                foregroundColor: lightColor),
+                iconTheme: IconThemeData(color: accentColor),
+                backgroundColor: lightColorDarker,
+                foregroundColor: accentColor),
             navigationBarTheme: NavigationBarThemeData(
+              backgroundColor: lightColorDarker,
+              indicatorColor: accentColor,
+              indicatorShape: BeveledRectangleBorder(),
               labelTextStyle:
-                  MaterialStateProperty.all(TextStyle(color: Colors.white)),
+                  MaterialStateProperty.all(TextStyle(color: accentColor)),
             ),
             textTheme: TextTheme(
               displayLarge: TextStyle(

@@ -142,12 +142,12 @@ class _CalendarViewState extends State<CalendarView>
         calendarStyle: CalendarStyle(
           outsideDaysVisible: true,
           outsideTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.secondary),
+              TextStyle(color: Theme.of(context).colorScheme.onPrimary  ),
           defaultTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.secondary),
-          disabledTextStyle: TextStyle(color: Colors.white38),
+              TextStyle(color: Theme.of(context).colorScheme.onTertiary),
+          disabledTextStyle: TextStyle(color: Theme.of(context).colorScheme.onTertiary),
           weekendTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.secondary),
+              TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
         daysOfWeekStyle: DaysOfWeekStyle(
             weekdayStyle: TextStyle(
@@ -200,7 +200,7 @@ class _CalendarViewState extends State<CalendarView>
             if (events.isNotEmpty) {
               return Positioned(
                 bottom: 1,
-                right: 1,
+                right: 8,
                 child: _buildEventsMarker(date, events),
               );
             } else {
@@ -222,7 +222,7 @@ class _CalendarViewState extends State<CalendarView>
         child: Text(
           '${events.length}',
           style: TextStyle().copyWith(
-            color: Colors.white54,
+            color: Theme.of(context).colorScheme.onTertiary,
             fontSize: 12.0,
           ),
         ),

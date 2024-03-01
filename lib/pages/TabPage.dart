@@ -80,14 +80,13 @@ class _TabPageState extends State<TabPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Scénická žatva 101",
+          "TVOR•BA 2024 ",
         ),
         actions: <Widget>[
           kIsWeb == true
               ? IconButton(
                   icon: Icon(
                     Icons.settings,
-                    color: Colors.white,
                   ),
                   onPressed: () {
                     context.go('/settings');
@@ -98,7 +97,6 @@ class _TabPageState extends State<TabPage> {
               ? IconButton(
                   icon: Icon(
                     Icons.person,
-                    color: Colors.white,
                   ),
                   onPressed: () {
                     // TODO Pridať možnosť prihlásiť sa na webe.
@@ -112,10 +110,6 @@ class _TabPageState extends State<TabPage> {
         child: buildPageView(newsProvider, eventsProvider, infoProvider),
       ),
       bottomNavigationBar: NavigationBar(
-          //type: BottomNavigationBarType.fixed,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          //unselectedItemColor: Colors.white70,
-          //selectedItemColor: Color(0xffdf9f4a),
           destinations: <Widget>[
             NavigationDestination(
               icon: Icon(Icons.notifications),
@@ -135,9 +129,6 @@ class _TabPageState extends State<TabPage> {
             ),
           ],
           selectedIndex: _selectedIndex,
-          /* selectedItemColor: colorTheme.textColor,
-        unselectedItemColor: colorTheme.textColor,*/
-          //showUnselectedLabels: true,
           onDestinationSelected: (index) =>
               _itemTapped(index, newsProvider, eventsProvider, infoProvider)),
     );

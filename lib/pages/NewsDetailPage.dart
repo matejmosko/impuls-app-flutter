@@ -41,7 +41,7 @@ class NewsDetailPage extends StatelessWidget {
               context.go("/news");
             }),
         title: Text(
-          "Scénická žatva 101",
+          "TVOR•BA 2024 ",
         ),
       ),
       body: SafeArea(

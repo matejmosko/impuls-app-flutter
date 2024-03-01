@@ -32,7 +32,7 @@ class InfoDetailPage extends StatelessWidget {
               context.go("/info");
             }),
         title: Text(
-          "Scénická žatva 101",
+          "TVOR•BA 2024 ",
         ),
       ),
       body: SafeArea(
