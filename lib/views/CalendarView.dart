@@ -23,11 +23,11 @@ class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime? _selectedDay;
-  DateTime _rangeStart = DateTime.utc(2023, 8, 30);
-  DateTime _rangeEnd = DateTime.utc(2023, 9, 2);
-  DateTime _focusedDay = (DateTime.now().isBefore(DateTime.utc(2023, 8, 30)) ||
-          DateTime.now().isAfter(DateTime.utc(2023, 8, 30)))
-      ? DateTime.utc(2023, 8, 30)
+  DateTime _rangeStart = DateTime.utc(2024, 3, 14);
+  DateTime _rangeEnd = DateTime.utc(2024, 3, 16);
+  DateTime _focusedDay = (DateTime.now().isBefore(DateTime.utc(2024, 3, 14)) ||
+          DateTime.now().isAfter(DateTime.utc(2024, 3, 16)))
+      ? DateTime.utc(2024, 3, 14)
       : DateTime.now();
   AnimationController? _animationController;
   List venues = [];
