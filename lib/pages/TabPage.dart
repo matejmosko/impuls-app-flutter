@@ -48,14 +48,14 @@ class _TabPageState extends State<TabPage> {
   void pageChanged(
       int index, newsProvider, eventsProvider, infoProvider) async {
     if (index == 0) {
-      newsProvider.fetchNews("news_src");
+      newsProvider.fetchWpNews("news_src");
     } else if (index == 1) {
       await eventsProvider.fetchAllEvents();
       await eventsProvider.fetchLocations();
     } else if (index == 3) {
       await infoProvider.fetchInfo();
     } else if (index == 2) {
-      newsProvider.fetchMagazine("magazine_src");
+      newsProvider.fetchWpMagazine("magazine_src");
     }
     setState(() {
       _selectedIndex = index;

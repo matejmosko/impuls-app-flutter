@@ -6,6 +6,7 @@ import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
+import 'package:scenickazatva_app/models/PostExtension.dart';
 
 class MagazineView extends StatefulWidget {
   static const TextStyle optionStyle = TextStyle(
@@ -21,6 +22,8 @@ class _MagazineViewState extends State<MagazineView>
     with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
+
+
 
     return Stack(
       children: [
@@ -38,21 +41,22 @@ class _MagazineViewState extends State<MagazineView>
           ),
         ),
         AnimatedOpacity(
-          opacity: newsProvider.articles.length > 0 ? 1.0 : 0.0,
+          opacity: newsProvider.wparticles.length > 0 ? 1.0 : 0.0,
           duration: Duration(milliseconds: 500),
           child: Container(
               child: Column(
             children: <Widget>[
               Flexible(
                 child: LazyLoadScrollView(
-                  onEndOfPage: () => newsProvider.fetchMagazine("magazine_src"),
+                  onEndOfPage: () => newsProvider.fetchWpMagazine("magazine_src"),
                   isLoading: newsProvider.loading,
                   scrollOffset: 10,
                   child: RefreshIndicator(
                       child: ListView.builder(
-                        itemCount: newsProvider.articles.length,
+                        itemCount: newsProvider.wparticles.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final item = newsProvider.articles[index];
+                          final item = newsProvider.wparticles[index];
+                          //print(item);
                           return Card(
                             child: GestureDetector(
                                 child: Row(
@@ -60,17 +64,17 @@ class _MagazineViewState extends State<MagazineView>
                                     children: [
                                       Expanded(
                                         child: ListTile(
-                                          title: Text(item.title),
+                                          title: Text(item.title!.rendered ?? ""),
                                           titleTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 20.0),
                                           subtitle:
-                                              Html(data: item.description),
+                                          Html(data: item.excerpt!.rendered ?? ""),
                                         ),
                                       ),
                                       Container(
                                         width: 120.0,
                                         height: 120.0,
                                         child: CachedNetworkImage(
-                                          imageUrl: item.image,
+                                          imageUrl: item.featuredImageSourceUrl(),
                                           fit: BoxFit.cover,
                                           height: double.infinity,
                                           width: double.infinity,
@@ -99,7 +103,7 @@ class _MagazineViewState extends State<MagazineView>
                           /// build method will run again otherwise
                           /// list will not show all elements
                           setState(() {
-                            newsProvider.fetchMagazine("magazine_src",
+                            newsProvider.fetchWpMagazine("magazine_src",
                                 refresh: true);
                           });
                         });

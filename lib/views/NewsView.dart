@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
+import 'package:scenickazatva_app/models/PostExtension.dart';
 
 class NewsView extends StatefulWidget {
   static const TextStyle optionStyle = TextStyle(
@@ -37,55 +38,59 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
           ),
         ),
         AnimatedOpacity(
-          opacity: newsProvider.news.length > 0 ? 1.0 : 0.0,
+          opacity: newsProvider.wpnews.length > 0 ? 1.0 : 0.0,
           duration: Duration(milliseconds: 500),
           child: Container(
               child: Column(
             children: <Widget>[
               Flexible(
-              child: LazyLoadScrollView(
-                  onEndOfPage: () => newsProvider.fetchNews("news_src"),
-          isLoading: newsProvider.loading,
-          scrollOffset: 10,
-          child: RefreshIndicator(
-                    child: ListView.builder(
-                      itemCount: newsProvider.news.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = newsProvider.news[index];
-                        return Card(
-                          child: GestureDetector(
-                              child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Expanded(
-                                      child: ListTile(
-                                        title: Text(item.title),
-                                        titleTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 20.0),
-                                        subtitle: Html(data: item.description),
+                child: LazyLoadScrollView(
+                  onEndOfPage: () => newsProvider.fetchWpNews("news_src"),
+                  isLoading: newsProvider.loading,
+                  scrollOffset: 10,
+                  child: RefreshIndicator(
+                      child: ListView.builder(
+                        itemCount: newsProvider.wpnews.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = newsProvider.wpnews[index];
+
+                          return Card(
+                            child: GestureDetector(
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Expanded(
+                                        child: ListTile(
+                                          title: Text(item.title!.rendered ?? ""),
+                                          titleTextStyle: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black87,
+                                              fontSize: 20.0),
+                                          subtitle:
+                                              Html(data: item.excerpt!.rendered ?? ""),
+                                        ),
                                       ),
-                                    ),
-                                    Container(
-                                            width: 120.0,
-                                            height: 120.0,
-                                            child: CachedNetworkImage(
-                                                      imageUrl: item.image,
-                                                      fit: BoxFit.cover,
-                                                      height: double.infinity,
-                                                      width: double.infinity,
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          Image.asset(
-                                                              'assets/images/icon512.png'),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Image.asset(
-                                                              'assets/images/icon512.png'),
-                                            ),
-                                          ),
-                                  ]),
-                              onTap: () {
-                                Analytics().sendEvent(item.title);
-                                context.go("/news/" + item.id.toString());
+                                      Container(
+                                        width: 120.0,
+                                        height: 120.0,
+                                       child: CachedNetworkImage(
+                                          //item['_embedded'][0]['wp:featuredimage']['source_url'] ?? "",
+                                          imageUrl: item.featuredImageSourceUrl(),
+                                          fit: BoxFit.cover,
+                                          height: double.infinity,
+                                          width: double.infinity,
+                                          placeholder: (context, url) =>
+                                              Image.asset(
+                                                  'assets/images/icon512.png'),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                                  'assets/images/icon512.png'),
+                                        ),
+                                      ),
+                                    ]),
+                                onTap: () {
+                                  Analytics().sendEvent(item.title);
+                                  context.go("/news/" + item.id.toString());
 /*                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -94,27 +99,27 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                     ),
                                   ),
                                 );*/
-                              }),
-                        );
-                      },
-                    ),
-                    onRefresh: () {
-                      return Future.delayed(Duration(seconds: 0), () {
-                        /// adding elements in list after [1 seconds] delay
-                        /// to mimic network call
-                        ///
-                        /// Remember: [setState] is necessary so that
-                        /// build method will run again otherwise
-                        /// list will not show all elements
-                        setState(() {
-                          newsProvider.fetchNews("news_src",refresh: true);
+                                }),
+                          );
+                        },
+                      ),
+                      onRefresh: () {
+                        return Future.delayed(Duration(seconds: 0), () {
+                          /// adding elements in list after [1 seconds] delay
+                          /// to mimic network call
+                          ///
+                          /// Remember: [setState] is necessary so that
+                          /// build method will run again otherwise
+                          /// list will not show all elements
+                          setState(() {
+                            newsProvider.fetchWpNews("news_src", refresh: true);
+                          });
                         });
-                      });
-                    }),
-              ),
+                      }),
+                ),
               ),
               Container(
-                  child: (newsProvider.loading)
+                  child: (newsProvider.loading && !newsProvider.allnews)
                       ? Padding(
                           padding: EdgeInsets.all(20),
                           child: new CircularProgressIndicator())

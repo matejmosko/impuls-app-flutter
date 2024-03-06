@@ -2,9 +2,15 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:scenickazatva_app/models/NewsPost.dart';
 import 'package:scenickazatva_app/requests/api.dart';
+import 'package:wordpress_client/wordpress_client.dart';
+
+
+
 
 class NewsProvider extends ChangeNotifier {
   List<NewsPost> _news = [];
+  List<Post> _wpnews = [];
+  List<Post> _wparticles = [];
   List<NewsPost> _articles = [];
   bool loading = false;
   bool allnews = false;
@@ -12,16 +18,20 @@ class NewsProvider extends ChangeNotifier {
   int newspage = 1;
   int magazinepage = 1;
 
+
   NewsProvider() {
-    fetchNews("news_src");
-    fetchMagazine("magazine_src");
+    fetchWpNews("news_src");
+    fetchWpMagazine("magazine_src");
   }
 
   //List<NewsPost> get arrangements => _news;
 
   List<NewsPost> get news => _news;
+  List<Post> get wpnews => _wpnews;
+  List<Post> get wparticles => _wparticles;
   List<NewsPost> get articles => _articles;
 
+  /*
   void /*Future<List<NewsPost>>*/ fetchNews(src, {refresh = false}) async {
     setLoading(true);
     if (refresh){
@@ -38,40 +48,61 @@ class NewsProvider extends ChangeNotifier {
           _list.map((model) => NewsPost.fromJson(model)).toList(), "news", refresh);
     });
   }
+*/
 
-  void /* Future<List<NewsPost>>*/ fetchMagazine(src, {refresh = false}) async {
+
+  void /* Future<List<NewsPost>>*/ fetchWpMagazine(src,
+      {refresh = false}) async {
     setLoading(true);
-    if (refresh){
+    if (refresh) {
       allarticles = false;
       magazinepage = 1;
     }
+    if (!allarticles) {
+      API().fetchWpNews(src, magazinepage).then((data) {
+        if (data == []) {
+          allarticles = true;
+        }
+        setArrangementsWp(data, src, refresh);
+      });
+    }
+  }
 
-    API().fetchNews(src, magazinepage).then((data) {
-      Iterable _list = json.decode(data);
-      if (data == []) {
-        allarticles = true;
-      }
-      setArrangements(
-          _list.map((model) => NewsPost.fromJson(model)).toList(), "magazine", refresh);
-    });
+  void /* Future<List<NewsPost>>*/ fetchWpNews(src, {refresh = false}) async {
+    setLoading(true);
+    if (refresh) {
+      allnews = false;
+      newspage = 1;
+    }
+    if (!allnews) {
+
+      API().fetchWpNews(src, newspage).then((data) {
+        if (data == []) {
+          allnews = true;
+        }
+
+        setArrangementsWp(data, src, refresh);
+        //_list.map((model) => NewsPost.fromJson(model)).toList(), "news", refresh);
+      });
+    }
   }
 
   void setLoading(bool val) {
     loading = val;
     notifyListeners();
   }
-
+/*
   void setArrangements(List<NewsPost> list, category, refresh) {
-    if (category == "news") {
-      if (refresh){
-       _news = [];
-       refresh = false;
+    if (category == "news_src") {
+      if (refresh) {
+        _news = [];
+        refresh = false;
       }
       _news = _news + list;
       newspage++;
     }
-    if (category == "magazine") {
-      if (refresh){
+    if (category == "magazine_src") {
+      if (refresh) {
         _articles = [];
         refresh = false;
       }
@@ -81,4 +112,32 @@ class NewsProvider extends ChangeNotifier {
     setLoading(false);
     notifyListeners();
   }
+  */
+
+  void setArrangementsWp(List<Post> list, category, refresh) {
+    switch (category) {
+      case "news_src":
+        if (refresh) {
+          _wpnews = [];
+          refresh = false;
+        }
+        _wpnews = _wpnews + list;
+
+        newspage++;
+        setLoading(false);
+        notifyListeners();
+        break;
+      case "magazine_src":
+        if (refresh) {
+          _wparticles = [];
+          refresh = false;
+        }
+        _wparticles = _wparticles + list;
+        magazinepage++;
+        setLoading(false);
+        notifyListeners();
+        break;
+    }
+  }
+
 }
