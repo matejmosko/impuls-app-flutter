@@ -45,8 +45,6 @@ dependencies:
   intl: any
   flutter_cache_manager: any
   wordpress_client: ^8.3.10
-  hive: ^2.0.5
-  hive_flutter: any
   shared_preferences: ^2.2.2
   dio_cache_interceptor: ^3.5.0
 

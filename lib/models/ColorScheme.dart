@@ -40,7 +40,7 @@ var lightColorScheme = ColorScheme(
   surface: lightColorDarker,
   onSurface: darkColor,
   surfaceVariant: lightColorDarker,
-  onSurfaceVariant: accentColorDarker,
+  onSurfaceVariant: darkColorLighter,
   outline: darkColorLighter,
   onInverseSurface: lightColorDarker,
   inverseSurface: accentColorDarker,
