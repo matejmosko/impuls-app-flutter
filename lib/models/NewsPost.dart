@@ -1,40 +1,40 @@
-class NewsPost {
-  int id = 0;
-  String title = "";
-  String description = "";
-  String content = "";
-  String location = "";
-  String publishTime = "";
-  String image = "";
+import 'package:wordpress_client/wordpress_client.dart';
 
-  NewsPost(
-      {this.id = 0,
-      this.title = "",
-      this.description = "",
-      this.content = "",
-      this.location = "",
-      this.publishTime = "",
-      this.image = "",
-    });
+class NewsPost extends Post{
+  final String image = "";
 
-  NewsPost.fromJson(Map<String, dynamic> json) {
-    id = json['id'] ?? 0;
-    title = json['title']['rendered'] ?? "";
-    description = json['excerpt']['rendered'] ?? "";
-    content = json['content']['rendered'] ?? "";
-    location = json['format'] ?? "";
-    publishTime = json['date'] ?? "";
+  NewsPost({
+    required super.id,
+    required super.slug,
+    required super.status,
+    required super.link,
+    required super.author,
+    required super.commentStatus,
+    required super.pingStatus,
+    required super.sticky,
+    required super.format,
+    required super.self,
+   // this.image = "",
+});
+
+/*
+  factory NewsPost.fromJson(Map<String, dynamic> json) {
+    return NewsPost(
+    super.id,
+    super.slug,
+    super.status,
+    super.link,
+    super.author,
+    super.commentStatus,
+    super.pingStatus,
+    super.sticky,
+    super.format,
+    super.self,
     image = json['_embedded']['wp:featuredmedia'][0]['source_url'] ?? "";
   }
-
+*/
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['description'] = this.description;
-    data['content'] = this.content;
-    data['location'] = this.location;
-    data['publishTime'] = this.publishTime;
     data['image'] = this.image;
    // data['arrangement'] = this.arrangement;
     return data;

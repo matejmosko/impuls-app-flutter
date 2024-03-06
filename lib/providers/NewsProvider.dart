@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:scenickazatva_app/models/NewsPost.dart';
 import 'package:scenickazatva_app/requests/api.dart';
@@ -17,7 +16,6 @@ class NewsProvider extends ChangeNotifier {
   bool allarticles = false;
   int newspage = 1;
   int magazinepage = 1;
-
 
   NewsProvider() {
     fetchWpNews("news_src");
@@ -58,8 +56,9 @@ class NewsProvider extends ChangeNotifier {
       allarticles = false;
       magazinepage = 1;
     }
+
     if (!allarticles) {
-      API().fetchWpNews(src, magazinepage).then((data) {
+      API().fetchWpNews(src, magazinepage, refresh).then((data) {
         if (data == []) {
           allarticles = true;
         }
@@ -76,7 +75,7 @@ class NewsProvider extends ChangeNotifier {
     }
     if (!allnews) {
 
-      API().fetchWpNews(src, newspage).then((data) {
+      API().fetchWpNews(src, newspage, refresh).then((data) {
         if (data == []) {
           allnews = true;
         }
@@ -84,6 +83,8 @@ class NewsProvider extends ChangeNotifier {
         setArrangementsWp(data, src, refresh);
         //_list.map((model) => NewsPost.fromJson(model)).toList(), "news", refresh);
       });
+
+
     }
   }
 

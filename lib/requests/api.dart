@@ -1,10 +1,11 @@
-//import 'package:http/http.dart' as http;
+//import 'dart:convert';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:wordpress_client/wordpress_client.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_analytics/firebase_analytics.dart'; // imported for firebase messaging to log events
-
+//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 class API {
   final String selectedArrangement = '5e19cdd924cfa04fc3de1d3a';
@@ -33,29 +34,70 @@ class API {
     }
   }
 
-  Future<List<Post>> fetchWpNews(src, page) async {
+  Future<List<Post>> fetchWpNews(src, page, refresh) async {
     var _url = await getRestSrc(src);
     final baseUrl = Uri.parse(_url);
-    final client = WordpressClient(baseUrl: baseUrl);
+    List<Post> data = [];
+    var cacheStore = MemCacheStore(maxSize: 10485760, maxEntrySize: 1048576);
+    var cacheOptions = CacheOptions(
+      store: cacheStore,
+      policy: refresh ? CachePolicy.refresh : CachePolicy.request,
+      hitCacheOnErrorExcept: [], // for offline behaviour
+    );
+    final client = WordpressClient(
+        baseUrl: baseUrl,
+        bootstrapper: (bootstrapper) => bootstrapper
+            .withDioInterceptor(DioCacheInterceptor(options: cacheOptions))
+            .build());
 
     client.initialize();
+/*
 
-    final request =
-        ListPostRequest(page: page, perPage: 20, extra: {"_embed": 1});
+INFO This part is custom made cache based on test request for one article. There are problems with multipage responses. I removed it in favor of dio_cache_interceptor
 
-    final wpResponse = await client.posts.list(request);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final str = prefs.getString(src) ?? "[]";
+    final cachedData = jsonDecode(str);
 
-    List<Post> data = [];
+    if (page == 0 && cachedData != []) {
+      final cacheTest = ListPostRequest(page: 0, perPage: 1);
+      final testResponse = await client.posts.list(cacheTest);
+      switch (testResponse) {
+        case WordpressSuccessResponse():
+          List<Post> cachedPosts =
+              List<Post>.from(cachedData.map((model) => Post.fromJson(model)));
+          if (testResponse.data[0].id == cachedPosts[0].id) {
+            data = cachedPosts;
+            refreshCache = false;
+          }
+          break;
 
-    switch (wpResponse) {
-      case WordpressSuccessResponse():
-        data = wpResponse.data; // List<Post>
-        break;
-      case WordpressFailureResponse():
-        final error = wpResponse.error; //// WordpressError
-        print(error);
-        break;
+        case WordpressFailureResponse():
+          print(testResponse.error);
+          List<Post> cachedPosts =
+              List<Post>.from(cachedData.map((model) => Post.fromJson(model)));
+          refreshCache = false;
+          data = cachedPosts;
+          break;
+      }
     }
+*/
+      final request = ListPostRequest(
+          page: page, perPage: 20, extra: {"_embed": "wp:featuredmedia"});
+
+      final wpResponse = await client.posts.list(request);
+
+      switch (wpResponse) {
+        case WordpressSuccessResponse():
+          data = wpResponse.data; // List<Post>
+          break;
+
+        case WordpressFailureResponse():
+          final error = wpResponse.error; //// WordpressError
+          print(error);
+          break;
+      }
+     // await prefs.setString(src, jsonEncode(data));
     return data;
   }
 

@@ -88,7 +88,7 @@ class _MagazineViewState extends State<MagazineView>
                                       ),
                                     ]),
                                 onTap: () {
-                                  Analytics().sendEvent(item.title);
+                                  Analytics().sendEvent(item.title!.rendered);
                                   context.go("/magazine/" + item.id.toString());
                                 }),
                           );
