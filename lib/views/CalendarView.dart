@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
+import 'package:scenickazatva_app/providers/AppSettingsProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
+import 'package:scenickazatva_app/models/AppSettings.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -21,6 +23,7 @@ class CalendarView extends StatefulWidget {
 
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
+
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime? _selectedDay;
   DateTime _rangeStart = DateTime.utc(2024, 3, 14);
@@ -52,6 +55,8 @@ class _CalendarViewState extends State<CalendarView>
     super.didChangeDependencies();
   }
 
+
+
   List<Event> _fetchEvents(DateTime day) {
     EventsProvider eventsProvider =
         Provider.of<EventsProvider>(context, listen: false);
@@ -61,6 +66,14 @@ class _CalendarViewState extends State<CalendarView>
           event.startTime?.month == day.month &&
           event.startTime?.day == day.day;
     }).toList();
+  }
+
+  AppSettings _fetchSettings(){
+    AppSettingsProvider appSettingsProvider =
+    Provider.of<AppSettingsProvider>(context, listen: false);
+    appSettingsProvider.fetchSettings();
+    AppSettings appSettings = appSettingsProvider.appsettings;
+    return appSettings;
   }
 
   @override
@@ -107,13 +120,17 @@ class _CalendarViewState extends State<CalendarView>
   }
 
   // More advanced TableCalendar configuration (using Builders & Styles)
-  Widget _buildTableCalendarWithBuilders() {
+  Widget _buildTableCalendarWithBuilders(){
+    AppSettings appSettings = _fetchSettings();
+
+    DateTime startDate = appSettings.festivals != null ? appSettings.festivals![appSettings.defaultfestival]!.startDate! : _rangeStart;
+    DateTime endDate = appSettings.festivals != null ? appSettings.festivals![appSettings.defaultfestival]!.endDate! : _rangeEnd;
     return Container(
       color: Theme.of(context).colorScheme.primary,
       child: TableCalendar(
         locale: 'sk_SK',
-        firstDay: _rangeStart,
-        lastDay: _rangeEnd,
+        firstDay: startDate,
+        lastDay: endDate,
         focusedDay: _focusedDay,
         headerVisible: false,
         selectedDayPredicate: (day) {
