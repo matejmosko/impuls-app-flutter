@@ -11,7 +11,7 @@ description: App for Scenicka zatva and TVORBA festival
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.20+20
+version: 1.0.21+21
 
 repository: https://github.com/kodekameratene/impuls-app-flutter
 issue_tracker: https://github.com/kodekameratene/impuls-app-flutter/issues
@@ -45,7 +45,6 @@ dependencies:
   intl: any
   flutter_cache_manager: any
   wordpress_client: ^8.3.10
-  shared_preferences: ^2.2.2
   dio_cache_interceptor: ^3.5.0
   dio_cache_interceptor_hive_store: ^3.2.2
   hive: ^2.2.3
