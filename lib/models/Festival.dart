@@ -1,9 +1,19 @@
+import 'package:hive/hive.dart';
+part 'Festival.g.dart';
+
+@HiveType(typeId : 1)
 class Festival {
+  @HiveField(0)
   DateTime? endDate;
+  @HiveField(1)
   String magazine_src = "https://javisko.sk/wp-json/wp/v2/posts?per_page=20&order=desc&";
+  @HiveField(2)
   String news_src = "https://www.tvor-ba.sk/2024/wp-json/wp/v2/posts?per_page=20&order=desc&";
+  @HiveField(3)
   DateTime? startDate;
+  @HiveField(4)
   String subtitle = "Multižánrový festival tvorivosti";
+  @HiveField(5)
   String title = "TVOR•BA 2024";
 
   Festival({
@@ -17,10 +27,9 @@ class Festival {
 
   factory Festival.fromJson(Map<String, dynamic> json) {
     //Map<String, dynamic> festivals = jsonDecode(json['festivals'] ?? {});
-    var endDate = DateTime(
-        json["endDate"].year, json["endDate"].month, json["endDate"].day);
-    var startDate = DateTime(
-        json["startDate"].year, json["startDate"].month, json["startDate"].day);
+
+    var startDate = DateTime.parse(json['startdate']);
+    var endDate = DateTime.parse(json['enddate']);
 
     return Festival(
     endDate: endDate,
@@ -34,10 +43,10 @@ class Festival {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['endDate'] = this.endDate;
+    data['enddate'] = this.endDate;
     data['magazine_src'] = this.magazine_src;
     data['news_src'] = this.magazine_src;
-    data['startDate'] = this.startDate;
+    data['startdate'] = this.startDate;
     data['subtitle'] = this.subtitle;
     data['title'] = this.title;
     return data;

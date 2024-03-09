@@ -37,7 +37,8 @@ class NewsDetailPage extends StatelessWidget {
     news = allArticles
           .where((element) => (element.id.toString() == newsId))
           .toList()[0];
-    } else if (GoRouterState.of(context).uri.toString().contains("news") &&
+    }
+    else if (GoRouterState.of(context).uri.toString().contains("news") &&
         allNews.map((element) => (element.id == newsId)).length > 0) {
     news = allNews
           .where((element) => (element.id.toString() == newsId))
@@ -52,7 +53,7 @@ class NewsDetailPage extends StatelessWidget {
               Icons.arrow_back_ios,
             ),
             onPressed: () {
-              context.go("/news");
+              GoRouterState.of(context).uri.toString().contains("magazine") ? context.go("/magazine") : context.go("/news");
             }),
         title: Text(
           "TVOR•BA 2024",

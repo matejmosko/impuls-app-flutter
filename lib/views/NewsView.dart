@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +17,12 @@ class NewsView extends StatefulWidget {
 }
 
 class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
-  @override
+
+  static String stripHtml(String text) {
+    return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ');
+  }
+
+
   Widget build(BuildContext context) {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
 
@@ -64,10 +68,8 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                                           title: Text(item.title!.rendered ?? ""),
                                           titleTextStyle: TextStyle(
                                               fontWeight: FontWeight.w600,
-                                              color: Colors.black87,
-                                              fontSize: 20.0),
-                                          subtitle:
-                                              Html(data: item.excerpt!.rendered ?? ""),
+                                              fontSize: 18.0),
+                                          subtitle: Text(stripHtml(item.excerpt!.rendered ?? "").substring(1,105)+"..."),
                                         ),
                                       ),
                                       Container(

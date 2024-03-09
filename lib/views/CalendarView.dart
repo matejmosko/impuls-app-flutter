@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
-import 'package:scenickazatva_app/providers/AppSettingsProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
-import 'package:scenickazatva_app/models/AppSettings.dart';
+import 'package:scenickazatva_app/models/Festival.dart';
+import 'package:scenickazatva_app/models/HivePreferences.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -23,16 +23,13 @@ class CalendarView extends StatefulWidget {
 
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
-
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime? _selectedDay;
   DateTime _rangeStart = DateTime.utc(2024, 3, 14);
   DateTime _rangeEnd = DateTime.utc(2024, 3, 16);
-  DateTime _focusedDay = (DateTime.now().isBefore(DateTime.utc(2024, 3, 14)) ||
-          DateTime.now().isAfter(DateTime.utc(2024, 3, 16)))
-      ? DateTime.utc(2024, 3, 14)
-      : DateTime.now();
+  DateTime _focusedDay = DateTime.now();
   AnimationController? _animationController;
+  Festival festival = Festival();
   List venues = [];
   // List events;
 
@@ -45,6 +42,11 @@ class _CalendarViewState extends State<CalendarView>
       duration: const Duration(milliseconds: 400),
     );
 
+    _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
+            DateTime.now().isAfter(_rangeEnd))
+        ? _rangeStart
+        : DateTime.now();
+
     _animationController?.forward();
 
     _selectedDay = _focusedDay;
@@ -54,8 +56,6 @@ class _CalendarViewState extends State<CalendarView>
   void didChangeDependencies() {
     super.didChangeDependencies();
   }
-
-
 
   List<Event> _fetchEvents(DateTime day) {
     EventsProvider eventsProvider =
@@ -68,12 +68,21 @@ class _CalendarViewState extends State<CalendarView>
     }).toList();
   }
 
-  AppSettings _fetchSettings(){
-    AppSettingsProvider appSettingsProvider =
-    Provider.of<AppSettingsProvider>(context, listen: false);
-    appSettingsProvider.fetchSettings();
-    AppSettings appSettings = appSettingsProvider.appsettings;
-    return appSettings;
+  Future<Festival> getFestival() async {
+    Preferences prefs = await Preferences.getInstance();
+    Festival festival = prefs.getFestival();
+    print(festival.title);
+
+    print(festival.startDate);
+    _rangeStart = festival.startDate ?? _rangeStart;
+    _rangeEnd = festival.endDate ?? _rangeEnd;
+
+    _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
+        DateTime.now().isAfter(_rangeEnd))
+        ? _rangeStart
+        : DateTime.now();
+
+    return festival;
   }
 
   @override
@@ -120,112 +129,122 @@ class _CalendarViewState extends State<CalendarView>
   }
 
   // More advanced TableCalendar configuration (using Builders & Styles)
-  Widget _buildTableCalendarWithBuilders(){
-    AppSettings appSettings = _fetchSettings();
-
-    DateTime startDate = appSettings.festivals != null ? appSettings.festivals![appSettings.defaultfestival]!.startDate! : _rangeStart;
-    DateTime endDate = appSettings.festivals != null ? appSettings.festivals![appSettings.defaultfestival]!.endDate! : _rangeEnd;
+  Widget _buildTableCalendarWithBuilders() {
     return Container(
       color: Theme.of(context).colorScheme.primary,
-      child: TableCalendar(
-        locale: 'sk_SK',
-        firstDay: startDate,
-        lastDay: endDate,
-        focusedDay: _focusedDay,
-        headerVisible: false,
-        selectedDayPredicate: (day) {
-          return isSameDay(_selectedDay, day);
-        },
-        onDaySelected: _onDaySelected,
-        onFormatChanged: (format) {
-          if (_calendarFormat != format) {
-            // Call `setState()` when updating calendar format
-            setState(() {
-              _calendarFormat = format;
-            });
-          }
-        },
-        onPageChanged: (focusedDay) {
-          // No need to call `setState()` here
-          _focusedDay = focusedDay;
-        },
-        eventLoader: _fetchEvents, //(day){ return events;},
-        calendarFormat: _calendarFormat,
-        startingDayOfWeek: StartingDayOfWeek.monday,
-        availableGestures: AvailableGestures.all,
-        availableCalendarFormats: const {
-          CalendarFormat.week: 'Týždeň',
-        },
-        calendarStyle: CalendarStyle(
-          outsideDaysVisible: true,
-          outsideTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.onPrimary  ),
-          defaultTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.onTertiary),
-          disabledTextStyle: TextStyle(color: Theme.of(context).colorScheme.onTertiary),
-          weekendTextStyle:
-              TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-        ),
-        daysOfWeekStyle: DaysOfWeekStyle(
-            weekdayStyle: TextStyle(
-              color: Colors.white54,
-            ),
-            weekendStyle: TextStyle(
-              color: Colors.white54,
-            )),
-        calendarBuilders: CalendarBuilders(
-          selectedBuilder: (context, date, _) {
-            return FadeTransition(
-              opacity:
-                  Tween(begin: 0.0, end: 1.0).animate(_animationController!),
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: Theme.of(context).colorScheme.inverseSurface),
-                child: Center(
-                  child: Text(
-                    '${date.day}',
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.surface)
-                            .copyWith(fontSize: 16.0),
-                  ),
+      child: FutureBuilder(
+          future: getFestival(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              // Future hasn't finished yet, return a placeholder
+              return Row(children: [
+                Text(
+                  "...",
+                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
                 ),
-              ),
-            );
-          },
-          todayBuilder: (context, date, _) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(width: 3.0),
-                borderRadius: BorderRadius.all(Radius.circular(
-                        4.0) //                 <--- border radius here
-                    ),
-              ),
-              width: 100,
-              height: 100,
-              child: Center(
-                child: Text(
-                  '${date.day}',
-                  style: TextStyle().copyWith(fontSize: 16.0),
-                ),
-              ),
-            );
-          },
-          markerBuilder: (context, date, List events) {
-            if (events.isNotEmpty) {
-              return Positioned(
-                bottom: 1,
-                right: 8,
-                child: _buildEventsMarker(date, events),
-              );
-            } else {
-              return SizedBox.shrink();
+              ]);
             }
-          },
-        ),
-      ),
+            return TableCalendar(
+              locale: 'sk_SK',
+              firstDay: snapshot.data!.startDate ?? _rangeStart,
+              lastDay: snapshot.data!.endDate ?? _rangeEnd,
+              focusedDay: _focusedDay,
+              headerVisible: false,
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDay, day);
+              },
+              onDaySelected: _onDaySelected,
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
+                  // Call `setState()` when updating calendar format
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                }
+              },
+              onPageChanged: (focusedDay) {
+                // No need to call `setState()` here
+                _focusedDay = focusedDay;
+              },
+              eventLoader: _fetchEvents, //(day){ return events;},
+              calendarFormat: _calendarFormat,
+              startingDayOfWeek: StartingDayOfWeek.monday,
+              availableGestures: AvailableGestures.all,
+              availableCalendarFormats: const {
+                CalendarFormat.week: 'Týždeň',
+              },
+              calendarStyle: CalendarStyle(
+                outsideDaysVisible: true,
+                outsideTextStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.onTertiary),
+                defaultTextStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                disabledTextStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.onTertiary),
+                weekendTextStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+              ),
+              daysOfWeekStyle: DaysOfWeekStyle(
+                  weekdayStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  weekendStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  )),
+              calendarBuilders: CalendarBuilders(
+                selectedBuilder: (context, date, _) {
+                  return FadeTransition(
+                    opacity: Tween(begin: 0.0, end: 1.0)
+                        .animate(_animationController!),
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: Theme.of(context).colorScheme.inverseSurface),
+                      child: Center(
+                        child: Text(
+                          '${date.day}',
+                          style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onInverseSurface)
+                              .copyWith(fontSize: 16.0),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                todayBuilder: (context, date, _) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 3.0),
+                      borderRadius: BorderRadius.all(Radius.circular(
+                              4.0) //                 <--- border radius here
+                          ),
+                    ),
+                    width: 100,
+                    height: 100,
+                    child: Center(
+                      child: Text(
+                        '${date.day}',
+                        style: TextStyle().copyWith(fontSize: 16.0),
+                      ),
+                    ),
+                  );
+                },
+                markerBuilder: (context, date, List events) {
+                  if (events.isNotEmpty) {
+                    return Positioned(
+                      bottom: 1,
+                      right: 8,
+                      child: _buildEventsMarker(date, events),
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
+              ),
+            );
+          }),
     );
   }
 

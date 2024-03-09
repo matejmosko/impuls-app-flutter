@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
-import 'package:scenickazatva_app/providers/AppSettingsProvider.dart';
 import 'package:scenickazatva_app/views/CalendarView.dart';
 import 'package:scenickazatva_app/views/InfoView.dart';
 import 'package:scenickazatva_app/views/NewsView.dart';
 import 'package:scenickazatva_app/views/MagazineView.dart';
+import 'package:scenickazatva_app/models/ColorScheme.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
@@ -39,7 +39,7 @@ class _TabPageState extends State<TabPage> {
     );
   }
 
-  void _itemTapped(int index, newsProvider, eventsProvider, infoProvider, appSettingsProvider) {
+  void _itemTapped(int index, newsProvider, eventsProvider, infoProvider) {
     setState(() {
       _selectedIndex = index;
       _pageController.jumpToPage(index);
@@ -47,13 +47,12 @@ class _TabPageState extends State<TabPage> {
   }
 
   void pageChanged(
-      int index, newsProvider, eventsProvider, infoProvider, appSettingsProvider) async {
+      int index, newsProvider, eventsProvider, infoProvider) async {
     if (index == 0) {
       newsProvider.fetchWpNews("news_src");
     } else if (index == 1) {
       await eventsProvider.fetchAllEvents();
       await eventsProvider.fetchLocations();
-      await appSettingsProvider.fetchSettings();
     } else if (index == 3) {
       await infoProvider.fetchInfo();
     } else if (index == 2) {
@@ -64,11 +63,11 @@ class _TabPageState extends State<TabPage> {
     });
   }
 
-  Widget buildPageView(newsProvider, eventsProvider, infoProvider, appSettingsProvider) {
+  Widget buildPageView(newsProvider, eventsProvider, infoProvider) {
     return PageView(
         controller: _pageController,
         onPageChanged: (index) {
-          pageChanged(index, newsProvider, eventsProvider, infoProvider, appSettingsProvider);
+          pageChanged(index, newsProvider, eventsProvider, infoProvider);
         },
         children: _widgetOptions);
   }
@@ -78,7 +77,6 @@ class _TabPageState extends State<TabPage> {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     final InfoProvider infoProvider = Provider.of<InfoProvider>(context);
-    final AppSettingsProvider appSettingsProvider = Provider.of<AppSettingsProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -110,7 +108,7 @@ class _TabPageState extends State<TabPage> {
         ],
       ),
       body: Center(
-        child: buildPageView(newsProvider, eventsProvider, infoProvider, appSettingsProvider),
+        child: buildPageView(newsProvider, eventsProvider, infoProvider),
       ),
       bottomNavigationBar: NavigationBar(
           destinations: <Widget>[
@@ -133,7 +131,7 @@ class _TabPageState extends State<TabPage> {
           ],
           selectedIndex: _selectedIndex,
           onDestinationSelected: (index) =>
-              _itemTapped(index, newsProvider, eventsProvider, infoProvider, appSettingsProvider)),
+              _itemTapped(index, newsProvider, eventsProvider, infoProvider)),
     );
   }
 }

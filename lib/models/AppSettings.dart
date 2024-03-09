@@ -1,8 +1,13 @@
 import 'dart:convert';
 import 'package:scenickazatva_app/models/Festival.dart';
+import 'package:hive/hive.dart';
+part 'AppSettings.g.dart';
 
+@HiveType(typeId : 0)
 class AppSettings {
+  @HiveField(0)
   String defaultfestival = "tvorba2024";
+  @HiveField(1)
   Map<String, Festival>? festivals = {};
 
   AppSettings({
@@ -11,8 +16,7 @@ class AppSettings {
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
-    final Map<String, dynamic> f =
-        jsonDecode(json["festivals"]) as Map<String, Festival>;
+    final Map<String, dynamic> f = jsonDecode(jsonEncode(json["festivals"]));
     Map<String, Festival> festivals = {};
 
     f.forEach((key, value) {

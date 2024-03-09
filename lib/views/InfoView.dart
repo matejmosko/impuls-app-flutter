@@ -8,6 +8,11 @@ class InfoView extends StatelessWidget {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
+
+  static String stripHtml(String text) {
+    return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ');
+  }
+
   @override
   Widget build(BuildContext context) {
     //final ColorProvider colorTheme = Provider.of<ColorProvider>(context);
@@ -38,12 +43,13 @@ class InfoView extends StatelessWidget {
                   final item = infoProvider.info[index];
                   return ListTile(
                       title: Text(item.title),
+                      isThreeLine: true,
                       leading: Icon(
                           IconData(item.icon, fontFamily: 'MaterialIcons')),
                       subtitle: Text(
-                        item.description,
+                        stripHtml(item.description),
                         overflow: TextOverflow.fade,
-                        maxLines: 1,
+                        maxLines: 2,
                       ),
                       onTap: () {
                         Analytics().sendEvent(item.title);

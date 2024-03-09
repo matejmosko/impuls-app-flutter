@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:scenickazatva_app/models/UserData.dart';
-import 'package:scenickazatva_app/providers/AppSettingsProvider.dart';
 
 class authService {
   var userData;

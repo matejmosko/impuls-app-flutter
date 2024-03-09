@@ -1,5 +1,6 @@
 //import 'dart:convert';
 //import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:wordpress_client/wordpress_client.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,9 +43,15 @@ class API {
     List<Post> data = [];
 
     //var cacheStore = MemCacheStore(maxSize: 10485760, maxEntrySize: 1048576);
-    var cacheDir = await getTemporaryDirectory();
+
+    var directory = null;
+    if (!kIsWeb){
+      var cacheDir = !kIsWeb ? await getTemporaryDirectory() : null;
+      directory = cacheDir!.path;
+    }
+
     var cacheStore = HiveCacheStore(
-      cacheDir.path,
+      directory,
       hiveBoxName: "scenickazatva_app",
     );
     var cacheOptions = CacheOptions(

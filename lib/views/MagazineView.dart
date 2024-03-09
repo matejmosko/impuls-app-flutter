@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
@@ -20,9 +19,13 @@ class MagazineView extends StatefulWidget {
 
 class _MagazineViewState extends State<MagazineView>
     with TickerProviderStateMixin {
+
+  static String stripHtml(String text) {
+    return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ');
+  }
+
   Widget build(BuildContext context) {
     final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
-
 
 
     return Stack(
@@ -48,7 +51,8 @@ class _MagazineViewState extends State<MagazineView>
             children: <Widget>[
               Flexible(
                 child: LazyLoadScrollView(
-                  onEndOfPage: () => newsProvider.fetchWpMagazine("magazine_src"),
+                  onEndOfPage: () =>
+                      newsProvider.fetchWpMagazine("magazine_src"),
                   isLoading: newsProvider.loading,
                   scrollOffset: 10,
                   child: RefreshIndicator(
@@ -64,17 +68,27 @@ class _MagazineViewState extends State<MagazineView>
                                     children: [
                                       Expanded(
                                         child: ListTile(
-                                          title: Text(item.title!.rendered ?? ""),
-                                          titleTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 20.0),
-                                          subtitle:
-                                          Html(data: item.excerpt!.rendered ?? ""),
+                                          title:
+                                              Text(item.title!.rendered ?? ""),
+                                          isThreeLine: true,
+                                          titleTextStyle: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 18.0),
+                                         /* subtitle: Html(
+                                            data: item.excerpt!.rendered!
+                                                    .substring(0, 105) ??
+                                                "",
+                                            shrinkWrap: true,
+                                          ),*/
+                                          subtitle: Text(stripHtml(item.excerpt!.rendered ?? "").substring(1,105)+"..."),
                                         ),
                                       ),
                                       Container(
                                         width: 120.0,
                                         height: 120.0,
                                         child: CachedNetworkImage(
-                                          imageUrl: item.featuredImageSourceUrl(),
+                                          imageUrl:
+                                              item.featuredImageSourceUrl(),
                                           fit: BoxFit.cover,
                                           height: double.infinity,
                                           width: double.infinity,

@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:scenickazatva_app/requests/AppSettingsRequest.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:scenickazatva_app/requests/auth_service.dart';
+import 'package:scenickazatva_app/requests/authFirestore.dart';
 import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
-import 'package:scenickazatva_app/providers/AppSettingsProvider.dart';
 import 'package:scenickazatva_app/pages/SettingsPage.dart';
 import 'package:scenickazatva_app/pages/TabPage.dart';
 import 'package:scenickazatva_app/pages/EventDetailPage.dart';
@@ -21,6 +21,9 @@ import 'package:scenickazatva_app/pages/NewsDetailPage.dart';
 import 'package:scenickazatva_app/pages/EventEditPage.dart';
 import 'package:scenickazatva_app/pages/InfoDetailPage.dart';
 import 'package:scenickazatva_app/models/ColorScheme.dart';
+import 'package:scenickazatva_app/models/AppSettings.dart';
+import 'package:scenickazatva_app/models/Festival.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 final _router = GoRouter(
   routes: [
@@ -154,6 +157,10 @@ void main() async {
     }
   });
 
+  await Hive.initFlutter();
+  Hive.registerAdapter(FestivalAdapter());
+  Hive.registerAdapter(AppSettingsAdapter());
+
   FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
     // Note: This callback is fired at each app startup and whenever a new
     // token is generated.
@@ -177,6 +184,9 @@ void main() async {
     // https://stackoverflow.com/questions/58459483/unsupported-operation-platform-operatingsystem
   }*/
 
+  AppSettingsRequest appSettingsRequest = AppSettingsRequest();
+  appSettingsRequest.fetchSettings();
+
   initializeDateFormatting('sk_SK').then((_) => runApp(MyApp()));
 }
 
@@ -194,9 +204,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<InfoProvider>.value(
           value: InfoProvider(),
         ),
-        ChangeNotifierProvider<AppSettingsProvider>.value(
-          value: AppSettingsProvider(),
-        ),
         ChangeNotifierProvider<ArrangementProvider>.value(
           value: ArrangementProvider(),
         ),
@@ -207,6 +214,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             colorScheme: lightColorScheme,
             fontFamily: 'Inter',
+
             appBarTheme: AppBarTheme(
                 iconTheme: IconThemeData(color: accentColor),
                 backgroundColor: lightColorDarker,
@@ -218,6 +226,15 @@ class MyApp extends StatelessWidget {
               labelTextStyle:
                   MaterialStateProperty.all(TextStyle(color: accentColor)),
             ),
+
+            listTileTheme: ListTileThemeData(
+              textColor: darkColorLighter,
+              titleTextStyle: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: darkColor,
+                  fontSize: 14.0),
+            ),
+
             textTheme: TextTheme(
               displayLarge: TextStyle(
                 fontSize: 24.0,
