@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/src/tree/image_element.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:scenickazatva_app/requests/api.dart';
@@ -15,10 +16,6 @@ class NewsDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
-    List<Post> allNews = newsProvider.wpnews;
-    List<Post> allArticles = newsProvider.wparticles;
-
     Post news = Post(
       id: 0,
       slug: "",
@@ -32,17 +29,25 @@ class NewsDetailPage extends StatelessWidget {
       self: {},
     );
 
-    if (GoRouterState.of(context).uri.toString().contains("magazine") &&
-        allArticles.map((element) => (element.id == newsId)).length > 0) {
-    news = allArticles
-          .where((element) => (element.id.toString() == newsId))
-          .toList()[0];
-    }
-    else if (GoRouterState.of(context).uri.toString().contains("news") &&
-        allNews.map((element) => (element.id == newsId)).length > 0) {
-    news = allNews
-          .where((element) => (element.id.toString() == newsId))
-          .toList()[0];
+    Future<Post> getArticle() async {
+      final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
+      List<Post> allNews = newsProvider.wpnews;
+      List<Post> allArticles = newsProvider.wparticles;
+
+      if (GoRouterState.of(context).uri.toString().contains("magazine") &&
+          allArticles.map((element) => (element.id == newsId)).length > 0) {
+        news = allArticles
+            .where((element) => (element.id.toString() == newsId))
+            .toList()[0];
+        return news;
+      } else if (GoRouterState.of(context).uri.toString().contains("news") &&
+          allNews.map((element) => (element.id == newsId)).length > 0) {
+        news = allNews
+            .where((element) => (element.id.toString() == newsId))
+            .toList()[0];
+        return news;
+      } else
+        return Future.error("No data yet.");
     }
 
     return Scaffold(
@@ -53,40 +58,67 @@ class NewsDetailPage extends StatelessWidget {
               Icons.arrow_back_ios,
             ),
             onPressed: () {
-              GoRouterState.of(context).uri.toString().contains("magazine") ? context.go("/magazine") : context.go("/news");
+              GoRouterState.of(context).uri.toString().contains("magazine")
+                  ? context.go("/magazine")
+                  : context.go("/news");
             }),
         title: Text(
           "TVOR•BA 2024",
         ),
       ),
       body: SafeArea(
-        child: ListView(
-          children: [
-            CachedNetworkImage(
-              imageUrl: news.featuredImageSourceUrl(),
-              placeholder: (context, url) =>
-                  Image.asset('assets/images/icon512.png'),
-              errorWidget: (context, url, error) =>
-                  Image.asset('assets/images/icon512.png'),
-            ),
-            Card(
-              child: Column(
-                children: <Widget>[
-                  Text("${news.title!.rendered}",
-                      style: Theme.of(context).textTheme.displayLarge),
-                  Padding(
-                    padding: EdgeInsets.all(12),
-                    child: //Text("${news.content ?? ''}"),
-                        Html(
-                      data: news.content!.rendered,
-                      onLinkTap: (url, map, element) => API().launchURL(url),
+        child: FutureBuilder(
+            future: getArticle(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.waiting &&
+                  !snapshot.hasError) {
+                return ListView(
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: news.featuredImageSourceUrl(),
+                      placeholder: (context, url) =>
+                          Image.asset('assets/images/icon512.png'),
+                      errorWidget: (context, url, error) =>
+                          Image.asset('assets/images/icon512.png'),
                     ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
+                    Card(
+                      child: Column(
+                        children: <Widget>[
+                          Text("${news.title!.rendered}",
+                              style: Theme.of(context).textTheme.displayLarge),
+                          Padding(
+                            padding: EdgeInsets.all(12),
+                            child: //Text("${news.content ?? ''}"),
+                                Html(
+                              data: news.content!.rendered,
+                              onLinkTap: (url, map, element) =>
+                                  API().launchURL(url),
+                              extensions: [
+                                ImageExtension(builder: (extensionContext) {
+                                  final element = extensionContext.styledElement
+                                      as ImageElement;
+                                  return CachedNetworkImage(
+                                    imageUrl: element.src,
+                                    alignment: Alignment.center,
+                                    fit: BoxFit.fill,
+                                  );
+                                }),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              } else
+                return Row(children: [
+                  Text(
+                    "...",
+                    style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                  ),
+                ]);
+            }),
       ),
     );
   }
