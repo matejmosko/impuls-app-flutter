@@ -48,7 +48,7 @@ android {
 
     defaultConfig {
         applicationId "sk.panakrala.scenickazatva"
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
