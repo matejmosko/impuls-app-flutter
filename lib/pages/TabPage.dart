@@ -8,7 +8,6 @@ import 'package:scenickazatva_app/views/CalendarView.dart';
 import 'package:scenickazatva_app/views/InfoView.dart';
 import 'package:scenickazatva_app/views/NewsView.dart';
 import 'package:scenickazatva_app/views/MagazineView.dart';
-import 'package:scenickazatva_app/models/ColorScheme.dart';
 import 'package:provider/provider.dart';
 
 class TabPage extends StatefulWidget {
