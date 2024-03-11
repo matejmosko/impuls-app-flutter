@@ -71,9 +71,6 @@ class _CalendarViewState extends State<CalendarView>
   Future<Festival> getFestival() async {
     Preferences prefs = await Preferences.getInstance();
     Festival festival = prefs.getFestival();
-    print(festival.title);
-
-    print(festival.startDate);
     _rangeStart = festival.startDate ?? _rangeStart;
     _rangeEnd = festival.endDate ?? _rangeEnd;
 

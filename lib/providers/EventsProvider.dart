@@ -175,7 +175,6 @@ class EventsProvider extends ChangeNotifier {
     if (_e.id != "") {
       //String _key = DateFormat("dd-MM-HHmm-", "sk_SK").format(_e.startTime!)+_e.id;
       String _key = _e.id;
-      print(_key);
       FirebaseDatabase.instance
           .ref("festivals/$_festival/events/$_key/")
           .update(_e.toJson())

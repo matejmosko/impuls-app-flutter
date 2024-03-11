@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/src/tree/image_element.dart';
@@ -93,14 +94,23 @@ class NewsDetailPage extends StatelessWidget {
                               data: news.content!.rendered,
                               onLinkTap: (url, map, element) =>
                                   API().launchURL(url),
+                              style:{
+                                "img": Style(
+                                    width: Width(MediaQuery.of(context).size.width - 80), // not working as intended.
+                              )},
                               extensions: [
                                 ImageExtension(builder: (extensionContext) {
                                   final element = extensionContext.styledElement
                                       as ImageElement;
-                                  return CachedNetworkImage(
-                                    imageUrl: element.src,
-                                    alignment: Alignment.center,
-                                    fit: BoxFit.fill,
+                                  return InteractiveViewer(
+                                    boundaryMargin: const EdgeInsets.all(20.0),
+                                    minScale: 1.0,
+                                    maxScale: 2.0,
+                                    child: CachedNetworkImage(
+                                          imageUrl: element.src,
+                                          //fit: BoxFit.fill,
+                                          alignment: Alignment.center,
+                                        ),
                                   );
                                 }),
                               ],

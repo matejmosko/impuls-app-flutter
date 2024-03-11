@@ -117,7 +117,7 @@ class _TabPageState extends State<TabPage> {
             ),
             NavigationDestination(
               icon: Icon(Icons.calendar_today),
-              label: 'Kalendár',
+              label: 'Program',
             ),
             NavigationDestination(
             icon: Icon(Icons.article),

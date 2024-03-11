@@ -60,7 +60,6 @@ class _MagazineViewState extends State<MagazineView>
                         itemCount: newsProvider.wparticles.length,
                         itemBuilder: (BuildContext context, int index) {
                           final item = newsProvider.wparticles[index];
-                          //print(item);
                           return Card(
                             child: GestureDetector(
                                 child: Row(
