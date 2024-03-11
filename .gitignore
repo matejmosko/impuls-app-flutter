@@ -276,4 +276,3 @@ $RECYCLE.BIN/
 #Please keep the Signing Key secret
 /android/key.properties
 /key.jks
-/lib/generated_plugin_registrant.dart
