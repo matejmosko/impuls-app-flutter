@@ -4,6 +4,7 @@ class Event {
   String title = "";
   String description = "";
   String location = "";
+  String type = "";
   DateTime? startTime;
   DateTime? endTime;
   String image = "";
@@ -15,6 +16,7 @@ class Event {
     this.startTime,
     this.endTime,
     this.location = "",
+    this.type = "",
     this.image = "",
     this.description = "",
     this.artist = "",
@@ -33,6 +35,7 @@ class Event {
       title: json['title'] ?? "",
       description: json['description'] ?? "",
       location: json['location'] ?? "",
+      type: json['type'] ?? "",
       startTime: startTime ?? DateTime.now(),
       endTime: endTime ?? DateTime.now(),
       image: json['image'] ?? "",
@@ -46,6 +49,7 @@ class Event {
       'title': title,
       'description': description,
       'location': location,
+      'type': type,
       'startTime': startTime.toString(),
       'endTime': endTime.toString(),
       'image': image,

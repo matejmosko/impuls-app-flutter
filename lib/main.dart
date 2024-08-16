@@ -12,6 +12,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:scenickazatva_app/requests/authFirestore.dart';
 import 'package:scenickazatva_app/providers/ArrangementProvider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
+import 'package:scenickazatva_app/providers/FestivalProvider.dart';
 import 'package:scenickazatva_app/providers/InfoProvider.dart';
 import 'package:scenickazatva_app/providers/NewsProvider.dart';
 import 'package:scenickazatva_app/pages/SettingsPage.dart';
@@ -200,6 +201,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<EventsProvider>.value(
           value: EventsProvider(),
+        ),
+        ChangeNotifierProvider<FestivalProvider>.value(
+          value: FestivalProvider(),
         ),
         ChangeNotifierProvider<InfoProvider>.value(
           value: InfoProvider(),

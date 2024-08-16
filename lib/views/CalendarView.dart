@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
+import 'package:scenickazatva_app/providers/FestivalProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:scenickazatva_app/models/ColorScheme.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:scenickazatva_app/models/Festival.dart';
@@ -31,6 +33,11 @@ class _CalendarViewState extends State<CalendarView>
   AnimationController? _animationController;
   Festival festival = Festival();
   List venues = [];
+  Color foregroundColor = darkColor;
+  Color backgroundColor = accentColor;
+  Color selectedColor = lightColor;
+  Color mainProgramColor = accentColor;
+  Color offProgramColor = lightColorDarker;
   // List events;
 
   @override
@@ -68,6 +75,26 @@ class _CalendarViewState extends State<CalendarView>
     }).toList();
   }
 
+  Festival fetchFestival() {
+    FestivalProvider festivalProvider =
+    Provider.of<FestivalProvider>(context, listen: false);
+    final festival = festivalProvider.festival;
+    _rangeStart = festival.startDate ?? _rangeStart;
+    _rangeEnd = festival.endDate ?? _rangeEnd;
+
+    _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
+        DateTime.now().isAfter(_rangeEnd))
+        ? _rangeStart
+        : DateTime.now();
+
+    foregroundColor = festivalProvider.getColor(festival.foregroundColor);
+    backgroundColor = festivalProvider.getColor(festival.backgroundColor);
+    selectedColor = festivalProvider.getColor(festival.selectedColor);
+    mainProgramColor = festivalProvider.getColor(festival.mainProgramColor);
+    offProgramColor = festivalProvider.getColor(festival.offProgramColor);
+    return festival;
+  }
+
   Future<Festival> getFestival() async {
     Preferences prefs = await Preferences.getInstance();
     Festival festival = prefs.getFestival();
@@ -75,7 +102,7 @@ class _CalendarViewState extends State<CalendarView>
     _rangeEnd = festival.endDate ?? _rangeEnd;
 
     _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
-        DateTime.now().isAfter(_rangeEnd))
+            DateTime.now().isAfter(_rangeEnd))
         ? _rangeStart
         : DateTime.now();
 
@@ -111,14 +138,14 @@ class _CalendarViewState extends State<CalendarView>
       children: <Widget>[
         Container(
           child: _buildTableCalendarWithBuilders(),
-          decoration: BoxDecoration(
+          /*decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
                 blurRadius: 1.0, // has the effect of softening the shadow
                 spreadRadius: 5.0, // has the effect of extending the shadow
               )
             ],
-          ),
+          ),*/
         ),
         Expanded(child: _buildEventList()),
       ],
@@ -128,7 +155,7 @@ class _CalendarViewState extends State<CalendarView>
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     return Container(
-      color: Theme.of(context).colorScheme.primary,
+      color: festivalBackgroundColor,
       child: FutureBuilder(
           future: getFestival(),
           builder: (context, snapshot) {
@@ -136,8 +163,7 @@ class _CalendarViewState extends State<CalendarView>
               // Future hasn't finished yet, return a placeholder
               return Row(children: [
                 Text(
-                  "...",
-                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                  "Načítavam...",
                 ),
               ]);
             }
@@ -173,20 +199,20 @@ class _CalendarViewState extends State<CalendarView>
               calendarStyle: CalendarStyle(
                 outsideDaysVisible: true,
                 outsideTextStyle:
-                    TextStyle(color: Theme.of(context).colorScheme.onTertiary),
+                    TextStyle(color: foregroundColor),
                 defaultTextStyle:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                    TextStyle(color: foregroundColor),
                 disabledTextStyle:
-                    TextStyle(color: Theme.of(context).colorScheme.onTertiary),
+                    TextStyle(color: foregroundColor),
                 weekendTextStyle:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                    TextStyle(color: foregroundColor),
               ),
               daysOfWeekStyle: DaysOfWeekStyle(
                   weekdayStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: foregroundColor,
                   ),
                   weekendStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: foregroundColor,
                   )),
               calendarBuilders: CalendarBuilders(
                 selectedBuilder: (context, date, _) {
@@ -198,13 +224,13 @@ class _CalendarViewState extends State<CalendarView>
                       height: 100,
                       decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
-                          color: Theme.of(context).colorScheme.inverseSurface),
+                          color: selectedColor),
                       child: Center(
                         child: Text(
                           '${date.day}',
-                          style: TextStyle(
+                          /*style: TextStyle(
                                   color: Theme.of(context).colorScheme.onInverseSurface)
-                              .copyWith(fontSize: 16.0),
+                              .copyWith(fontSize: 16.0),*/
                         ),
                       ),
                     ),
@@ -223,7 +249,7 @@ class _CalendarViewState extends State<CalendarView>
                     child: Center(
                       child: Text(
                         '${date.day}',
-                        style: TextStyle().copyWith(fontSize: 16.0),
+                        /* style: TextStyle().copyWith(fontSize: 16.0),*/
                       ),
                     ),
                   );
@@ -231,8 +257,8 @@ class _CalendarViewState extends State<CalendarView>
                 markerBuilder: (context, date, List events) {
                   if (events.isNotEmpty) {
                     return Positioned(
-                      bottom: 1,
-                      right: 8,
+                      bottom: 0,
+                      right: 0,
                       child: _buildEventsMarker(date, events),
                     );
                   } else {
@@ -248,15 +274,17 @@ class _CalendarViewState extends State<CalendarView>
   Widget _buildEventsMarker(DateTime date, List events) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(shape: BoxShape.rectangle),
+      decoration: BoxDecoration(
+          color: festivalForegroundColor,
+          shape: BoxShape.rectangle),
       width: 16.0,
       height: 16.0,
       child: Center(
         child: Text(
           '${events.length}',
           style: TextStyle().copyWith(
-            color: Theme.of(context).colorScheme.onTertiary,
-            fontSize: 12.0,
+            color: festivalThirdColor,
+            fontSize: 10.0,
           ),
         ),
       ),
@@ -267,6 +295,12 @@ class _CalendarViewState extends State<CalendarView>
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
 
     return Container(
+        /* decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          )
+        ),*/
         child: AnimatedOpacity(
       opacity: eventsProvider.events.length > 0 ? 1.0 : 0.0,
       duration: Duration(milliseconds: 500),
@@ -302,70 +336,79 @@ class EventListItem extends StatelessWidget {
         ? event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
         : '';*/
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
+    final FestivalProvider festivalProvider = Provider.of<FestivalProvider>(context);
+    final festival = festivalProvider.festival;
+    Color mainProgramColor = festivalProvider.getColor(festival.mainProgramColor);
+    Color offProgramColor = festivalProvider.getColor(festival.offProgramColor);
+
     return GestureDetector(
       child: Card(
+          color: event.type == "OFF" ? offProgramColor : mainProgramColor,
           child: Row(children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(12.0),
-          child: SizedBox(
-              width: 60,
-              child: Column(
-                /*crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: EdgeInsets.all(12.0),
+              child: SizedBox(
+                  width: 60,
+                  child: Column(
+                    /*crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,*/
-                children: <Widget>[
-                  Icon(eventsProvider.getLocationIcon(event.location),
-                      color: eventsProvider.getLocationColor(event.location),
-                      size: 26),
-                  Text("$location",
-                      style: TextStyle(
+                    children: <Widget>[
+                      Icon(eventsProvider.getLocationIcon(event.location),
                           color:
-                              eventsProvider.getLocationColor(event.location)),
-                      textAlign: TextAlign.center),
-                  Text("$startTime"),
+                              eventsProvider.getLocationColor(event.location),
+                          size: 26),
+                      Text("$location",
+                          style: TextStyle(
+                              color: eventsProvider
+                                  .getLocationColor(event.location)),
+                          textAlign: TextAlign.center),
+                      Text("$startTime"),
+                    ],
+                  )),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text("${event.title ?? ''}",
+                      style: Theme.of(context).textTheme.displaySmall),
+                  LimitedBox(
+                    child: ShaderMask(
+                      blendMode: BlendMode.srcIn,
+                      shaderCallback: (bounds) {
+                        return LinearGradient(
+                          begin: Alignment.center,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.black, Colors.transparent],
+                        ).createShader(bounds);
+                      },
+                      child: Html(data: MD.markdownToHtml(event.description)),
+                    ),
+                    maxHeight: 70,
+                  )
                 ],
-              )),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text("${event.title ?? ''}",
-                  style: Theme.of(context).textTheme.displaySmall),
-              LimitedBox(
-                child: ShaderMask(
-                  blendMode: BlendMode.srcIn,
-                  shaderCallback: (bounds) {
-                    return LinearGradient(
-                      begin: Alignment.center,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.black, Colors.transparent],
-                    ).createShader(bounds);
-                  },
-                  child: Html(data: MD.markdownToHtml(event.description)),
-                ),
-                maxHeight: 70,
-              )
-            ],
-          ),
-        ),
-        Container(
-          width: 120.0,
-          height: 120.0,
-          child: event.image != ""
-              ? Image(
-                  image: FirebaseImageProvider(FirebaseUrl(event.image)),
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  width: double.infinity,
-                  errorBuilder: (BuildContext context, Object exception,
-                      StackTrace? stackTrace) {
-                    return Image.asset('assets/images/icon512.png');
-                  },
-                )
-              : Image.asset('assets/images/icon512.png'),
-        ),
-      ])),
+              ),
+            ),
+            Container(
+              width: 120.0,
+              height: 120.0,
+              child: event.image != ""
+                  ? Image(
+                      image: FirebaseImageProvider(FirebaseUrl(event.image),
+                      ),
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                      errorBuilder: (BuildContext context, Object exception,
+                          StackTrace? stackTrace) {
+                        return Image(image: FirebaseImageProvider(FirebaseUrl(festival.logo)));
+                        //return Image.asset('assets/images/icon512.png');
+                      },
+                    )
+                  : Image( image: FirebaseImageProvider(FirebaseUrl(festival.logo))),
+            ),
+          ])),
       onTap: () {
         Analytics().sendEvent(event.title);
         context.go("/events/" + event.id);

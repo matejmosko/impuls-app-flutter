@@ -10,6 +10,11 @@ Color accentColor = Color(0xffCCA965);
 Color accentColorDarker = Color(0xbbCCA965);
 Color buttonColor = Color(0xbb914DFF);
 Color lightColorTransparent = Colors.white54;
+Color festivalBackgroundColor = Color(0xffffe617);
+Color festivalForegroundColor = Colors.black;
+Color festivalThirdColor = Colors.white;
+
+
 
 var lightColorScheme = ColorScheme(
   brightness: Brightness.light,
