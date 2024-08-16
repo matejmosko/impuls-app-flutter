@@ -209,36 +209,37 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp.router(
-        title: "TVOR•BA 2024 ",
+        title: "javisko.sk",
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
-            fontFamily: 'Inter',
+            fontFamily: 'Space Grotesk',
 
             appBarTheme: AppBarTheme(
-                iconTheme: IconThemeData(color: accentColor),
-                backgroundColor: lightColorDarker,
-                foregroundColor: accentColor),
+                iconTheme: IconThemeData(color: lightColor),
+                backgroundColor: darkColor,
+                foregroundColor: lightColor),
             navigationBarTheme: NavigationBarThemeData(
-              backgroundColor: lightColorDarker,
-              indicatorColor: accentColor,
+              backgroundColor: accentColor,
+              indicatorColor: accentColorDarker,
               indicatorShape: BeveledRectangleBorder(),
               labelTextStyle:
-                  MaterialStateProperty.all(TextStyle(color: accentColor)),
+                  MaterialStateProperty.all(TextStyle(color: darkColor)),
             ),
 
             listTileTheme: ListTileThemeData(
               textColor: darkColorLighter,
               titleTextStyle: TextStyle(
-                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Space Grotesk',
+                  fontVariations: [FontVariation('wght', 700)],
                   color: darkColor,
-                  fontSize: 14.0),
+                  fontSize: 18.0),
             ),
 
             textTheme: TextTheme(
               displayLarge: TextStyle(
                 fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+                fontVariations: [FontVariation('wght', 700)],
                 //color: accentColor
               ),
               displayMedium: TextStyle(
@@ -257,57 +258,16 @@ class MyApp extends StatelessWidget {
                 //    color: accentColor
               ),
               bodyLarge: TextStyle(
-                fontSize: 14.0, fontFamily: 'Hind',
+                fontSize: 14.0,
                 //    color: darkColor
               ),
               bodyMedium: TextStyle(
-                fontSize: 14.0, fontFamily: 'Hind',
+                fontSize: 14.0,
                 //color: darkColor
               ),
             )),
         darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-        /*theme: ThemeData(
-            useMaterial3: true,
-            colorSchemeSeed: accentColor,
-            fontFamily: 'Hind',/*
-            appBarTheme: AppBarTheme(
-              backgroundColor: darkColor,
-              foregroundColor: accentColor,
-            )*/
 
-            // Define the default `TextTheme`. Use this to specify the default
-            // text styling for headlines, titles, bodies of text, and more.
-            textTheme: TextTheme(
-              displayLarge: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  //color: accentColor
-     ),
-              displayMedium: TextStyle(
-                  fontSize: 18.0,
-                  fontStyle: FontStyle.italic,
-                  //color: accentColor
-     ),
-              displaySmall: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                  //color: darkColor
-    ),
-              titleLarge: TextStyle(
-                  fontSize: 19.0,
-                  //fontWeight: FontWeight.bold,
-              //    color: accentColor
-              ),
-              bodyLarge: TextStyle(
-                  fontSize: 14.0, fontFamily: 'Hind',
-              //    color: darkColor
-              ),
-              bodyMedium: TextStyle(
-                  fontSize: 14.0, fontFamily: 'Hind',
-                  //color: darkColor
-    ),
-
-            )),*/
         debugShowCheckedModeBanner: false,
         //home: TabPage(),
         routerConfig: _router,

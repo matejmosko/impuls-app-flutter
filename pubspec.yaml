@@ -112,6 +112,12 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
+  fonts:
+    - family: Space Grotesk
+      fonts:
+        - asset: fonts/SpaceGrotesk-VariableFont_wght.ttf
+          weight: 400
+
 # To create image just run: $ flutter pub run flutter_launcher_icons
 flutter_launcher_icons:
   android: "launcher_icon"

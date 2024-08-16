@@ -29,6 +29,8 @@ class NewsDetailPage extends StatelessWidget {
       self: {},
     );
 
+    var title = GoRouterState.of(context).uri.toString().contains("news") ? "Festivalové novinky" : "javisko.sk";
+
     Future<Post> getArticle() async {
       final NewsProvider newsProvider = Provider.of<NewsProvider>(context);
       List<Post> allNews = newsProvider.wpnews;
@@ -63,7 +65,7 @@ class NewsDetailPage extends StatelessWidget {
                   : context.go("/news");
             }),
         title: Text(
-          "TVOR•BA 2024",
+          title,
         ),
       ),
       body: SafeArea(

@@ -8,10 +8,6 @@ import 'package:scenickazatva_app/requests/api.dart';
 import 'package:scenickazatva_app/models/PostExtension.dart';
 
 class MagazineView extends StatefulWidget {
-  static const TextStyle optionStyle = TextStyle(
-    fontSize: 30,
-    fontWeight: FontWeight.bold,
-  );
 
   @override
   _MagazineViewState createState() => _MagazineViewState();
@@ -38,8 +34,7 @@ class _MagazineViewState extends State<MagazineView>
             duration: Duration(milliseconds: 500),
             // The green box must be a child of the AnimatedOpacity widget.
             child: Text(
-              "Načítavam...",
-              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+              "Načítavam..."
             ),
           ),
         ),
@@ -70,9 +65,6 @@ class _MagazineViewState extends State<MagazineView>
                                           title:
                                               Text(item.title!.rendered ?? ""),
                                           isThreeLine: true,
-                                          titleTextStyle: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 18.0),
                                          /* subtitle: Html(
                                             data: item.excerpt!.rendered!
                                                     .substring(0, 105) ??

@@ -19,9 +19,9 @@ class TabPage extends StatefulWidget {
 
 class _TabPageState extends State<TabPage> {
   static List<Widget> _widgetOptions = <Widget>[
-    NewsView(),
-    CalendarView(),
     MagazineView(),
+    CalendarView(),
+    NewsView(),
     InfoView(),
 //    MagazineView(),
   ];
@@ -47,14 +47,14 @@ class _TabPageState extends State<TabPage> {
 
   void pageChanged(
       int index, newsProvider, eventsProvider, infoProvider) async {
-    if (index == 0) {
+    if (index == 2) {
       newsProvider.fetchWpNews("news_src");
     } else if (index == 1) {
       await eventsProvider.fetchAllEvents();
       await eventsProvider.fetchLocations();
     } else if (index == 3) {
       await infoProvider.fetchInfo();
-    } else if (index == 2) {
+    } else if (index == 0) {
       newsProvider.fetchWpMagazine("magazine_src");
     }
     setState(() {
@@ -80,7 +80,7 @@ class _TabPageState extends State<TabPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "TVOR•BA 2024 ",
+          _selectedIndex == 0 ? "javisko.sk" : "Scénická žatva",
         ),
         actions: <Widget>[
           kIsWeb == true
@@ -112,17 +112,17 @@ class _TabPageState extends State<TabPage> {
       bottomNavigationBar: NavigationBar(
           destinations: <Widget>[
             NavigationDestination(
-              icon: Icon(Icons.notifications),
-              label: 'Novinky',
+              icon: Icon(Icons.menu_book),
+              label: 'javisko.sk',
             ),
             NavigationDestination(
-              icon: Icon(Icons.calendar_today),
+              icon: Icon(Icons.date_range),
               label: 'Program',
             ),
             NavigationDestination(
-            icon: Icon(Icons.article),
-            label: 'javisko.sk',
-          ),
+              icon: Icon(Icons.notifications),
+              label: 'Novinky',
+            ),
             NavigationDestination(
               icon: Icon(Icons.info),
               label: 'Info',
