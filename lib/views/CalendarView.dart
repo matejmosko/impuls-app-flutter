@@ -87,11 +87,11 @@ class _CalendarViewState extends State<CalendarView>
         ? _rangeStart
         : DateTime.now();
 
-    foregroundColor = festivalProvider.getColor(festival.foregroundColor);
-    backgroundColor = festivalProvider.getColor(festival.backgroundColor);
-    selectedColor = festivalProvider.getColor(festival.selectedColor);
-    mainProgramColor = festivalProvider.getColor(festival.mainProgramColor);
-    offProgramColor = festivalProvider.getColor(festival.offProgramColor);
+    foregroundColor = festivalProvider.foregroundColor;
+    backgroundColor = festivalProvider.backgroundColor;
+    selectedColor = festivalProvider.selectedColor;
+    mainProgramColor = festivalProvider.mainProgramColor;
+    offProgramColor = festivalProvider.offProgramColor;
     return festival;
   }
 
@@ -338,8 +338,8 @@ class EventListItem extends StatelessWidget {
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     final FestivalProvider festivalProvider = Provider.of<FestivalProvider>(context);
     final festival = festivalProvider.festival;
-    Color mainProgramColor = festivalProvider.getColor(festival.mainProgramColor);
-    Color offProgramColor = festivalProvider.getColor(festival.offProgramColor);
+    Color mainProgramColor = festivalProvider.mainProgramColor;
+    Color offProgramColor = festivalProvider.offProgramColor;
 
     return GestureDetector(
       child: Card(

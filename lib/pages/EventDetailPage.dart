@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:provider/provider.dart';
 import 'package:scenickazatva_app/providers/EventsProvider.dart';
+import 'package:scenickazatva_app/providers/FestivalProvider.dart';
 import 'package:intl/intl.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
@@ -27,7 +28,8 @@ class EventDetailPage extends StatelessWidget {
     }
 
     final startDate = event.startTime != null
-        ? new DateFormat("E, d.M.", "sk_SK").format(event.startTime ?? DateTime.now())
+        ? new DateFormat("E, d.M.", "sk_SK")
+            .format(event.startTime ?? DateTime.now())
         : '';
     final startTime = event.startTime != null
         ? new DateFormat("HH:mm").format(event.startTime ?? DateTime.now())
@@ -45,6 +47,9 @@ class EventDetailPage extends StatelessWidget {
 
     //Location
     //final location = event.location != null ? "\n${event.location}" : '';
+    FestivalProvider festivalProvider =
+        Provider.of<FestivalProvider>(context, listen: false);
+    final festival = festivalProvider.festival;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -56,34 +61,44 @@ class EventDetailPage extends StatelessWidget {
               context.go("/events");
             }),
         title: Text(
-          "TVOR•BA 2024",
+          event.title,
         ),
       ),
       body: SafeArea(
         child: ListView(
           children: [
-            event.image != ""
-                ? Image(
-                    image: FirebaseImageProvider(FirebaseUrl(event.image)),
+            SizedBox(
+              height: 300,
+              width: double.infinity,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: event.type == "OFF" ? festivalProvider.offProgramColor : festivalProvider.mainProgramColor,
+                ),
+                child: event.image != ""
+                  ? Image(
+                image: FirebaseImageProvider(FirebaseUrl(event.image)),
+                fit: BoxFit.cover,
+                height: 300,
+                width: double.infinity,
+                errorBuilder: (BuildContext context, Object exception,
+                    StackTrace? stackTrace) {
+                  return Image(
+                    image:
+                    FirebaseImageProvider(FirebaseUrl(festival.logo)),
                     fit: BoxFit.cover,
                     height: 300,
                     width: double.infinity,
-                    errorBuilder: (BuildContext context, Object exception,
-                        StackTrace? stackTrace) {
-                      return Image.asset(
-                        'assets/images/icon512.png',
-                        fit: BoxFit.cover,
-                        height: 300,
-                        width: double.infinity,
-                      );
-                    },
-                  )
-                : Image.asset(
-                    'assets/images/icon512.png',
-                    fit: BoxFit.cover,
-                    height: 300,
-                    width: double.infinity,
-                  ),
+                  );
+                },
+              )
+                  : Image(
+                image: FirebaseImageProvider(FirebaseUrl(festival.logo)),
+                fit: BoxFit.cover,
+                height: 300,
+                width: double.infinity,
+              ),
+            ),
+            ),
             Card(
               child: Column(children: <Widget>[
                 Container(

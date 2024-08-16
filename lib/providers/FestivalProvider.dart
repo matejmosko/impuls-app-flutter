@@ -13,6 +13,12 @@ class FestivalProvider extends ChangeNotifier {
 
   Festival get festival => _festival;
 
+  Color get backgroundColor => getColor(_festival.backgroundColor);
+  Color get foregroundColor => getColor(_festival.foregroundColor);
+  Color get selectedColor => getColor(_festival.selectedColor);
+  Color get mainProgramColor => getColor(_festival.mainProgramColor);
+  Color get offProgramColor => getColor(_festival.offProgramColor);
+
   void /*Future<List<InfoPost>>*/ fetchFestival() async {
     Preferences prefs = await Preferences.getInstance();
     Festival festival = prefs.getFestival();
