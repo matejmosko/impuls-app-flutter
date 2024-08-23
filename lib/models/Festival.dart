@@ -31,6 +31,8 @@ class Festival {
   String logo;
   @HiveField(12)
   String background;
+  @HiveField(13)
+  String partnerProgramColor;
 
   Festival(
       {this.endDate,
@@ -46,6 +48,7 @@ class Festival {
       this.selectedColor = "ff888888",
       this.mainProgramColor = "ffffffff",
       this.offProgramColor = "ffffffff",
+      this.partnerProgramColor = "ffffffff",
       this.logo = "gs://scenickazatva-343517.appspot.com/default.png",
       this.background = "gs://scenickazatva-343517.appspot.com/default.png"});
 
@@ -66,6 +69,7 @@ class Festival {
         foregroundColor: json['foregroundColor'],
         selectedColor: json['selectedColor'],
         mainProgramColor: json['mainProgramColor'],
+        partnerProgramColor: json['partnerProgramColor'],
         offProgramColor: json['offProgramColor'],
         logo: json['logo'],
         background: json['background']
@@ -85,6 +89,7 @@ class Festival {
     data['selectedColor'] = this.selectedColor;
     data['mainProgramColor'] = this.mainProgramColor;
     data['offProgramColor'] = this.offProgramColor;
+    data['partnerProgramColor'] = this.partnerProgramColor;
     data['logo'] = this.logo;
     data['background'] = this.background;
     return data;

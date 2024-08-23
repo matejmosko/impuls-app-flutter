@@ -26,9 +26,9 @@ class CalendarView extends StatefulWidget {
 class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime? _selectedDay;
-  DateTime _rangeStart = DateTime.utc(2024, 8, 28);
-  DateTime _rangeEnd = DateTime.utc(2024, 8, 31);
+  DateTime _selectedDay = DateTime.now();
+  DateTime _rangeStart = DateTime.utc(2024, 1, 1);
+  DateTime _rangeEnd = DateTime.utc(2025, 12, 31);
   DateTime _focusedDay = DateTime.now();
   AnimationController? _animationController;
   Festival festival = Festival();
@@ -160,7 +160,7 @@ class _CalendarViewState extends State<CalendarView>
                 ),
               ]);
             }
-
+            print(_focusedDay);
             return TableCalendar(
               locale: 'sk_SK',
               firstDay: _rangeStart,
@@ -300,7 +300,7 @@ class _CalendarViewState extends State<CalendarView>
       duration: Duration(milliseconds: 500),
       child: ListView(
         padding: EdgeInsets.all(8),
-        children: _fetchEvents(_selectedDay!)
+        children: _fetchEvents(_selectedDay)
             .map((event) => EventListItem(event: event))
             .toList(),
       ),
@@ -329,15 +329,28 @@ class EventListItem extends StatelessWidget {
     /*final description = event.description != null
         ? event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
         : '';*/
+
+    final playing = (event.startTime.isAfter(DateTime.now()) && event.endTime.isBefore(DateTime.now())) ? true : false; // Check if the event is currently on.
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     final FestivalProvider festivalProvider = Provider.of<FestivalProvider>(context);
     final festival = festivalProvider.festival;
     Color mainProgramColor = festivalProvider.mainProgramColor;
     Color offProgramColor = festivalProvider.offProgramColor;
+    Color partnerProgramColor = festivalProvider.partnerProgramColor;
 
     return GestureDetector(
       child: Card(
-          color: event.type == "offprogram" ? offProgramColor : mainProgramColor,
+          shape: playing ? RoundedRectangleBorder(
+            side: BorderSide(
+              color: Colors.black,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(5.0),
+          ) :
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          color: event.type == "offprogram" ? offProgramColor : event.type == "partner" ? partnerProgramColor : mainProgramColor,
           child: Row(children: <Widget>[
             Padding(
               padding: EdgeInsets.all(12.0),
