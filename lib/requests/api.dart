@@ -67,7 +67,7 @@ class API {
             .withDioInterceptor(DioCacheInterceptor(options: cacheOptions))
             .build());
 
-    client.initialize();
+    //client.initialize();
 /*
 
 INFO This part is custom made cache based on test request for one article. There are problems with multipage responses. I removed it in favor of dio_cache_interceptor

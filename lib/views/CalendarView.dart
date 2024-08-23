@@ -27,8 +27,8 @@ class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime? _selectedDay;
-  DateTime _rangeStart = DateTime.utc(2024, 3, 14);
-  DateTime _rangeEnd = DateTime.utc(2024, 3, 16);
+  DateTime _rangeStart = DateTime.utc(2024, 8, 28);
+  DateTime _rangeEnd = DateTime.utc(2024, 8, 31);
   DateTime _focusedDay = DateTime.now();
   AnimationController? _animationController;
   Festival festival = Festival();
@@ -48,15 +48,15 @@ class _CalendarViewState extends State<CalendarView>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-
+/*
     _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
             DateTime.now().isAfter(_rangeEnd))
         ? _rangeStart
-        : DateTime.now();
+        : DateTime.now();*/
 
     _animationController?.forward();
 
-    _selectedDay = _focusedDay;
+   // _selectedDay = _focusedDay;
   }
 
   @override
@@ -75,37 +75,30 @@ class _CalendarViewState extends State<CalendarView>
     }).toList();
   }
 
-  Festival fetchFestival() {
-    FestivalProvider festivalProvider =
-    Provider.of<FestivalProvider>(context, listen: false);
-    final festival = festivalProvider.festival;
+  Future<Festival> getFestival() async {
+    Preferences prefs = await Preferences.getInstance();
+    Festival festival = prefs.getFestival();
+
     _rangeStart = festival.startDate ?? _rangeStart;
     _rangeEnd = festival.endDate ?? _rangeEnd;
-
     _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
         DateTime.now().isAfter(_rangeEnd))
         ? _rangeStart
         : DateTime.now();
+
+    return festival;
+  }
+
+  Festival fetchFestival() {
+    FestivalProvider festivalProvider =
+    Provider.of<FestivalProvider>(context, listen: false);
+    final festival = festivalProvider.festival;
 
     foregroundColor = festivalProvider.foregroundColor;
     backgroundColor = festivalProvider.backgroundColor;
     selectedColor = festivalProvider.selectedColor;
     mainProgramColor = festivalProvider.mainProgramColor;
     offProgramColor = festivalProvider.offProgramColor;
-    return festival;
-  }
-
-  Future<Festival> getFestival() async {
-    Preferences prefs = await Preferences.getInstance();
-    Festival festival = prefs.getFestival();
-    _rangeStart = festival.startDate ?? _rangeStart;
-    _rangeEnd = festival.endDate ?? _rangeEnd;
-
-    _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
-            DateTime.now().isAfter(_rangeEnd))
-        ? _rangeStart
-        : DateTime.now();
-
     return festival;
   }
 
@@ -116,7 +109,7 @@ class _CalendarViewState extends State<CalendarView>
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    // print('CALLBACK: _onDaySelected');
+    print('CALLBACK: _onDaySelected');
     setState(() {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
@@ -167,10 +160,11 @@ class _CalendarViewState extends State<CalendarView>
                 ),
               ]);
             }
+
             return TableCalendar(
               locale: 'sk_SK',
-              firstDay: snapshot.data!.startDate ?? _rangeStart,
-              lastDay: snapshot.data!.endDate ?? _rangeEnd,
+              firstDay: _rangeStart,
+              lastDay: _rangeEnd,
               focusedDay: _focusedDay,
               headerVisible: false,
               selectedDayPredicate: (day) {
@@ -343,7 +337,7 @@ class EventListItem extends StatelessWidget {
 
     return GestureDetector(
       child: Card(
-          color: event.type == "OFF" ? offProgramColor : mainProgramColor,
+          color: event.type == "offprogram" ? offProgramColor : mainProgramColor,
           child: Row(children: <Widget>[
             Padding(
               padding: EdgeInsets.all(12.0),

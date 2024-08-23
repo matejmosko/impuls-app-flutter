@@ -228,7 +228,7 @@ class MyApp extends StatelessWidget {
               indicatorColor: accentColorDarker,
               indicatorShape: BeveledRectangleBorder(),
               labelTextStyle:
-                  MaterialStateProperty.all(TextStyle(color: darkColor)),
+                  WidgetStateProperty.all(TextStyle(color: darkColor)),
             ),
 
             listTileTheme: ListTileThemeData(
