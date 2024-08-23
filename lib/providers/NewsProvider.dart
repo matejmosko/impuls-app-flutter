@@ -7,11 +7,12 @@ import 'package:wordpress_client/wordpress_client.dart';
 
 
 class NewsProvider extends ChangeNotifier {
-  List<NewsPost> _news = [];
+  //List<NewsPost> _news = [];
+  //List<NewsPost> _articles = [];
   List<Post> _wpnews = [];
   List<Post> _wparticles = [];
-  List<NewsPost> _articles = [];
-  bool loading = false;
+  bool newsLoading = false;
+  bool articlesLoading = false;
   bool allnews = false;
   bool allarticles = false;
   int newspage = 1;
@@ -24,10 +25,10 @@ class NewsProvider extends ChangeNotifier {
 
   //List<NewsPost> get arrangements => _news;
 
-  List<NewsPost> get news => _news;
+  //List<NewsPost> get news => _news;
   List<Post> get wpnews => _wpnews;
   List<Post> get wparticles => _wparticles;
-  List<NewsPost> get articles => _articles;
+ // List<NewsPost> get articles => _articles;
 
   /*
   void /*Future<List<NewsPost>>*/ fetchNews(src, {refresh = false}) async {
@@ -51,7 +52,7 @@ class NewsProvider extends ChangeNotifier {
 
   void /* Future<List<NewsPost>>*/ fetchWpMagazine(src,
       {refresh = false}) async {
-    setLoading(true);
+    setLoading("articles", true);
     if (refresh) {
       allarticles = false;
       magazinepage = 1;
@@ -68,7 +69,7 @@ class NewsProvider extends ChangeNotifier {
   }
 
   void /* Future<List<NewsPost>>*/ fetchWpNews(src, {refresh = false}) async {
-    setLoading(true);
+    setLoading("news", true);
     if (refresh) {
       allnews = false;
       newspage = 1;
@@ -88,9 +89,19 @@ class NewsProvider extends ChangeNotifier {
     }
   }
 
-  void setLoading(bool val) {
-    loading = val;
-    notifyListeners();
+  void setLoading(String category, bool val) {
+    switch (category) {
+      case "news_src":
+        newsLoading = val;
+        notifyListeners();
+        break;
+      case "magazine_src":
+        articlesLoading = val;
+        notifyListeners();
+        break;
+    }
+
+
   }
 /*
   void setArrangements(List<NewsPost> list, category, refresh) {
@@ -125,7 +136,7 @@ class NewsProvider extends ChangeNotifier {
         _wpnews = _wpnews + list;
 
         newspage++;
-        setLoading(false);
+        setLoading(category, false);
         notifyListeners();
         break;
       case "magazine_src":
@@ -135,7 +146,7 @@ class NewsProvider extends ChangeNotifier {
         }
         _wparticles = _wparticles + list;
         magazinepage++;
-        setLoading(false);
+        setLoading(category, false);
         notifyListeners();
         break;
     }

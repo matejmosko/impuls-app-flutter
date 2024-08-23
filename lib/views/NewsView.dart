@@ -28,7 +28,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
           child: AnimatedOpacity(
             // If the widget is visible, animate to 0.0 (invisible).
             // If the widget is hidden, animate to 1.0 (fully visible).
-            opacity: newsProvider.loading ? 1.0 : 0.0,
+            opacity: newsProvider.newsLoading ? 1.0 : 0.0,
             duration: Duration(milliseconds: 500),
             // The green box must be a child of the AnimatedOpacity widget.
             child: Text(
@@ -45,7 +45,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
               Flexible(
                 child: LazyLoadScrollView(
                   onEndOfPage: () => newsProvider.fetchWpNews("news_src"),
-                  isLoading: newsProvider.loading,
+                  isLoading: newsProvider.newsLoading,
                   scrollOffset: 10,
                   child: RefreshIndicator(
                       child: ListView.builder(
@@ -113,7 +113,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                 ),
               ),
               Container(
-                  child: (newsProvider.loading && !newsProvider.allnews)
+                  child: (newsProvider.newsLoading || !newsProvider.allnews)
                       ? Padding(
                           padding: EdgeInsets.all(20),
                           child: new CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent)))

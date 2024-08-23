@@ -27,7 +27,7 @@ class _CalendarViewState extends State<CalendarView>
     with TickerProviderStateMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _selectedDay = DateTime.now();
-  DateTime _rangeStart = DateTime.utc(2024, 1, 1);
+  DateTime _rangeStart = DateTime.utc(2024, 8, 28);
   DateTime _rangeEnd = DateTime.utc(2025, 12, 31);
   DateTime _focusedDay = DateTime.now();
   AnimationController? _animationController;
@@ -48,11 +48,11 @@ class _CalendarViewState extends State<CalendarView>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-/*
+
     _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
             DateTime.now().isAfter(_rangeEnd))
         ? _rangeStart
-        : DateTime.now();*/
+        : DateTime.now();
 
     _animationController?.forward();
 
@@ -85,7 +85,7 @@ class _CalendarViewState extends State<CalendarView>
         DateTime.now().isAfter(_rangeEnd))
         ? _rangeStart
         : DateTime.now();
-
+print(_focusedDay);
     return festival;
   }
 
@@ -160,7 +160,6 @@ class _CalendarViewState extends State<CalendarView>
                 ),
               ]);
             }
-            print(_focusedDay);
             return TableCalendar(
               locale: 'sk_SK',
               firstDay: _rangeStart,

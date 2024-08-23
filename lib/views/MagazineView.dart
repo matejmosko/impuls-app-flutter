@@ -30,7 +30,7 @@ class _MagazineViewState extends State<MagazineView>
           child: AnimatedOpacity(
             // If the widget is visible, animate to 0.0 (invisible).
             // If the widget is hidden, animate to 1.0 (fully visible).
-            opacity: newsProvider.loading ? 1.0 : 0.0,
+            opacity: newsProvider.articlesLoading ? 1.0 : 0.0,
             duration: Duration(milliseconds: 500),
             // The green box must be a child of the AnimatedOpacity widget.
             child: Text(
@@ -48,7 +48,7 @@ class _MagazineViewState extends State<MagazineView>
                 child: LazyLoadScrollView(
                   onEndOfPage: () =>
                       newsProvider.fetchWpMagazine("magazine_src"),
-                  isLoading: newsProvider.loading,
+                  isLoading: newsProvider.articlesLoading,
                   scrollOffset: 10,
                   child: RefreshIndicator(
                       child: ListView.builder(
@@ -71,7 +71,7 @@ class _MagazineViewState extends State<MagazineView>
                                                 "",
                                             shrinkWrap: true,
                                           ),*/
-                                          subtitle: Text(stripHtml(item.excerpt!.rendered ?? "").substring(1,105)+"..."),
+                                          subtitle: Text(stripHtml(item.excerpt!.rendered ?? "").length > 100 ? stripHtml(item.excerpt!.rendered ?? "").substring(1,100)+"..." : stripHtml(item.excerpt!.rendered ?? "")),
                                         ),
                                       ),
                                       Container(
@@ -116,7 +116,7 @@ class _MagazineViewState extends State<MagazineView>
                 ),
               ),
               Container(
-                  child: (newsProvider.loading && !newsProvider.allarticles)
+                  child: (newsProvider.articlesLoading && !newsProvider.allarticles)
                       ? Padding(
                           padding: EdgeInsets.all(20),
                       child: new CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent)))

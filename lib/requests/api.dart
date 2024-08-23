@@ -42,7 +42,7 @@ class API {
     //var cacheStore = MemCacheStore(maxSize: 10485760, maxEntrySize: 1048576);
 
     var directory = null;
-    if (!kIsWeb){
+    if (!kIsWeb) {
       var cacheDir = !kIsWeb ? await getTemporaryDirectory() : null;
       directory = cacheDir!.path;
     }
@@ -55,7 +55,7 @@ class API {
       store: cacheStore,
       policy: refresh ? CachePolicy.refresh : CachePolicy.forceCache,
       priority: CachePriority.high,
-      maxStale: const Duration(days: 5),
+      maxStale: const Duration(hours: 5),
       keyBuilder: (request) {
         return request.uri.toString();
       },
@@ -99,24 +99,25 @@ INFO This part is custom made cache based on test request for one article. There
       }
     }
 */
-      final request = ListPostRequest(
-          page: page, perPage: 20, extra: {"_embed": "wp:featuredmedia"});
+    final request = ListPostRequest(
+        page: page, perPage: 20, extra: {"_embed": "wp:featuredmedia"});
 
-      final wpResponse = await client.posts.list(request);
+    final wpResponse = await client.posts.list(request);
 
-      switch (wpResponse) {
-        case WordpressSuccessResponse():
-          data = wpResponse.data; // List<Post>
-          break;
+    switch (wpResponse) {
+      case WordpressSuccessResponse():
+        data = wpResponse.data; // List<Post>
+        break;
 
-        case WordpressFailureResponse():
-          final error = wpResponse.error; //// WordpressError
-          print(error);
-          break;
-      }
-     // await prefs.setString(src, jsonEncode(data));
+      case WordpressFailureResponse():
+        final error = wpResponse.error; //// WordpressError
+        print(error);
+        break;
+    }
+    // await prefs.setString(src, jsonEncode(data));
     return data;
   }
+
 /*
   Future<String> fetchNews(src, page) async {
     try {
@@ -149,7 +150,6 @@ INFO This part is custom made cache based on test request for one article. There
       throw 'Could not launch $url';
     }
   }
-
 }
 
 class Analytics {
