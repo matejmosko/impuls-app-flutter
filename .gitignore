@@ -276,25 +276,3 @@ $RECYCLE.BIN/
 #Please keep the Signing Key secret
 /android/key.properties
 /key.jks
-/android/app/src/main/res/drawable-hdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-mdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-night-hdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-night-mdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-night-xhdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-night-xxhdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-night-xxxhdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-xhdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-xxhdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-xxxhdpi-v31/android12branding.png
-/android/app/src/main/res/drawable-hdpi/android12splash.png
-/android/app/src/main/res/drawable-mdpi/android12splash.png
-/android/app/src/main/res/drawable-night-hdpi/android12splash.png
-/android/app/src/main/res/drawable-night-mdpi/android12splash.png
-/android/app/src/main/res/drawable-night-xhdpi/android12splash.png
-/android/app/src/main/res/drawable-night-xxhdpi/android12splash.png
-/android/app/src/main/res/drawable-night-xxxhdpi/android12splash.png
-/android/app/src/main/res/drawable-xhdpi/android12splash.png
-/android/app/src/main/res/drawable-xxhdpi/android12splash.png
-/android/app/src/main/res/drawable-xxxhdpi/android12splash.png
-/assets/images/branding.png
-/assets/images/splash-icon-transparent.png
