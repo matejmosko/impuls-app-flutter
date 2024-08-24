@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:scenickazatva_app/models/NewsPost.dart';
+//import 'package:scenickazatva_app/models/NewsPost.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:wordpress_client/wordpress_client.dart';
 

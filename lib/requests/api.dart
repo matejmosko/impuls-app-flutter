@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 import 'package:wordpress_client/wordpress_client.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -102,19 +103,25 @@ INFO This part is custom made cache based on test request for one article. There
     final request = ListPostRequest(
         page: page, perPage: 20, extra: {"_embed": "wp:featuredmedia"});
 
-    final wpResponse = await client.posts.list(request);
 
-    switch (wpResponse) {
-      case WordpressSuccessResponse():
-        data = wpResponse.data; // List<Post>
-        break;
+     final wpResponse = await client.posts.list(request);
 
-      case WordpressFailureResponse():
-        final error = wpResponse.error; //// WordpressError
-        print(error);
-        break;
-    }
-    // await prefs.setString(src, jsonEncode(data));
+     if (wpResponse.code == 304 || wpResponse.code == 200){
+       switch (wpResponse) {
+         case WordpressSuccessResponse():
+           data = wpResponse.data; // List<Post>
+           break;
+
+         case WordpressFailureResponse():
+           final error = wpResponse.error; //// WordpressError
+           print(error);
+           break;
+       }
+     }else{
+       print(wpResponse.code);
+       return data;
+     }
+
     return data;
   }
 

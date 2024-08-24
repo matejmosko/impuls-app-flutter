@@ -113,7 +113,7 @@ class _NewsViewState extends State<NewsView> with TickerProviderStateMixin {
                 ),
               ),
               Container(
-                  child: (newsProvider.newsLoading || !newsProvider.allnews)
+                  child: (newsProvider.newsLoading)
                       ? Padding(
                           padding: EdgeInsets.all(20),
                           child: new CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent)))
