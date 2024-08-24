@@ -29,7 +29,7 @@ class _CalendarViewState extends State<CalendarView>
   DateTime _rangeStart = DateTime.utc(2024, 8, 28);
   DateTime _rangeEnd = DateTime.utc(2025, 12, 31);
   DateTime _focusedDay = DateTime.now();
- // static var _calendarKeyCount = 0;
+  // static var _calendarKeyCount = 0;
   AnimationController? _animationController;
   Festival festival = Festival();
   List venues = [];
@@ -78,7 +78,7 @@ class _CalendarViewState extends State<CalendarView>
   Future<Festival> getFestival() async {
     FestivalProvider festivalProvider =
         Provider.of<FestivalProvider>(context, listen: false);
-    final festival = festivalProvider.festival;
+    festival = festivalProvider.festival;
 
     _rangeStart = festival.startDate ?? _rangeStart;
     _rangeEnd = festival.endDate ?? _rangeEnd;
@@ -86,11 +86,16 @@ class _CalendarViewState extends State<CalendarView>
     if (_focusedDay.isBefore(_rangeStart) || _focusedDay.isAfter(_rangeEnd)) {
       _focusedDay = _rangeStart;
     }
+    foregroundColor = festivalProvider.foregroundColor;
+    backgroundColor = festivalProvider.backgroundColor;
+    selectedColor = festivalProvider.selectedColor;
+    mainProgramColor = festivalProvider.mainProgramColor;
+    offProgramColor = festivalProvider.offProgramColor;
 
     //_calendarKeyCount += 1;
     return festival;
   }
-
+/*
   Festival fetchFestival() {
     FestivalProvider festivalProvider =
         Provider.of<FestivalProvider>(context, listen: false);
@@ -102,7 +107,7 @@ class _CalendarViewState extends State<CalendarView>
     mainProgramColor = festivalProvider.mainProgramColor;
     offProgramColor = festivalProvider.offProgramColor;
     return festival;
-  }
+  }*/
 
   @override
   void dispose() {
@@ -156,11 +161,7 @@ class _CalendarViewState extends State<CalendarView>
           builder: (BuildContext context, AsyncSnapshot<Festival> snapshot) {
             if (snapshot.hasData) {
               return TableCalendar(
-                //key: ValueKey<int>(_calendarKeyCount),
                 locale: 'sk_SK',
-                /*firstDay: DateTime.parse('2024-08-20 20:18:04Z'),
-                lastDay: DateTime.parse('2024-08-25 20:18:04Z'),
-                focusedDay: DateTime.parse('2024-08-23 20:18:04Z'),*/
                 firstDay: snapshot.data!.startDate ?? _rangeStart,
                 lastDay: snapshot.data!.endDate ?? _rangeEnd,
                 focusedDay: _focusedDay,
@@ -307,7 +308,7 @@ class _CalendarViewState extends State<CalendarView>
       child: ListView(
         padding: EdgeInsets.all(8),
         children: _fetchEvents(_selectedDay)
-            .map((event) => EventListItem(event: event))
+            .map((event) => EventListItem(event: event, festival: festival))
             .toList(),
       ),
     ));
@@ -316,8 +317,9 @@ class _CalendarViewState extends State<CalendarView>
 
 class EventListItem extends StatelessWidget {
   final event;
+  final Festival festival;
 
-  const EventListItem({Key? key, @required this.event}) : super(key: key);
+  const EventListItem({Key? key, @required this.event, required this.festival}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -340,104 +342,103 @@ class EventListItem extends StatelessWidget {
             event.endTime.isBefore(DateTime.now()))
         ? true
         : false; // Check if the event is currently on.
+
+    print(festival.mainProgramColor);
+
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
-    final FestivalProvider festivalProvider =
-        Provider.of<FestivalProvider>(context);
-    final festival = festivalProvider.festival;
-    Color mainProgramColor = festivalProvider.mainProgramColor;
-    Color offProgramColor = festivalProvider.offProgramColor;
-    Color partnerProgramColor = festivalProvider.partnerProgramColor;
+    final FestivalProvider festivalProvider = Provider.of<FestivalProvider>(context);
 
     return GestureDetector(
-      child: Card(
-          shape: playing
-              ? RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                  borderRadius: BorderRadius.circular(5.0),
-                )
-              : RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-          color: event.type == "offprogram"
-              ? offProgramColor
-              : event.type == "partner"
-                  ? partnerProgramColor
-                  : mainProgramColor,
-          child: Row(children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(12.0),
-              child: SizedBox(
-                  width: 60,
-                  child: Column(
-                    /*crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,*/
-                    children: <Widget>[
-                      Icon(eventsProvider.getLocationIcon(event.location),
-                          color:
-                              eventsProvider.getLocationColor(event.location),
-                          size: 26),
-                      Text("$location",
-                          style: TextStyle(
-                              color: eventsProvider
-                                  .getLocationColor(event.location)),
-                          textAlign: TextAlign.center),
-                      Text("$startTime"),
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text("${event.title ?? ''}",
-                      style: Theme.of(context).textTheme.displaySmall),
-                  LimitedBox(
-                    child: ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (bounds) {
-                        return LinearGradient(
-                          begin: Alignment.center,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.black, Colors.transparent],
-                        ).createShader(bounds);
-                      },
-                      child: Html(data: MD.markdownToHtml(event.description)),
+        child: Card(
+            shape: playing
+                ? RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Colors.black,
+                      width: 2.0,
                     ),
-                    maxHeight: 70,
+                    borderRadius: BorderRadius.circular(5.0),
                   )
-                ],
+                : RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+            color: event.type == "offprogram"
+                ? festivalProvider.offProgramColor
+                : event.type == "partner"
+                    ? festivalProvider.partnerProgramColor
+                    : festivalProvider.mainProgramColor,
+            child: Row(children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(12.0),
+                child: SizedBox(
+                    width: 60,
+                    child: Column(
+                      /*crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,*/
+                      children: <Widget>[
+                        Icon(eventsProvider.getLocationIcon(event.location),
+                            color:
+                                eventsProvider.getLocationColor(event.location),
+                            size: 26),
+                        Text("$location",
+                            style: TextStyle(
+                                color: eventsProvider
+                                    .getLocationColor(event.location)),
+                            textAlign: TextAlign.center),
+                        Text("$startTime"),
+                      ],
+                    )),
               ),
-            ),
-            Container(
-              width: 120.0,
-              height: 120.0,
-              child: event.image != ""
-                  ? Image(
-                      image: FirebaseImageProvider(
-                        FirebaseUrl(event.image),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text("${event.title ?? ''}",
+                        style: Theme.of(context).textTheme.displaySmall),
+                    LimitedBox(
+                      child: ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (bounds) {
+                          return LinearGradient(
+                            begin: Alignment.center,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.black, Colors.transparent],
+                          ).createShader(bounds);
+                        },
+                        child: Html(data: MD.markdownToHtml(event.description)),
                       ),
-                      fit: BoxFit.cover,
-                      height: double.infinity,
-                      width: double.infinity,
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace? stackTrace) {
-                        return Image(
-                            image: FirebaseImageProvider(
-                                FirebaseUrl(festival.logo)));
-                        //return Image.asset('assets/images/icon512.png');
-                      },
+                      maxHeight: 70,
                     )
-                  : Image(
-                      image: FirebaseImageProvider(FirebaseUrl(festival.logo))),
-            ),
-          ])),
-      onTap: () {
-        Analytics().sendEvent(event.title);
-        context.go("/events/" + event.id);
+                  ],
+                ),
+              ),
+              Container(
+                width: 120.0,
+                height: 120.0,
+                child: event.image != ""
+                    ? Image(
+                        image: FirebaseImageProvider(
+                          FirebaseUrl(event.image),
+                        ),
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace? stackTrace) {
+                          return Image(
+                              image: FirebaseImageProvider(
+                                  FirebaseUrl(festivalProvider.festival.logo)));
+                          //return Image.asset('assets/images/icon512.png');
+                        },
+                      )
+                    : Image(
+                        image: FirebaseImageProvider(
+                            FirebaseUrl(festivalProvider.festival.logo))),
+              ),
+            ])),
+        onTap: () {
+          Analytics().sendEvent(event.title);
+          context.go("/events/" + event.id);
 /*        Navigator.push(
           context,
           MaterialPageRoute(
@@ -446,7 +447,6 @@ class EventListItem extends StatelessWidget {
             ),
           ),
         );*/
-      },
-    );
+        });
   }
 }

@@ -218,7 +218,6 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             colorScheme: lightColorScheme,
             fontFamily: 'Space Grotesk',
-
             appBarTheme: AppBarTheme(
                 iconTheme: IconThemeData(color: lightColor),
                 backgroundColor: darkColor,
@@ -230,7 +229,6 @@ class MyApp extends StatelessWidget {
               labelTextStyle:
                   WidgetStateProperty.all(TextStyle(color: darkColor)),
             ),
-
             listTileTheme: ListTileThemeData(
               textColor: darkColorLighter,
               titleTextStyle: TextStyle(
@@ -239,36 +237,25 @@ class MyApp extends StatelessWidget {
                   color: darkColor,
                   fontSize: 18.0),
             ),
-
             textTheme: TextTheme(
               displayLarge: TextStyle(
-                fontSize: 24.0,
-                fontVariations: [FontVariation('wght', 700)],
-                //color: accentColor
-              ),
+                  fontSize: 24.0,
+                  fontVariations: [FontVariation('wght', 700)],
+                  color: darkColor),
               displayMedium: TextStyle(
-                fontSize: 18.0,
-                fontStyle: FontStyle.italic,
-                //color: accentColor
-              ),
+                  fontSize: 18.0,
+                  fontStyle: FontStyle.italic,
+                  color: darkColor),
               displaySmall: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                //color: darkColor
-              ),
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: darkColor),
               titleLarge: TextStyle(
-                fontSize: 19.0,
-                //fontWeight: FontWeight.bold,
-                //    color: accentColor
-              ),
-              bodyLarge: TextStyle(
-                fontSize: 14.0,
-                //    color: darkColor
-              ),
-              bodyMedium: TextStyle(
-                fontSize: 14.0,
-                //color: darkColor
-              ),
+                  fontSize: 19.0,
+                  //fontWeight: FontWeight.bold,
+                  color: darkColor),
+              bodyLarge: TextStyle(fontSize: 14.0, color: darkColor),
+              bodyMedium: TextStyle(fontSize: 14.0, color: darkColor),
             )),
         darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
 
