@@ -29,7 +29,7 @@ class _CalendarViewState extends State<CalendarView>
   DateTime _rangeStart = DateTime.utc(2024, 8, 28);
   DateTime _rangeEnd = DateTime.utc(2025, 12, 31);
   DateTime _focusedDay = DateTime.now();
-  static var _calendarKeyCount = 0;
+ // static var _calendarKeyCount = 0;
   AnimationController? _animationController;
   Festival festival = Festival();
   List venues = [];
@@ -87,7 +87,7 @@ class _CalendarViewState extends State<CalendarView>
       _focusedDay = _rangeStart;
     }
 
-    _calendarKeyCount += 1;
+    //_calendarKeyCount += 1;
     return festival;
   }
 
