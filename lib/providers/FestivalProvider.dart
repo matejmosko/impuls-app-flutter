@@ -23,28 +23,8 @@ class FestivalProvider extends ChangeNotifier {
   void /*Future<List<InfoPost>>*/ fetchFestival() async {
     Preferences prefs = await Preferences.getInstance();
     Festival festival = prefs.getFestival();
-/*
-    setLoading(true);
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    if(!kIsWeb){database.setPersistenceEnabled(true);}
 
-
-    String festival = await API().getDefaultFestival();
-    final festivaldb = FirebaseDatabase.instance.ref("appsettings/festivals/$festival").orderByChild("id");
-    if(!kIsWeb){festivaldb.keepSynced(true);}
-    // Get the Stream
-    Stream<DatabaseEvent> stream = festivaldb.onValue;
-
-// Subscribe to the stream!
-    stream.listen((DatabaseEvent festival) {
-
-      Map<String, dynamic> validMap = json.decode(json.encode(festival.snapshot.value)) as Map<String, dynamic>;
-
-    });
-      setFestival(Festival.fromJson(validMap));
-      */
-  setFestival(festival);
-
+    setFestival(festival);
   }
 
   void setLoading(bool val) {
