@@ -78,7 +78,8 @@ class _CalendarViewState extends State<CalendarView>
   Future<Festival> getFestival() async {
     FestivalProvider festivalProvider =
         Provider.of<FestivalProvider>(context, listen: false);
-    festival = festivalProvider.festival;
+
+    festival = await festivalProvider.fetchFestival();
 
     _rangeStart = festival.startDate ?? _rangeStart;
     _rangeEnd = festival.endDate ?? _rangeEnd;
@@ -347,6 +348,7 @@ class EventListItem extends StatelessWidget {
 
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
     final FestivalProvider festivalProvider = Provider.of<FestivalProvider>(context);
+    print(festivalProvider.festival.logo);
 
     return GestureDetector(
         child: Card(
@@ -427,13 +429,16 @@ class EventListItem extends StatelessWidget {
                             StackTrace? stackTrace) {
                           return Image(
                               image: FirebaseImageProvider(
-                                  FirebaseUrl(festivalProvider.festival.logo)));
-                          //return Image.asset('assets/images/icon512.png');
+                              FirebaseUrl(festival.logo),
+                          ));
+
+                          // Image.asset('assets/images/logo_sz.png');
                         },
                       )
                     : Image(
-                        image: FirebaseImageProvider(
-                            FirebaseUrl(festivalProvider.festival.logo))),
+                    image: FirebaseImageProvider(
+                      FirebaseUrl(festival.logo),
+                    )),
               ),
             ])),
         onTap: () {
