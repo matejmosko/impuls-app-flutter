@@ -61,7 +61,7 @@
 		<string>production</string>
 		<!-- Either development or production -->
 		<key>UIStatusBarHidden</key>
-		<false/>
+		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 	</dict>

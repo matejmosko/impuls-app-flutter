@@ -54,7 +54,7 @@ dependencies:
   firebase_database_web: any
   firebase_messaging_web: any
   firebase_storage_web: any
-  flutter_native_splash: any
+  flutter_native_splash: 2.4.1
   url_launcher_web: any
   path_provider: any
 dev_dependencies:
@@ -128,5 +128,19 @@ flutter_launcher_icons:
 
 #  flutter pub run flutter_native_splash:create
 flutter_native_splash:
-  image: assets/images/splash.png
+  android: true
+  ios: true
+  web: false
+  image: "assets/images/splash.png"
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: center
   color: "#CCA965"
+  android_12:
+    image: "assets/images/splash-icon-transparent.png"
+    branding: "assets/images/branding.png"
+    color: "#CCA965"
+    branding_mode: bottom
+    fullscreen: true
+    android_gravity: center
+    ios_content_mode: center
