@@ -4,7 +4,7 @@ part 'Festival.g.dart';
 @HiveType(typeId: 1)
 class Festival {
   @HiveField(0)
-  DateTime? endDate;
+  DateTime? endDate = DateTime.utc(2030-12-31);
   @HiveField(1)
   String magazine_src =
       "https://javisko.sk/wp-json/wp/v2/posts?per_page=20&order=desc&";
@@ -12,7 +12,7 @@ class Festival {
   String news_src =
       "https://www.tvor-ba.sk/2024/wp-json/wp/v2/posts?per_page=20&order=desc&";
   @HiveField(3)
-  DateTime? startDate;
+  DateTime? startDate = DateTime.utc(2022-01-01);
   @HiveField(4)
   String subtitle = "Multižánrový festival tvorivosti";
   @HiveField(5)

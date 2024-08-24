@@ -7,7 +7,6 @@ import 'package:scenickazatva_app/models/ColorScheme.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:scenickazatva_app/models/Event.dart';
 import 'package:scenickazatva_app/models/Festival.dart';
-import 'package:scenickazatva_app/models/HivePreferences.dart';
 import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:scenickazatva_app/requests/api.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -30,6 +29,7 @@ class _CalendarViewState extends State<CalendarView>
   DateTime _rangeStart = DateTime.utc(2024, 8, 28);
   DateTime _rangeEnd = DateTime.utc(2025, 12, 31);
   DateTime _focusedDay = DateTime.now();
+  static var _calendarKeyCount = 0;
   AnimationController? _animationController;
   Festival festival = Festival();
   List venues = [];
@@ -49,14 +49,14 @@ class _CalendarViewState extends State<CalendarView>
       duration: const Duration(milliseconds: 400),
     );
 
-    _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
-            DateTime.now().isAfter(_rangeEnd))
-        ? _rangeStart
-        : DateTime.now();
+    _focusedDay =
+        (_focusedDay.isBefore(_rangeStart) || _focusedDay.isAfter(_rangeEnd))
+            ? _rangeStart
+            : _focusedDay;
 
     _animationController?.forward();
 
-   // _selectedDay = _focusedDay;
+    _selectedDay = _focusedDay;
   }
 
   @override
@@ -76,22 +76,24 @@ class _CalendarViewState extends State<CalendarView>
   }
 
   Future<Festival> getFestival() async {
-    Preferences prefs = await Preferences.getInstance();
-    Festival festival = prefs.getFestival();
+    FestivalProvider festivalProvider =
+        Provider.of<FestivalProvider>(context, listen: false);
+    final festival = festivalProvider.festival;
 
     _rangeStart = festival.startDate ?? _rangeStart;
     _rangeEnd = festival.endDate ?? _rangeEnd;
-    _focusedDay = (DateTime.now().isBefore(_rangeStart) ||
-        DateTime.now().isAfter(_rangeEnd))
-        ? _rangeStart
-        : DateTime.now();
-print(_focusedDay);
+
+    if (_focusedDay.isBefore(_rangeStart) || _focusedDay.isAfter(_rangeEnd)) {
+      _focusedDay = _rangeStart;
+    }
+
+    _calendarKeyCount += 1;
     return festival;
   }
 
   Festival fetchFestival() {
     FestivalProvider festivalProvider =
-    Provider.of<FestivalProvider>(context, listen: false);
+        Provider.of<FestivalProvider>(context, listen: false);
     final festival = festivalProvider.festival;
 
     foregroundColor = festivalProvider.foregroundColor;
@@ -115,7 +117,7 @@ print(_focusedDay);
       _focusedDay = focusedDay;
       setSelectedDay(selectedDay);
     });
-    _fetchEvents;
+    //_fetchEvents;
   }
 
   void setSelectedDay(DateTime day) {
@@ -151,115 +153,121 @@ print(_focusedDay);
       color: festivalBackgroundColor,
       child: FutureBuilder(
           future: getFestival(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+          builder: (BuildContext context, AsyncSnapshot<Festival> snapshot) {
+            if (snapshot.hasData) {
+              return TableCalendar(
+                //key: ValueKey<int>(_calendarKeyCount),
+                locale: 'sk_SK',
+                /*firstDay: DateTime.parse('2024-08-20 20:18:04Z'),
+                lastDay: DateTime.parse('2024-08-25 20:18:04Z'),
+                focusedDay: DateTime.parse('2024-08-23 20:18:04Z'),*/
+                firstDay: snapshot.data!.startDate ?? _rangeStart,
+                lastDay: snapshot.data!.endDate ?? _rangeEnd,
+                focusedDay: _focusedDay,
+                headerVisible: false,
+                selectedDayPredicate: (day) {
+                  return isSameDay(_selectedDay, day);
+                },
+                onDaySelected: _onDaySelected,
+                onFormatChanged: (format) {
+                  if (_calendarFormat != format) {
+                    // Call `setState()` when updating calendar format
+                    setState(() {
+                      _calendarFormat = format;
+                    });
+                  }
+                },
+                onPageChanged: (focusedDay) {
+                  // No need to call `setState()` here
+                  _focusedDay = focusedDay;
+                },
+                eventLoader: _fetchEvents, //(day){ return events;},
+                calendarFormat: _calendarFormat,
+                startingDayOfWeek: StartingDayOfWeek.monday,
+                availableGestures: AvailableGestures.all,
+                availableCalendarFormats: const {
+                  CalendarFormat.week: 'Týždeň',
+                },
+                calendarStyle: CalendarStyle(
+                  outsideDaysVisible: true,
+                  outsideTextStyle: TextStyle(color: foregroundColor),
+                  defaultTextStyle: TextStyle(color: foregroundColor),
+                  disabledTextStyle: TextStyle(color: foregroundColor),
+                  weekendTextStyle: TextStyle(color: foregroundColor),
+                ),
+                daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle: TextStyle(
+                      color: foregroundColor,
+                    ),
+                    weekendStyle: TextStyle(
+                      color: foregroundColor,
+                    )),
+                calendarBuilders: CalendarBuilders(
+                  selectedBuilder: (context, date, _) {
+                    return FadeTransition(
+                      opacity: Tween(begin: 0.0, end: 1.0)
+                          .animate(_animationController!),
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.rectangle, color: selectedColor),
+                        child: Center(
+                          child: Text(
+                            '${date.day}',
+                            /*style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onInverseSurface)
+                              .copyWith(fontSize: 16.0),*/
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  todayBuilder: (context, date, _) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 3.0),
+                        borderRadius: BorderRadius.all(Radius.circular(
+                                4.0) //                 <--- border radius here
+                            ),
+                      ),
+                      width: 100,
+                      height: 100,
+                      child: Center(
+                        child: Text(
+                          '${date.day}',
+                          /* style: TextStyle().copyWith(fontSize: 16.0),*/
+                        ),
+                      ),
+                    );
+                  },
+                  markerBuilder: (context, date, List events) {
+                    if (events.isNotEmpty) {
+                      return Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: _buildEventsMarker(date, events),
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Row(children: [
+                Text(
+                  "Nepodarilo sa načítať informácie o festivale. Skontrolujte svoje pripojenie k internetu.",
+                ),
+              ]);
+            } else
+
               // Future hasn't finished yet, return a placeholder
               return Row(children: [
                 Text(
                   "Načítavam...",
                 ),
               ]);
-            }
-            return TableCalendar(
-              locale: 'sk_SK',
-              firstDay: _rangeStart,
-              lastDay: _rangeEnd,
-              focusedDay: _focusedDay,
-              headerVisible: false,
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
-              },
-              onDaySelected: _onDaySelected,
-              onFormatChanged: (format) {
-                if (_calendarFormat != format) {
-                  // Call `setState()` when updating calendar format
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                }
-              },
-              onPageChanged: (focusedDay) {
-                // No need to call `setState()` here
-                _focusedDay = focusedDay;
-              },
-              eventLoader: _fetchEvents, //(day){ return events;},
-              calendarFormat: _calendarFormat,
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              availableGestures: AvailableGestures.all,
-              availableCalendarFormats: const {
-                CalendarFormat.week: 'Týždeň',
-              },
-              calendarStyle: CalendarStyle(
-                outsideDaysVisible: true,
-                outsideTextStyle:
-                    TextStyle(color: foregroundColor),
-                defaultTextStyle:
-                    TextStyle(color: foregroundColor),
-                disabledTextStyle:
-                    TextStyle(color: foregroundColor),
-                weekendTextStyle:
-                    TextStyle(color: foregroundColor),
-              ),
-              daysOfWeekStyle: DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(
-                    color: foregroundColor,
-                  ),
-                  weekendStyle: TextStyle(
-                    color: foregroundColor,
-                  )),
-              calendarBuilders: CalendarBuilders(
-                selectedBuilder: (context, date, _) {
-                  return FadeTransition(
-                    opacity: Tween(begin: 0.0, end: 1.0)
-                        .animate(_animationController!),
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          color: selectedColor),
-                      child: Center(
-                        child: Text(
-                          '${date.day}',
-                          /*style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onInverseSurface)
-                              .copyWith(fontSize: 16.0),*/
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                todayBuilder: (context, date, _) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 3.0),
-                      borderRadius: BorderRadius.all(Radius.circular(
-                              4.0) //                 <--- border radius here
-                          ),
-                    ),
-                    width: 100,
-                    height: 100,
-                    child: Center(
-                      child: Text(
-                        '${date.day}',
-                        /* style: TextStyle().copyWith(fontSize: 16.0),*/
-                      ),
-                    ),
-                  );
-                },
-                markerBuilder: (context, date, List events) {
-                  if (events.isNotEmpty) {
-                    return Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: _buildEventsMarker(date, events),
-                    );
-                  } else {
-                    return SizedBox.shrink();
-                  }
-                },
-              ),
-            );
           }),
     );
   }
@@ -268,8 +276,7 @@ print(_focusedDay);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
-          color: festivalForegroundColor,
-          shape: BoxShape.rectangle),
+          color: festivalForegroundColor, shape: BoxShape.rectangle),
       width: 16.0,
       height: 16.0,
       child: Center(
@@ -329,9 +336,13 @@ class EventListItem extends StatelessWidget {
         ? event.description.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
         : '';*/
 
-    final playing = (event.startTime.isAfter(DateTime.now()) && event.endTime.isBefore(DateTime.now())) ? true : false; // Check if the event is currently on.
+    final playing = (event.startTime.isAfter(DateTime.now()) &&
+            event.endTime.isBefore(DateTime.now()))
+        ? true
+        : false; // Check if the event is currently on.
     final EventsProvider eventsProvider = Provider.of<EventsProvider>(context);
-    final FestivalProvider festivalProvider = Provider.of<FestivalProvider>(context);
+    final FestivalProvider festivalProvider =
+        Provider.of<FestivalProvider>(context);
     final festival = festivalProvider.festival;
     Color mainProgramColor = festivalProvider.mainProgramColor;
     Color offProgramColor = festivalProvider.offProgramColor;
@@ -339,17 +350,22 @@ class EventListItem extends StatelessWidget {
 
     return GestureDetector(
       child: Card(
-          shape: playing ? RoundedRectangleBorder(
-            side: BorderSide(
-              color: Colors.black,
-              width: 2.0,
-            ),
-            borderRadius: BorderRadius.circular(5.0),
-          ) :
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          color: event.type == "offprogram" ? offProgramColor : event.type == "partner" ? partnerProgramColor : mainProgramColor,
+          shape: playing
+              ? RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: Colors.black,
+                    width: 2.0,
+                  ),
+                  borderRadius: BorderRadius.circular(5.0),
+                )
+              : RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+          color: event.type == "offprogram"
+              ? offProgramColor
+              : event.type == "partner"
+                  ? partnerProgramColor
+                  : mainProgramColor,
           child: Row(children: <Widget>[
             Padding(
               padding: EdgeInsets.all(12.0),
@@ -401,18 +417,22 @@ class EventListItem extends StatelessWidget {
               height: 120.0,
               child: event.image != ""
                   ? Image(
-                      image: FirebaseImageProvider(FirebaseUrl(event.image),
+                      image: FirebaseImageProvider(
+                        FirebaseUrl(event.image),
                       ),
                       fit: BoxFit.cover,
                       height: double.infinity,
                       width: double.infinity,
                       errorBuilder: (BuildContext context, Object exception,
                           StackTrace? stackTrace) {
-                        return Image(image: FirebaseImageProvider(FirebaseUrl(festival.logo)));
+                        return Image(
+                            image: FirebaseImageProvider(
+                                FirebaseUrl(festival.logo)));
                         //return Image.asset('assets/images/icon512.png');
                       },
                     )
-                  : Image( image: FirebaseImageProvider(FirebaseUrl(festival.logo))),
+                  : Image(
+                      image: FirebaseImageProvider(FirebaseUrl(festival.logo))),
             ),
           ])),
       onTap: () {

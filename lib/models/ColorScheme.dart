@@ -14,8 +14,6 @@ Color festivalBackgroundColor = Color(0xffffe617);
 Color festivalForegroundColor = Colors.black;
 Color festivalThirdColor = Colors.white;
 
-
-
 var lightColorScheme = ColorScheme(
   brightness: Brightness.light,
   primary: lightColor,
